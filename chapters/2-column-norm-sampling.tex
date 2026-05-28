@@ -91,22 +91,4 @@ In particular, in $n$ rounds the probability of outputting $i$ is
 \end{align*}
 \end{proof}
 
-
-\begin{corollary}[Frobenius norm approximation]
-    Fix $\epsilon, \delta > 0$. Suppose we run $r$ rounds of Algorithm~\ref{alg:sampling-procedure}. Let $X$ be the number of accepted rounds and compute 
-    \[\widehat F := \frac{X}{r}\tr(\bA)^2.\]
-    If $r\geq 3n\log(2/\delta)/\epsilon^2$ then with probability at least $1-\delta$,
-    \[(1-\epsilon)\|\bA\|^2_F\leq \widehat F\leq(1+\epsilon)\|\bA\|^2_F.\]
-\end{corollary}
-
-\begin{proof}
-    Define the random variable
-    \[ X_i :=\begin{cases}1&\text{if round $i$ accepted}\\
-    0&\text{otherwise.}\end{cases}\]
-    Recall from the proof of Theorem~\ref{alg:sampling-procedure} that the acceptance probability for any round is
-    \[\beta = \frac{\|A\|^2_F}{\tr(\bA)^2}\]
-    so $\E X_i = \beta$.
-\end{proof}
-
 \section{Lower Bound for Length-Squared Sampling}
-
