@@ -8,10 +8,6 @@ Let $r = \rank(\bM)$ and write
 \[\bM = \sum_{i=1}^r\sigma_i\bu_i\bv_i^\top\]
 for the singular value decomposition of $\bM$, where $\sigma_1\geq\sigma_2\geq\cdots\geq \sigma_r\geq 0$ are the singular values of $\bM$, and the $\bu_i$ and $\bv_i$ are corresponding left and right singular vectors of $\bM$, respectively. The matrix $\bM_k$ is defined as
 \[\bM_k := \sum_{i=1}^k \sigma_i\bu_i\bv_i^\top.\]
-% Let $r = \rank(\bM)$ and write $\bM = \bU\bSigma\bV^\top$ for the svd of $\bM$. The matrices $\bU, \bV\in\R^{n\times r}$ contain the left and right singular vectors as columns, respectively, and $\bSigma = \diag(\sigma_1, \sigma_2, \ldots, \sigma_r)$ where $\sigma_1\geq \sigma_2\geq\cdots \geq \sigma_r$ are the singular values of $\bM$. Define
-% \[\bM_k := \bU\bSigma_k\bV^\top\]
-% \todo{rewrite this}
-% where $\bSigma_k\in \R^{r\times r}$ is the truncation of $\bSigma$ to the top-$k$ singular values: $\bSigma = \diag(\sigma_1,\ldots, \sigma_k, 0,\ldots, 0)$. Notice that $\bM_k$ has rank at most $k$.
 
 \begin{fact}
     Let $\bM\in\R^{n\times d}$ and $\bM_k$ be as defined above. Then
@@ -31,7 +27,6 @@ A symmetric matrix $\bA\in\R^{n\times n}$ is \textit{positive semidefinite (psd)
     \item $\bA = \bU^\top\bU$ for some matrix $\bU$.
 \end{enumerate}
 
-% In our length-squared sampling algorithm, we use the following structural fact:
 \begin{fact}
     Let $\bA$ be an $n\times n$ psd matrix. For all $i,j\in [n]$, we have the inequality
     \[\bA_{ij}^2\leq\bA_{ii}\bA_{jj}.\]
@@ -46,10 +41,6 @@ Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are ps
 
 \section{Sampling Primitives for Matrix Approximation}
 A common technique used in query-efficient matrix algorithms is to construct a small sketch of the input via a subset of sampled rows or columns. Generally speaking, the quality and cost of the resulting approximation depend on how this subset is chosen. In this section, we review several sampling rules and their related results.
-
-% Throughout, $\bA\in \R^{n\times d}$ denotes a real-valued matrix. If $\bA$ is psd and $S\subset [n]$ is a subset of indices of size $k$, we write
-% \[\widetilde\bA = \bC\bW^{-1}\bC^\top\]
-% to denote the \textit{Nystr\"om approximation} of $\bA$, where $\bC = \bA_{\ast, S}$ is the $n\times k$ submatrix of columns of $\bA$ indexed by $S$, and $\bW = \bA_{S, S}$ is the $k\times k$ principal submatrix of $\bA$ indexed by $S$.
 
 \subsection{Uniform Sampling}
 The uniform sampling method picks $k$ rows or columns uniformly at random, either with or without replacement. A clear advantage of uniform sampling is that it is data agnostic: it generates a sample without using any information about the matrix. Moreover, uniform sampling is often effective in practice \cite{}.

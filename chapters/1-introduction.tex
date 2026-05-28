@@ -1,4 +1,3 @@
-% \section{Overview}
 In modern data analysis, some naturally-arising matrices are too large to compute and store efficiently. A canonical example comes from \emph{kernel methods} in machine learning. Given $n$ data points $x_1,\dots,x_n$ and a positive semidefinite kernel function $k(\cdot,\cdot)$, an associated kernel matrix $\bA \in \mathbb{R}^{n\times n}$ is defined entrywise by
 \[
 \bA_{ij} = k(x_i,x_j).
@@ -27,9 +26,6 @@ We also show that the query complexity of our algorithm is optimal up to constan
 
 We next show how this sampling primitive can be used in several low-rank and spectral approximation problems for positive semidefinite matrices. We consider additive-error low-rank approximation, robust low-rank approximation, and eigenvalue approximation. In each application, the sampler replaces a length-squared column sampling step that would otherwise require computing all column norms.
 
-% \todo{mention first sublinear algorithm for eigenvalue approximation}
-% We then apply this sampling primitive to several problems in randomized matrix approximation. The applications focus on low-rank approximation of positive semidefinite matrices, including additive-error low-rank approximation, relative-error low-rank approximation, and robust low-rank approximation. We also discuss consequences for eigenvalue approximation. In each case, the role of the new sampler is to implement a length-squared column sampling step without first computing all column norms.
-
 Finally, we include numerical experiments comparing length-squared column sampling with other column-selection methods for low-rank approximation. The goal of these experiments is to identify regimes where length-squared sampling is a competitive practical choice.
 
 \section{Outline}
@@ -45,5 +41,4 @@ Chapter 4 develops consequences of the sampling primitive for matrix approximati
 Chapter 5 presents numerical experiments. We compare length-squared sampling with other column-selection methods for low-rank approximation, including uniform sampling and leverage score sampling. We identify regimes where length-squared sampling is a competitive practical choice.
 
 Chapter 6 \todo{fill in} concludes the thesis and discusses directions for future work.
-
 

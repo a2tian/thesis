@@ -20,7 +20,6 @@ The acceptance probability of Algorithm~\ref{alg:sampling-procedure} gives an im
 \end{proof}
 
 \section{Additive Error Low-Rank Approximation}
-% We now apply our length-squared sampling algorithm to compute an additive-error low-rank approximation 
 \todo[inline]{add exposition}
 \begin{theorem}[\cite{frieze_fast_2004}, Theorem 2]
     Let $\bA\in\R^{n\times d}$ be a matrix and $S$ be a sample of $O(k/\epsilon)$ rows of $\bA$ from a distribution that satisfies
@@ -70,26 +69,6 @@ The acceptance probability of Algorithm~\ref{alg:sampling-procedure} gives an im
 \begin{proof}
     
 \end{proof}
-% One  the algorithm of Frieze, Kannan, and Vempala \cite{frieze_fast_2004}.
-
-% \begin{theorem}[\cite{frieze_fast_2004}, as cited in \cite{indyk_sample-optimal_2019}]
-%     Let $\bA\in \R^{n\times d}$ be a matrix and let $S$ be a sample of $O(k/\epsilon)$ rows from a distribution that satisfies
-%     \[p_i\geq c\cdot \frac{\|\bA_{i, *}\|^2_2}{\|\bA\|^2_F}\]
-%     for all $i\in[n]$. Then in time $O(dk/\epsilon + \poly(k, 1/\epsilon))$ we can compute from $S$ a matrix $\bU\in\R^{k\times d}$ that with probability $0.99$ satisfies
-%     \[\bA - \bA\bU^\top\bU^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
-% \end{theorem}
-
-% \begin{theorem}[\cite{frieze_fast_2004}, as cited in \cite{indyk_sample-optimal_2019}]
-%     Let $\bA\in \R^{n\times d}$ be a matrix and let $S$ be a sample of $O(k/\epsilon)$ rows from a distribution that satisfies
-%     \[p_i\geq c\cdot \frac{\|\bA_{i, *}\|^2_2}{\|\bA\|^2_F}\]
-%     for all $i\in[n]$. Then in time $O(dk/\epsilon + \poly(k, 1/\epsilon))$ we can compute from $S$ a matrix $\bU\in\R^{k\times d}$ that with probability $0.99$ satisfies
-%     \[\bA - \bA\bU^\top\bU^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
-% \end{theorem}
-
-% We combine our result with the algorithm of Frieze, Kannan, and Vempala \cite{frieze_fast_2004}
-
-
-% \section{Relative Error Low-Rank Approximation}
 
 \newpage
 \section{Robust Low-Rank Approximation}
@@ -286,4 +265,3 @@ $\Phi^2 n$.
 
 
 \section{Eigenvalue Approximation}
-
