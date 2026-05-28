@@ -40,7 +40,7 @@ A symmetric matrix $\bA\in\R^{n\times n}$ is \textit{positive semidefinite (psd)
 Let $\bA\in\R^{n\times n}$ be a psd matrix and $S\subset[n]$. Define
 \[\bC := \bA_{\ast, S}\qquad\bW := \bA_{S, S}\]
 We write $\widetilde \bA$ to denote the \textit{Nystr\"om approximation} of $\bA$ with index set $S$, where 
-\[\widetilde\bA = \bC\bW\bC^\top.\]
+\[\widetilde\bA = \bC\bW^{-1}\bC^\top.\]
 Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are psd. Moreover, $\rank(\widetilde\bA) = |S|$.
 
 
