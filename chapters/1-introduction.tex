@@ -33,7 +33,17 @@ We next show how this sampling primitive can be used in several low-rank and spe
 Finally, we include numerical experiments comparing length-squared column sampling with other column-selection methods for low-rank approximation. The goal of these experiments is to identify regimes where length-squared sampling is a competitive practical choice.
 
 \section{Outline}
-\todo{todo}
+\label{sec:introduction-outline}
+\todo{revisit outline at the end}
 
+The remainder of this thesis is organized as follows. Chapter 2 introduces the mathematical background and notation used throughout the thesis. We review low-rank approximation, positive semidefinite matrices, the Nystr\"om approximation, and several sampling primitives that appear in randomized matrix approximation.
+
+Chapter 3 contains the main technical contribution: a fast algorithm for length-squared sampling from a positive semidefinite matrix. We present the rejection-sampling procedure, prove that it samples columns from the correct distribution in expected $O(n)$ time, and give a matching lower bound showing that $\Omega(n)$ entry queries are necessary in the worst case.
+
+Chapter 4 develops consequences of the sampling primitive for matrix approximation. We first show how the sampler yields a simple estimator for the Frobenius norm. We then apply the sampler to additive-error low-rank approximation and robust low-rank approximation. Finally, we discuss an application to eigenvalue approximation, where the Frobenius norm estimate is used as a subroutine.
+
+Chapter 5 presents numerical experiments. We compare length-squared sampling with other column-selection methods for low-rank approximation, including uniform sampling and leverage score sampling. We identify regimes where length-squared sampling is a competitive practical choice.
+
+Chapter 6 \todo{fill in} concludes the thesis and discusses directions for future work.
 
 
