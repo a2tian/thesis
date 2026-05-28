@@ -1,0 +1,98 @@
+\documentclass{article}
+\input{preamble}
+
+\title{Approximate Column Norm Sampling}
+\author{Aaron Tian}
+\date{\today}
+
+\begin{document}
+% \input{chapters/abstract}
+\maketitle
+
+% can we sample a small principal submatrix?
+
+% \section*{Column Norm Sampling}
+We show how to sample columns from a psd matrix $\bA$ in such a way that column $i$ is picked with probability
+\[p_i \geq \alpha\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+for all $i$ and for some constant $\alpha$, using only $O(n)$ entries of $\bA$ per sample. 
+
+\section*{First Approach.}
+A single round of the procedure is as follows:
+\begin{enumerate}
+    \item Sample indices $i,j\sim \frac{\diag(\bA)}{\tr(\bA)}$
+    \item Accept $i$ with probability $\frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}}$, otherwise reject.
+\end{enumerate}
+Then, we run $n$ rounds and return the first accepted index, or return a uniformly random index if all rounds are rejections. Note in particular that $\bA_{ij}^2\leq \bA_{ii}\bA_{jj}$ when $\bA$ is psd. In total, sampling an index requires all $n$ diagonal entries of $\bA$, plus one additional entry per round for a total of at most $2n$ entries.
+
+\begin{lemma}
+    The sampling procedure described above outputs column $i$ with probability
+    \[p_i \geq \left(1 - e^{-1}\right)\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    for all $i$.
+\end{lemma}
+
+\begin{proof}
+    In any given round, the probability of outputting $i$ is
+    \[\frac{\bA_{ii}}{\tr(\bA)}\sum_{j\in [n]} \frac{\bA_{jj}}{\tr(\bA)}\cdot \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}} = \sum_{j\in [n]}\frac{\bA_{ij}^2}{\tr(\bA)^2} = \frac{\|\ba_i\|^2_2}{\tr(\bA)^2}.\]
+    % \[\frac{\bA_{ii}}{\tr(\bA)}\sum_{j\in [n]} \frac{1}{n}\cdot \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}} = \sum_{j\in [n]}\frac{\bA_{ij}^2}{\tr(\bA)^2} = \frac{\|\ba_i\|^2_2}{\tr(\bA)^2}.\]
+    Moreover, summing over all indices gives the success probability
+    \[\beta := \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
+    for one round. Conditioning on success, the probability of outputting $i$ in any given round is thus
+    \[\frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.\]
+    Now, suppose we run $k$ rounds. The probability of at least one success is 
+    $1 - (1-\beta)^k$,
+    so the probability of outputting $i$ is at least
+    \[\left[1 - (1-\beta)^k\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.\]
+    Finally, expand $\beta$ to obtain a lower bound:
+    \begin{align*}
+        \beta &= \frac{\|\bA\|^2_F}{\tr(\bA)^2}\\
+        &= \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}\lambda_k(\bA)\right)^2}\\
+        &\geq \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}1^2\right)\left(\sum_{k \in [n]}\lambda_k(\bA)^2\right)}\\
+        &= \frac{1}{n}.
+    \end{align*}
+    In particular, in $n$ rounds the probability of outputting $i$ is
+    \begin{align*}
+        p_i&\geq \left[1 - \left(1-\frac{1}{n}\right)^n\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\\
+        &\geq \left(1 - e^{-1}\right)\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.
+    \end{align*}
+\end{proof}
+
+Alternatively, instead of stopping at exactly $n$ rounds, we can repeat until the first success. The output $i$ is sampled with probability exactly $\|a_i\|^2_2 / \|\bA\|^2_F$, and the expected number of rounds until success is $1/\beta \leq n$.
+% \begin{algorithm}
+%     \caption{single round rejection sampling}
+%     \KwIn{psd matrix $\bA\in\R^{n\times n}$}
+
+%     Sample indices $i,j\sim \frac{\diag(\bA)}{\tr(\bA)}$
+
+%     Accept $i$ with probability $\frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}}$, otherwise reject.
+% \end{algorithm}
+
+
+% \bibliographystyle{alpha}
+% \bibliography{references}
+\vspace{1em}
+% \todo[inline]{Aaron: study RPCholesky proof applied to $PAP$ residual instead of Nystrom}
+% \todo[inline]{Aaron: determine whether we can get a similar result by sampling a random $\sqrt n\times \sqrt n$ submatrix as this may be more efficient in practice.}
+
+\section*{Second Approach.}
+Let $\bA\in\R^{n\times n}$ be a psd matrix, and let $s:= \lceil\sqrt{n}\rceil$.
+\begin{enumerate}
+    \item Sample indices $r_1,\ldots, r_s, c_1, \ldots, c_s\stackrel{\text{i.i.d}}{\sim} \frac{\diag(\bA)}{\tr(\bA)}$.
+    \item For $i, j\in [s]^2$, the pair $(i, j)$ is kept with probability ${\bA_{r_ir_j}^2} / {\bA_{r_ir_i}\bA_{r_jr_j}}$. 
+    \item If any pairs are kept, let $(i,j)$ be a uniformly random kept pair and return $r_i$. Otherwise, return any pair uniformly at random.
+\end{enumerate}
+
+\begin{lemma}
+The sampling procedure described above outputs column $i$ with probability
+\[
+p_i\geq c\cdot \frac{\|\ba_i\|_2^2}{\|\bA\|_F^2}
+\]
+for all $i$.
+\end{lemma}
+\begin{proof}
+    In this setting, we have $s^2\approx n$ rounds of the sequential sampling procedure, where the rounds are not mutually independent. As before, the probability of outputting $i$ in any given round is 
+    \[\frac{\|\ba_i\|_2^2}{\tr(\bA)^2}\]
+    and every round succeeds with probability
+    \[\frac{\|\bA\|_F^2}{\tr(\bA)^2}.\]
+    % Now, let $N_i$ be the number of kept ordered pairs whose first index is $i$, and let $N$ be the total number of kept ordered pairs. Conditional on $N>0$, the algorithm returns $i$ with probability $N_i/N$. 
+\end{proof}
+\end{document}

@@ -1,0 +1,269 @@
+\section{Additive Error Low-Rank Approximation}
+% We now apply our length-squared sampling algorithm to compute an additive-error low-rank approximation 
+\todo[inline]{add exposition}
+\begin{theorem}[\cite{frieze_fast_2004}, Theorem 2]
+    Let $\bA\in\R^{n\times d}$ be a matrix and $S$ be a sample of $O(k/\epsilon)$ rows of $\bA$ from a distribution that satisfies
+    \[p_i\geq c\cdot \frac{\|\bA_{i, *}\|^2_2}{\|\bA\|^2_F}\]
+    for all $i\in [n]$. Then with probability at least 0.99, there exist vectors $\by_1, \by_2,\ldots, \by_k$ in the span of $S$ to satisfy
+    \[\|\bA - \bA\bY\bY^\top\|^2_F \leq \|\bA -\bA_k\|^2_F + \epsilon\|\bA\|^2_F\]
+    where $\bY\in\R^{n\times k}$ is the matrix whose columns are $\by_1, \by_2,\ldots, \by_k$.
+\end{theorem}
+
+\begin{theorem}[\cite{musco_power_2018}, Lemma 2.2.14]
+    Let $\bC\in\R^{n\times r}$ and $\bA\in\R^{n\times d}$. For all $i\in[n]$, let $\tilde\ell_i\geq \ell_i$ be an overestimate for the $i$th row leverage score of $\bA$. 
+    \todo[inline]{(guarantee for approximate regression via leverage score sampling)}
+\end{theorem}
+    We apply Theorem~\ref{thm:fkv-span} to $\bA^\top$. Since sampling rows
+    of $\bA^\top$ is the same as sampling columns of $\bA$, with probability
+    at least $0.995$, the span of the sampled columns contains a
+    $k$-dimensional subspace giving additive error $\alpha\|\bA\|_F^2$.
+    Equivalently, there is an orthogonal projector $\bP$ with
+    $\rank(\bP)\leq k$ and $\range(\bP)\subseteq \colspan(\bC)$ such that
+    \[
+        \left\|\bA-\bP\bA\right\|_F^2
+        \leq
+        \left\|\bA-\bA_k\right\|_F^2
+        +
+        \alpha\|\bA\|_F^2.
+    \]
+    Since $\range(\bP)\subseteq \colspan(\bC)$, there is a matrix
+    $\bZ_0\in\R^{r\times n}$ such that
+    \[
+        \bC\bZ_0=\bP\bA.
+    \]
+    Therefore
+    \[
+        \min_{\bZ\in\R^{r\times n}}
+        \left\|\bA-\bC\bZ\right\|_F^2
+        \leq
+        \left\|\bA-\bC\bZ_0\right\|_F^2
+        =
+        \left\|\bA-\bP\bA\right\|_F^2
+        \leq
+        \left\|\bA-\bA_k\right\|_F^2
+        +
+        \alpha\|\bA\|_F^2.
+        \tag{1}
+    \]
+
+\begin{proof}
+    
+\end{proof}
+% One  the algorithm of Frieze, Kannan, and Vempala \cite{frieze_fast_2004}.
+
+% \begin{theorem}[\cite{frieze_fast_2004}, as cited in \cite{indyk_sample-optimal_2019}]
+%     Let $\bA\in \R^{n\times d}$ be a matrix and let $S$ be a sample of $O(k/\epsilon)$ rows from a distribution that satisfies
+%     \[p_i\geq c\cdot \frac{\|\bA_{i, *}\|^2_2}{\|\bA\|^2_F}\]
+%     for all $i\in[n]$. Then in time $O(dk/\epsilon + \poly(k, 1/\epsilon))$ we can compute from $S$ a matrix $\bU\in\R^{k\times d}$ that with probability $0.99$ satisfies
+%     \[\bA - \bA\bU^\top\bU^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
+% \end{theorem}
+
+% \begin{theorem}[\cite{frieze_fast_2004}, as cited in \cite{indyk_sample-optimal_2019}]
+%     Let $\bA\in \R^{n\times d}$ be a matrix and let $S$ be a sample of $O(k/\epsilon)$ rows from a distribution that satisfies
+%     \[p_i\geq c\cdot \frac{\|\bA_{i, *}\|^2_2}{\|\bA\|^2_F}\]
+%     for all $i\in[n]$. Then in time $O(dk/\epsilon + \poly(k, 1/\epsilon))$ we can compute from $S$ a matrix $\bU\in\R^{k\times d}$ that with probability $0.99$ satisfies
+%     \[\bA - \bA\bU^\top\bU^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
+% \end{theorem}
+
+% We combine our result with the algorithm of Frieze, Kannan, and Vempala \cite{frieze_fast_2004}
+
+
+% \section{Relative Error Low-Rank Approximation}
+
+\newpage
+\section{Robust Low-Rank Approximation}
+Consider a matrix of the form $\bB=\bA+\bN\in\R^{n\times n}$, where $\bA$ is an unknown positive semidefinite matrix and $\bN$ is an unknown corruption matrix. This setting models the noise that may occur in real-world computation, for example, due to rounding or numerical errors. With some mild assumptions on $\bN$ and only query access to the matrix $\bB$, can we still hope to recover a good low-rank approximation to $\bA$?
+
+
+Bakshi, Chepurko, and Woodruff \cite{bakshi_robust_2020} study low-rank approximation in this setting under the assumptions
+\[
+    \norm{\bN}_F^2\leq \eta\norm{\bA}_F^2
+    \qquad\text{and}\qquad
+    \|\bN_{i,*}\|_2^2\leq c\|\bA_{i,*}\|_2^2
+    \quad\text{for all }i\in[n],
+\]
+for a fixed constant $c$. In words, the Frobenius norm of the corruption is bounded by that of $\bA$, and the corruption is well-spread among the rows. Their algorithm also assumes access to the parameter
+\[
+    \phi_{\max}:=\max_{i\in[n]}\frac{\bA_{ii}}{|\bB_{ii}|}.
+\]
+and achieves a rank-$k$ approximation $\bX$ satisfying
+\[
+    \norm{\bA-\bX}_F^2
+    \leq
+    \norm{\bA-\bA_k}_F^2+(\varepsilon+\sqrt{\eta})\norm{\bA}_F^2
+\]
+using $\widetilde O(\phi_{\max}^2nk/\varepsilon)$ queries to $\bB$. We present a simpler algorithm and analysis via fast length-squared sampling. The main idea is to modify our techniques to efficiently perform length-squared sampling on a matrix $\widetilde \bB$ derived from $\bB$. We then apply Algorithm~\ref{todo} to find an additive-error low rank approximation to $\widetilde \bB$. Finally, we argue that this approximation is also a good approximation to $\bA$.
+
+
+Assume $\phi_{\max}$ is known, and let $\Phi = \max\{1, \phi_{\max}\}$. We first define the matrix $\widetilde{\bB}$ entrywise by
+\[
+    \widetilde{\bB}_{ij}
+    :=
+    \clip\!\left(
+        \bB_{ij},
+        -\Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|},
+        \Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|}
+    \right),
+\]
+where
+\[
+    \clip(x,-\tau,\tau):=\min\{\tau,\max\{-\tau,x\}\}.
+\]
+A query to $\widetilde{\bB}_{ij}$ is very efficient when the diagonal entries of $\bB$ are known.
+
+\begin{lemma}[Clipping lemma]
+The matrix $\widetilde\bB$ satisfies
+\[
+    \widetilde{\bB}_{ij}^{\,2}
+    \leq
+    \Phi^2|\bB_{ii}|\,|\bB_{jj}|
+    \qquad\text{for all }i,j\in[n].
+\]
+Moreover, we may write
+\[\widetilde\bB = \bA + \widetilde\bN\]
+for some matrix $\widetilde\bN$ satisfying $\|\widetilde\bN\|^2_F\leq \|\bN\|^2_F$. 
+\end{lemma}
+
+\begin{proof}
+The first claim follows directly from the definition of clipping. For the
+second claim, we first note
+\[
+    \bA_{ii}\leq \Phi|\bB_{ii}|
+    \qquad\text{and}\qquad
+    \bA_{jj}\leq \Phi|\bB_{jj}|.
+\]
+by the definition of $\phi_{\max}$. Moreover, $\bA_{ij}^2\leq \bA_{ii}\bA_{jj}$ since $\bA$ is psd, so
+\[
+    |\bA_{ij}|
+    \leq
+    \Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|}.
+\]
+So the clipping interval for entry $ij$ contains 
+$\bA_{ij}$. In particular,
+\[
+    |\bB_{ij}-\bA_{ij}|
+    =
+    |\bB_{ij}-\widetilde{\bB}_{ij}|
+    +
+    |\widetilde{\bB}_{ij}-\bA_{ij}|
+    \geq
+    |\widetilde{\bB}_{ij}-\bA_{ij}|.
+\]
+Therefore
+\[
+    (\widetilde{\bB}_{ij}-\bA_{ij})^2
+    \leq
+    \left(\bB_{ij}-\bA_{ij}\right)^2
+    =
+    \bN_{ij}^2.
+\]
+Summing over all entries gives $\|\widetilde\bB - \bA\|^2_F\leq \|\bN\|^2_F$, which is the desired result.
+\end{proof}
+
+Given entry access to $\bB$, we now demonstrate how to obtain a length-squared sample from $\widetilde\bB$. Let
+\[
+    D:=\sum_{i=1}^n |\bB_{ii}|.
+\]
+Assume $D>0$. In one trial, 
+\begin{enumerate}
+    \item Sample indices $i,j$ independently from $\frac{\diag(|\bB|)}{D}$.
+    \item Accept $i$ with probability
+    $\frac{\widetilde{\bB}_{ij}^{\,2}}{\Phi^2|\bB_{ii}|\,|\bB_{jj}|}.$
+\end{enumerate}
+
+\begin{lemma}
+Conditioned on acceptance,
+\[
+    p_i
+    =
+    \frac{\|\widetilde{\bB}_{i,*}\|_2^2}{\|\widetilde{\bB}\|_F^2}
+\]
+and the expected number of trials until acceptance is at most
+$\Phi^2 n$.
+\end{lemma}
+
+% \begin{proof}
+% The acceptance probability is well-defined because the clipping lemma gives
+% \[
+%     \widetilde{\bB}_{ij}^{\,2}
+%     \leq
+%     \Phi^2|\bB_{ii}|\,|\bB_{jj}|.
+% \]
+% If $|\bB_{ii}|\,|\bB_{jj}|=0$, then the pair $(i,j)$ is sampled with probability
+% zero, so the value of the acceptance rule on that pair is irrelevant.
+
+% In one trial, the probability of outputting $i$ is
+% \[
+%     \frac{|\bB_{ii}|}{D}
+%     \sum_{j=1}^n
+%     \frac{|\bB_{jj}|}{D}
+%     \cdot
+%     \frac{\widetilde{\bB}_{ij}^{\,2}}
+%     {\Phi^2|\bB_{ii}|\,|\bB_{jj}|}
+%     =
+%     \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}
+%     {\Phi^2 D^2}.
+% \]
+% Summing over all indices gives total acceptance probability
+% \[
+%     \frac{\norm{\widetilde{\bB}}_F^2}{\Phi^2 D^2}
+% \]
+% and conditioning on acceptance, the probability of outputting $i$ is
+% \[
+%     \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}{\norm{\widetilde{\bB}}_F^2}.
+% \]
+
+% It remains to bound the acceptance probability. Since
+% $\Phi\geq 1$, the diagonal entries are not clipped, so
+% \[
+%     D^2
+%     =
+%     \left(\sum_{i=1}^n |\bB_{ii}|\right)^2
+%     \leq
+%     n\sum_{i=1}^n \bB_{ii}^2
+%     =
+%     n\sum_{i=1}^n \widetilde{\bB}_{ii}^{\,2}
+%     \leq
+%     n\norm{\widetilde{\bB}}_F^2.
+% \]
+% Thus the acceptance probability satisfies
+% \[
+%     \frac{\norm{\widetilde{\bB}}_F^2}{\Phi^2D^2}
+%     \geq
+%     \frac{1}{\Phi^2 n}.
+% \]
+
+% \end{proof}
+
+
+\begin{theorem}[Robust low-rank approximation.]
+    Let $\bM$ be the approximation to $\tilde\bB$ obtained via \cite{frieze_fast_2004}. Then $\bM$ satisfies
+    \[\|\bA - \bM\|^2_F\leq \|\bA - \bA_k\|^2_F + O(\epsilon + \sqrt\eta)\|\bA\|^2_F.\]
+    Moreover, computing $\bM$ requires only $O(\phi_{\max}^2nk/\epsilon)$ entries of $\bB$.
+\end{theorem}
+
+\begin{proof}
+    By the guarantee of \cite{frieze_fast_2004},
+    \[\|\tilde \bB - \bM\|^2_F\leq \|\tilde B - \tilde B_k\|^2_F + \epsilon \|\tilde B\|^2_F.\]
+    Expanding terms,
+    \begin{align*}
+        \|\bA + \tilde \bN - \bM\|^2_F&\leq \|\bA + \tilde \bN - (\bA + \tilde \bN)_k\|^2_F + \epsilon \|\bA + \tilde \bN\|^2_F\\
+        &\leq \|\bA + \tilde \bN - \bA_k\|^2_F + \epsilon \|\bA + \tilde \bN\|^2_F\\
+        &\leq \|\bA - \bA_k\|^2_F + \|\tilde\bN\|^2_F + 2\langle\bA - \bA_k, \tilde\bN\rangle + (3 + \eta)\epsilon\|\bA\|^2_F\\
+        &\leq \|\bA - \bA_k\|^2_F + O(\epsilon + \sqrt\eta)\|\bA\|^2_F.
+    \end{align*}
+    In addition,
+    \begin{align*}
+        \|\bA + \tilde \bN - \bM\|^2_F &= \|\bA - \bM\|^2_F + \|\tilde\bN\|^2_F + 2\langle\bA - \bM, \tilde\bN\rangle\\
+        &\geq\|\bA - \bM\|^2_F - 2\sqrt\eta\|\bA\|^2_F.
+    \end{align*}
+    Putting these together gives 
+    \[\|\bA - \bM\|^2_F\leq \|\bA - \bA_k\|^2_F + O(\epsilon + \sqrt\eta)\|\bA\|^2_F.\]
+    as desired.
+\end{proof}
+
+
+
+\section{Eigenvalue Approximation}
+
+

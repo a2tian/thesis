@@ -1,0 +1,86 @@
+% ----------------------------
+% Introduction
+% ----------------------------
+
+\section{Introduction}
+
+In modern data analysis, some naturally-arising matrices are too large to compute and store efficiently. A canonical example comes from \emph{kernel methods} in machine learning. Given $n$ data points $x_1,\dots,x_n$ and a positive semidefinite kernel function $k(\cdot,\cdot)$, the associated kernel matrix $\bA \in \mathbb{R}^{n\times n}$ is defined entrywise by
+\[
+\bA_{ij} = k(x_i,x_j).
+\]
+Although we can compute any single entry $\bA_{ij}$ on demand, computing and storing all $n^2$ entries is prohibitively expensive when $n$, the size of the dataset, is large. The problem is compounded by downstream computations involving $\bA$: many linear algebra routines, including eigendecomposition and solving least-squares, typically require $O(n^3)$ arithmetic operations.
+
+Fortunately, the kernel matrix $\bA$ often exhibits low-rank structure, meaning that it can be approximated by a much smaller matrix without significant loss of accuracy. Substituting $\bA$ with an appropriate low-rank approximation can yield speedups of several orders of magnitude in practice compared to direct methods, especially in kernel ridge regression and kernel spectral clustering \cite{chen_randomly_2025}. Given the practical significance, \textit{how can we compute accurate low-rank approximations for large kernel matrices efficiently?}
+
+
+
+% \subsection{Problem and objectives}
+
+% The primary objective of this thesis is to find a fast and practical algorithm for low-rank approximation of large positive semidefinite (psd) matrices. We impose two natural criteria on our algorithm:
+% \begin{enumerate}
+%     \item Computing the approximation should be cheaper than evaluating the entire matrix, i.e., it should run in $o(n^2)$ time.
+%     \item The approximation should be "close" to the original matrix, so as to minimize error in downstream computations. 
+% \end{enumerate}
+
+% More precisely, given entrywise access to a psd matrix $\bA \in \mathbb{R}^{n\times n}$, the algorithm should output a rank-$k$ approximation using $\tilde O\left(kn\right)$ entries of the input matrix and run in time $\tilde O(k^2n)$. From a theoretical perspective, we would like for the approximation $\widehat{\bA}$ to satisfy the \textit{relative-error} guarantee
+% \[
+% \|\bA - \widehat{\bA}\|_F^2 \le (1+\varepsilon)\,\|\bA - \bA_r\|_F^2
+% \]
+% for a prescribed accuracy parameter $\varepsilon > 0$ and target rank $r$, where the rank of $\widehat{\bA}$ is permitted to be $O(r/\varepsilon)$ and $\bA_r$ is the optimal rank-$r$ approximation to $\bA$. In addition, we consider the following practical desiderata:
+% \begin{enumerate}
+%     \item \textbf{Empirically fast.} The algorithm should be fast when applied to real-world data.
+%     \item \textbf{Implementable.} The algorithm should be simple and easy to implement. 
+% \end{enumerate}
+
+
+% \medskip
+% \noindent\textbf{H0.} There exists a practical adaptive column selection algorithm which, given psd matrix $\bA$, target rank $r$, and error parameter $\varepsilon > 0$, outputs a rank $k = O(r/\varepsilon)$ approximation $\widehat{A}$ satisfying the Frobenius relative-error bound
+% \begin{equation}
+% \label{eq:frobenius-guarantee}
+% \|\bA - \widehat{\bA}\|_F^2 \leq (1+\varepsilon)\,\|\bA - \bA_r\|_F^2,
+% \end{equation}
+% using $\tilde O(kn)$ entry queries.
+
+% \medskip
+% \noindent\textbf{H1.} The proposed method achieves accuracy comparable to state-of-the-art methods (e.g., ridge leverage-score sampling \cite{musco_sublinear_2019, clarkson_low-rank_2017} and Randomly Pivoted Cholesky \cite{chen_randomly_2025}) on real-world kernel matrices. 
+
+% \medskip
+% A secondary objective of this thesis is to identify a "minimal" set of techniques necessary to attain the Frobenius error guarantee of \ref{eq:frobenius-guarantee}. This goal is inspired by the recent work of Chen et al. \cite{chen_randomly_2025}, which shows that a very simple algorithm based on the \textit{Nystr\"om approximation} suffices to attain an analogous trace error guarantee,
+% \[\tr(\bA - \widehat{\bA}) \leq (1+\varepsilon)\,\tr(\bA - \bA_r).\]
+
+% In our preliminary work, we prove that Nystr\"om methods require too many entry queries to satisfy \ref{eq:frobenius-guarantee}, raising the need to study alternative approaches. One idea supported by existing literature is to consider projection-based approaches \cite{bakshi_sublinear_2018, bakshi_robust_2020}. These algorithms rely on two main techniques: column norm estimation and ridge leverage score (RLS) sampling. RLS sampling is difficult to implement in practice, so we would like to determine whether column norm estimation alone is sufficient to attain Frobenius error guarantees.
+
+% \medskip
+% \noindent\textbf{H2.} There exists a practical algorithm to estimate the column norms of an $n\times n$ psd matrix in $O(n)$ time.
+
+% \medskip
+% \noindent\textbf{H3.} There is a projection-based algorithm achieving \textbf{H0} without RLS sampling. 
+
+% \medskip
+% By the end of the semester, the thesis will deliver:
+% \begin{enumerate}
+%   \item A clearly specified algorithm for low-rank approximation of large psd matrices.
+%   \item A theoretical analysis that studies the worst-case Frobenius error of the algorithm.
+%   \item A reproducible benchmark of the algorithm, reporting the error, runtime, and query complexity on real-world kernel matrices.
+% \end{enumerate}
+
+% \subsection{Significance and relation to key literature}
+% For a general matrix $\bA$, the best rank-$k$ approximation is given by truncating its singular value decomposition (SVD). It is the rank-$k$ matrix $\bX$ that minimizes
+% \[\|\bA - \bX\|_{\mathrm{UI}}\]
+% over all rank-$k$ matrices $\bX$, where $\|\cdot\|_{\mathrm{UI}}$ is any unitarily invariant matrix norm. Computing the SVD for an arbitrary $n\times n$ matrix requires $O(n^3)$ time. 
+
+% Techniques from randomized numerical linear algebra (RandNLA) allow us to do much better on psd matrices. Crucially, psd matrices afford additional structure that allow us to approximate them efficiently via random sampling. There is vast literature leveraging this idea to produce fast low-rank approximation algorithms \cite{williams_using_2000, achlioptas_fast_2007, gittens_revisiting_2016, tu_large_2016}. These algorithms compute a rank-$k$ approximation in as little time as $\tilde O(k^2n)$, and some of them have been implemented in widely-used computing libraries \cite{pedregosa_scikit-learn_2011, kollias_libskylark_2015}. However, these algorithms have weak guarantees on the approximation error and could potentially lead to unexpected consequences in downstream applications.
+
+% Later work has focused on low-rank psd approximation with strong theoretical guarantees \cite{musco_recursive_2017, clarkson_low-rank_2017, musco_sublinear_2019, bakshi_robust_2020}. This has resulted in algorithms achieving near-optimal approximation while still using $\tilde O(k^2n)$ time. However, these algorithms require additional machinery in the form of \textit{ridge leverage score (RLS) sampling}, making them more difficult to implement and use in practice. 
+
+% Recently, Chen et al. \cite{chen_randomly_2025} show that strong theoretical guarantees are possible without RLS sampling. Their algorithm, Randomly Pivoted Cholesky (\RPCholesky), computes a rank-$k$ approximation using $\tilde O(kn)$ entry evaluations and $\tilde O(k^2n)$ arithmetic operations. \RPCholesky\ has provable error guarantees with respect to the trace norm: given a target rank $r$ and error parameter $\varepsilon > 0$, it outputs an approximation $\widehat \bA$ of rank $k = O(r/\varepsilon)$ satisfying
+% \[\E\left[\tr(\bA - \widehat\bA)\right] \leq (1+\varepsilon)\cdot \tr(\bA - \bA_r).\]
+% Moreover, \RPCholesky\ is simple, easy to implement, and empirically fast on real-world datasets. These findings position \RPCholesky\ as the leading algorithm for low-rank psd approximation.
+
+% Currently, the error guarantee for \RPCholesky\ is stated in terms of the trace norm. Prior to our work, it was not known whether \RPCholesky\ has a similar guarantee in terms of the Frobenius norm, i.e., whether the algorithm could produce an approximation $\widehat \bA$ satisfying
+% \[\E\left[\|\bA - \widehat\bA\|^2_F\right] \leq (1+\varepsilon)\cdot \|\bA - \bA_r\|^2_F.\]
+% Our preliminary work shows that \RPCholesky\ and other Nystr\"om-based methods cannot achieve this guarantee with $\tilde O(kn)$ entry evaluations. Nonetheless, a practical approach may still be possible. Existing literature shows that the Frobenius error guarantee is attainable using a projection-based approach involving RLS sampling \cite{bakshi_robust_2020}. If \RPCholesky\ achieves trace error guarantees without RLS sampling, is there an analogous algorithm without RLS sampling for the Frobenius norm?
+
+% A resolution to \textbf{H0} and \textbf{H1} would have immediate value for low-rank kernel methods. A resolution to \textbf{H2} and \textbf{H3} would have theoretical value in informing the design and analysis of further low-rank approximation algorithms targeting the Frobenius error.  
+
+

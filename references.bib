@@ -1,0 +1,542 @@
+
+@article{musco_power_2018,
+	title = {The {Power} of {Randomized} {Algorithms}: {From} {Numerical} {Linear} {Algebra} to {Biological} {Systems}},
+	abstract = {In this thesis we study simple, randomized algorithms from a dual perspective. The first part of the work considers how randomized methods can be used to accelerate the solution of core problems in numerical linear algebra. In particular, we give a randomized low-rank approximation algorithm for positive semidefinite matrices that runs in sublinear time, significantly improving upon what is possible with traditional deterministic methods. We also discuss lower bounds on low-rank approximation and spectral summarization problems that attempt to explain the importance of randomization and approximation in accelerating linear algebraic computation.},
+	language = {en},
+	author = {Musco, Cameron},
+	year = {2018},
+}
+
+@misc{indyk_sample-optimal_2019,
+	title = {Sample-{Optimal} {Low}-{Rank} {Approximation} of {Distance} {Matrices}},
+	copyright = {arXiv.org perpetual, non-exclusive license},
+	url = {https://arxiv.org/abs/1906.00339},
+	doi = {10.48550/ARXIV.1906.00339},
+	abstract = {A distance matrix \$A {\textbackslash}in {\textbackslash}mathbb R{\textasciicircum}\{n {\textbackslash}times m\}\$ represents all pairwise distances, \$A\_\{ij\}={\textbackslash}mathrm\{d\}(x\_i,y\_j)\$, between two point sets \$x\_1,...,x\_n\$ and \$y\_1,...,y\_m\$ in an arbitrary metric space \$({\textbackslash}mathcal Z, {\textbackslash}mathrm\{d\})\$. Such matrices arise in various computational contexts such as learning image manifolds, handwriting recognition, and multi-dimensional unfolding. In this work we study algorithms for low-rank approximation of distance matrices. Recent work by Bakshi and Woodruff (NeurIPS 2018) showed it is possible to compute a rank-\$k\$ approximation of a distance matrix in time \$O((n+m){\textasciicircum}\{1+γ\}) {\textbackslash}cdot {\textbackslash}mathrm\{poly\}(k,1/ε)\$, where \$ε\&gt;0\$ is an error parameter and \$γ\&gt;0\$ is an arbitrarily small constant. Notably, their bound is sublinear in the matrix size, which is unachievable for general matrices. We present an algorithm that is both simpler and more efficient. It reads only \$O((n+m) k/ε)\$ entries of the input matrix, and has a running time of \$O(n+m) {\textbackslash}cdot {\textbackslash}mathrm\{poly\}(k,1/ε)\$. We complement the sample complexity of our algorithm with a matching lower bound on the number of entries that must be read by any algorithm. We provide experimental results to validate the approximation quality and running time of our algorithm.},
+	urldate = {2026-05-19},
+	publisher = {arXiv},
+	author = {Indyk, Piotr and Vakilian, Ali and Wagner, Tal and Woodruff, David},
+	year = {2019},
+	note = {Version Number: 1},
+	keywords = {Data Structures and Algorithms (cs.DS), FOS: Computer and information sciences, Machine Learning (cs.LG)},
+}
+
+@article{kumar_sampling_2012,
+	title = {Sampling {Methods} for the {Nyström} {Method}},
+	volume = {13},
+	url = {http://jmlr.org/papers/v13/kumar12a.html},
+	number = {34},
+	journal = {Journal of Machine Learning Research},
+	author = {Kumar, Sanjiv and Mohri, Mehryar and Talwalkar, Ameet},
+	year = {2012},
+	pages = {981--1006},
+}
+
+@misc{gittens_spectral_2011,
+	title = {The spectral norm error of the naive {Nystrom} extension},
+	copyright = {arXiv.org perpetual, non-exclusive license},
+	url = {https://arxiv.org/abs/1110.5305},
+	doi = {10.48550/ARXIV.1110.5305},
+	abstract = {The naive Nystrom extension forms a low-rank approximation to a positive-semidefinite matrix by uniformly randomly sampling from its columns. This paper provides the first relative-error bound on the spectral norm error incurred in this process. This bound follows from a natural connection between the Nystrom extension and the column subset selection problem. The main tool is a matrix Chernoff bound for sampling without replacement.},
+	urldate = {2026-05-05},
+	publisher = {arXiv},
+	author = {Gittens, Alex},
+	year = {2011},
+	note = {Version Number: 1},
+	keywords = {FOS: Mathematics, Numerical Analysis (math.NA)},
+}
+
+@misc{talwalkar_matrix_2010,
+	title = {Matrix {Coherence} and the {Nystrom} {Method}},
+	copyright = {arXiv.org perpetual, non-exclusive license},
+	url = {https://arxiv.org/abs/1004.2008},
+	doi = {10.48550/ARXIV.1004.2008},
+	abstract = {The Nystrom method is an efficient technique to speed up large-scale learning applications by generating low-rank approximations. Crucial to the performance of this technique is the assumption that a matrix can be well approximated by working exclusively with a subset of its columns. In this work we relate this assumption to the concept of matrix coherence and connect matrix coherence to the performance of the Nystrom method. Making use of related work in the compressed sensing and the matrix completion literature, we derive novel coherence-based bounds for the Nystrom method in the low-rank setting. We then present empirical results that corroborate these theoretical bounds. Finally, we present more general empirical results for the full-rank setting that convincingly demonstrate the ability of matrix coherence to measure the degree to which information can be extracted from a subset of columns.},
+	urldate = {2026-05-05},
+	publisher = {arXiv},
+	author = {Talwalkar, Ameet and Rostamizadeh, Afshin},
+	year = {2010},
+	note = {Version Number: 1},
+	keywords = {Artificial Intelligence (cs.AI), FOS: Computer and information sciences},
+}
+
+@article{frieze_fast_2004,
+	title = {Fast monte-carlo algorithms for finding low-rank approximations},
+	volume = {51},
+	issn = {0004-5411, 1557-735X},
+	url = {https://dl.acm.org/doi/10.1145/1039488.1039494},
+	doi = {10.1145/1039488.1039494},
+	abstract = {We consider the problem of approximating a given
+              m
+              ×
+              n
+              matrix
+              A
+              by another matrix of specified rank
+              k
+              , which is smaller than
+              m
+              and
+              n
+              . The Singular Value Decomposition (SVD) can be used to find the "best" such approximation. However, it takes time polynomial in
+              m, n
+              which is prohibitive for some modern applications. In this article, we develop an algorithm that is qualitatively faster, provided we may sample the entries of the matrix in accordance with a natural probability distribution. In many applications, such sampling can be done efficiently. Our main result is a randomized algorithm to find
+              the description of
+              a matrix
+              
+                D
+              
+              *
+              of rank at most
+              k
+              so that holds with probability at least 1 − δ (where {\textbar}·{\textbar}
+              
+                F
+              
+              is the Frobenius norm). The algorithm takes time polynomial in
+              k
+              ,1/ϵ, log(1/δ) only and is
+              independent of m and n
+              . In particular, this implies that in constant time, it can be determined if a given matrix of arbitrary size has a good low-rank approximation.},
+	language = {en},
+	number = {6},
+	urldate = {2026-05-03},
+	journal = {Journal of the ACM},
+	author = {Frieze, Alan and Kannan, Ravi and Vempala, Santosh},
+	month = nov,
+	year = {2004},
+	pages = {1025--1041},
+}
+
+@misc{needell_stochastic_2015,
+	title = {Stochastic {Gradient} {Descent}, {Weighted} {Sampling}, and the {Randomized} {Kaczmarz} algorithm},
+	url = {http://arxiv.org/abs/1310.5715},
+	doi = {10.48550/arXiv.1310.5715},
+	abstract = {We obtain an improved ﬁnite-sample guarantee on the linear convergence of stochastic gradient descent for smooth and strongly convex objectives, improving from a quadratic dependence on the conditioning (L/µ)2 (where L is a bound on the smoothness and µ on the strong convexity) to a linear dependence on L/µ. Furthermore, we show how reweighting the sampling distribution (i.e. importance sampling) is necessary in order to further improve convergence, and obtain a linear dependence in the average smoothness, dominating previous results. We also discuss importance sampling for SGD more broadly and show how it can improve convergence also in other scenarios.},
+	language = {en},
+	urldate = {2026-04-30},
+	publisher = {arXiv},
+	author = {Needell, Deanna and Srebro, Nathan and Ward, Rachel},
+	month = jan,
+	year = {2015},
+	note = {arXiv:1310.5715 [math]},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning, Mathematics - Numerical Analysis, Mathematics - Optimization and Control, Statistics - Machine Learning},
+}
+
+@misc{jaiswal_multiplicative_2019,
+	title = {Multiplicative {Rank}-1 {Approximation} using {Length}-{Squared} {Sampling}},
+	url = {http://arxiv.org/abs/1909.07515},
+	doi = {10.48550/arXiv.1909.07515},
+	abstract = {We show that the span of \$Ω({\textbackslash}frac\{1\}\{{\textbackslash}varepsilon{\textasciicircum}4\})\$ rows of any matrix \$A {\textbackslash}subset {\textbackslash}mathbb\{R\}{\textasciicircum}\{n {\textbackslash}times d\}\$ sampled according to the length-squared distribution contains a rank-\$1\$ matrix \${\textbackslash}tilde\{A\}\$ such that \${\textbar}{\textbar}A - {\textbackslash}tilde\{A\}{\textbar}{\textbar}\_F{\textasciicircum}2 {\textbackslash}leq (1 + {\textbackslash}varepsilon) {\textbackslash}cdot {\textbar}{\textbar}A - π\_1(A){\textbar}{\textbar}\_F{\textasciicircum}2\$, where \$π\_1(A)\$ denotes the best rank-\$1\$ approximation of \$A\$ under the Frobenius norm. Length-squared sampling has previously been used in the context of rank-\$k\$ approximation. However, the approximation obtained was additive in nature. We obtain a multiplicative approximation albeit only for rank-\$1\$ approximation.},
+	language = {en},
+	urldate = {2026-04-29},
+	publisher = {arXiv},
+	author = {Jaiswal, Ragesh and Kumar, Amit},
+	month = oct,
+	year = {2019},
+	note = {arXiv:1909.07515 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms},
+}
+
+@inproceedings{deshpande_matrix_2006,
+	address = {Miami, Florida},
+	title = {Matrix approximation and projective clustering via volume sampling},
+	isbn = {978-0-89871-605-4},
+	url = {http://portal.acm.org/citation.cfm?doid=1109557.1109681},
+	doi = {10.1145/1109557.1109681},
+	language = {en},
+	urldate = {2026-03-16},
+	booktitle = {Proceedings of the seventeenth annual {ACM}-{SIAM} symposium on {Discrete} algorithm  - {SODA} '06},
+	publisher = {ACM Press},
+	author = {Deshpande, Amit and Rademacher, Luis and Vempala, Santosh and Wang, Grant},
+	year = {2006},
+	pages = {1117--1126},
+}
+
+@misc{boutsidis_optimal_2014,
+	title = {Optimal {CUR} {Matrix} {Decompositions}},
+	url = {http://arxiv.org/abs/1405.7910},
+	doi = {10.48550/arXiv.1405.7910},
+	abstract = {The CUR decomposition of an \$m {\textbackslash}times n\$ matrix \$A\$ finds an \$m {\textbackslash}times c\$ matrix \$C\$ with a subset of \$c {\textless} n\$ columns of \$A,\$ together with an \$r {\textbackslash}times n\$ matrix \$R\$ with a subset of \$r {\textless} m\$ rows of \$A,\$ as well as a \$c {\textbackslash}times r\$ low-rank matrix \$U\$ such that the matrix \$C U R\$ approximates the matrix \$A,\$ that is, \$ {\textbar}{\textbar} A - CUR {\textbar}{\textbar}\_F{\textasciicircum}2 {\textbackslash}le (1+ε) {\textbar}{\textbar} A - A\_k{\textbar}{\textbar}\_F{\textasciicircum}2\$, where \${\textbar}{\textbar}.{\textbar}{\textbar}\_F\$ denotes the Frobenius norm and \$A\_k\$ is the best \$m {\textbackslash}times n\$ matrix of rank \$k\$ constructed via the SVD. We present input-sparsity-time and deterministic algorithms for constructing such a CUR decomposition where \$c=O(k/ε)\$ and \$r=O(k/ε)\$ and rank\$(U) = k\$. Up to constant factors, our algorithms are simultaneously optimal in \$c, r,\$ and rank\$(U)\$.},
+	language = {en},
+	urldate = {2026-03-10},
+	publisher = {arXiv},
+	author = {Boutsidis, Christos and Woodruff, David P.},
+	month = jul,
+	year = {2014},
+	note = {arXiv:1405.7910 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms, Computer Science - Machine Learning, Mathematics - Numerical Analysis},
+}
+
+@article{drineas_nystrom_2005,
+	title = {On the {Nyström} {Method} for {Approximating} a {Gram} {Matrix} for {Improved} {Kernel}-{Based} {Learning}},
+	language = {en},
+	journal = {Journal of Machine Learning Research},
+	author = {Drineas, Petros and Mahoney, Michael W},
+	month = dec,
+	year = {2005},
+}
+
+@inproceedings{kollias_libskylark_2015,
+	title = {{libSkylark}: {A} {Framework} for {High}-{Performance} {Matrix} {Sketching} for {Statistical} {Computing}},
+	language = {en},
+	author = {Kollias, G and Avron, H and Ineichen, Y and Bekas, C and Curioni, A and Sindhwani, V and Clarkson, K},
+	year = {2015},
+}
+
+@article{pedregosa_scikit-learn_2011,
+	title = {Scikit-learn: {Machine} {Learning} in {Python}},
+	volume = {12},
+	issn = {1532-4435},
+	abstract = {Scikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algorithms for medium-scale supervised and unsupervised problems. This package focuses on bringing machine learning to non-specialists using a general-purpose high-level language. Emphasis is put on ease of use, performance, documentation, and API consistency. It has minimal dependencies and is distributed under the simplified BSD license, encouraging its use in both academic and commercial settings. Source code, binaries, and documentation can be downloaded from http://scikit-learn.sourceforge.net.},
+	number = {null},
+	journal = {J. Mach. Learn. Res.},
+	publisher = {JMLR.org},
+	author = {Pedregosa, Fabian and Varoquaux, Gaël and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, Édouard},
+	month = nov,
+	year = {2011},
+	pages = {2825--2830},
+}
+
+@article{achlioptas_fast_2007,
+	title = {Fast computation of low-rank matrix approximations},
+	volume = {54},
+	issn = {0004-5411, 1557-735X},
+	url = {https://dl.acm.org/doi/10.1145/1219092.1219097},
+	doi = {10.1145/1219092.1219097},
+	abstract = {Given a matrix
+              A
+              , it is often desirable to find a good approximation to
+              A
+              that has low rank. We introduce a simple technique for accelerating the computation of such approximations when
+              A
+              has strong spectral features, that is, when the singular values of interest are significantly greater than those of a random matrix with size and entries similar to
+              A
+              . Our technique amounts to independently sampling and/or quantizing the entries of
+              A
+              , thus speeding up computation by reducing the number of nonzero entries and/or the length of their representation. Our analysis is based on observing that the acts of sampling and quantization can be viewed as adding a random matrix
+              N
+              to
+              A
+              , whose entries are independent random variables with zero-mean and bounded variance. Since, with high probability,
+              N
+              has very weak spectral features, we can prove that the effect of sampling and quantization nearly vanishes when a low-rank approximation to
+              A
+              +
+              N
+              is computed. We give high probability bounds on the quality of our approximation both in the Frobenius and the 2-norm.},
+	language = {en},
+	number = {2},
+	urldate = {2026-02-14},
+	journal = {Journal of the ACM},
+	author = {Achlioptas, Dimitris and Mcsherry, Frank},
+	month = apr,
+	year = {2007},
+	pages = {9},
+}
+
+@article{tu_large_2016,
+	title = {Large {Scale} {Kernel} {Learning} using {Block} {Coordinate} {Descent}},
+	abstract = {We demonstrate that distributed block coordinate descent can quickly solve kernel regression and classiﬁcation problems with millions of data points. Armed with this capability, we conduct a thorough comparison between the full kernel, the Nystro¨m method, and random features on three large classiﬁcation tasks from various domains. Our results suggest that the Nystro¨m method generally achieves better statistical accuracy than random features, but can require signiﬁcantly more iterations of optimization. Lastly, we derive new rates for block coordinate descent which support our experimental ﬁndings when specialized to kernel methods.},
+	language = {en},
+	author = {Tu, Stephen and Roelofs, Rebecca and Venkataraman, Shivaram and Recht, Benjamin},
+	year = {2016},
+}
+
+@misc{epperly_low-rank_2022,
+	title = {Low-{Rank} {Approximation} {Toolbox}: {Nyström} {Approximation}},
+	url = {https://www.ethanepperly.com/index.php/2022/10/11/low-rank-approximation-toolbox-nystrom-approximation/},
+	author = {Epperly, Ethan},
+	month = oct,
+	year = {2022},
+}
+
+@inproceedings{clarkson_low-rank_2017,
+	title = {Low-{Rank} {PSD} {Approximation} in {Input}-{Sparsity} {Time}},
+	isbn = {978-1-61197-478-2},
+	url = {http://epubs.siam.org/doi/10.1137/1.9781611974782.134},
+	doi = {10.1137/1.9781611974782.134},
+	language = {en},
+	urldate = {2026-02-12},
+	booktitle = {Proceedings of the {Twenty}-{Eighth} {Annual} {ACM}-{SIAM} {Symposium} on {Discrete} {Algorithms}},
+	publisher = {Society for Industrial and Applied Mathematics},
+	author = {Clarkson, Kenneth L. and Woodruff, David P.},
+	month = jan,
+	year = {2017},
+	pages = {2061--2072},
+}
+
+@misc{kapralov_sublinear_2025,
+	title = {Sublinear {Time} {Low}-{Rank} {Approximation} of {Hankel} {Matrices}},
+	url = {http://arxiv.org/abs/2511.21418},
+	doi = {10.48550/arXiv.2511.21418},
+	abstract = {Hankel matrices are an important class of highly-structured matrices, arising across computational mathematics, engineering, and theoretical computer science. It is well-known that positive semidefinite (PSD) Hankel matrices are always approximately low-rank. In particular, a celebrated result of Beckermann and Townsend shows that, for any PSD Hankel matrix H ∈ Rn×n and any ϵ {\textgreater} 0, letting Hk be the best rank-k approximation of H (obtained via truncated singular value decomposition), ∥H − Hk∥F ≤ ϵ∥H∥F for k = O(log n log(1/ϵ)). I.e., the optimal low-rank approximation error decays exponentially in the rank-k. As such, PSD Hankel matrices are natural targets for low-rank approximation algorithms. We give the first such algorithm that runs in sublinear time. In particular, we show how to compute, in polylog(n, 1/ϵ) time, a factored representation of a rank-O(log n log(1/ϵ)) Hankel matrix Hb matching the error guarantee of Beckermann and Townsend up to constant factors. We further show that our algorithm is robust – given input H + E where E ∈ Rn×n is an arbitrary non-Hankel noise matrix, we obtain error ∥H − Hb ∥F ≤ O(∥E∥F ) + ϵ∥H∥F . Towards this algorithmic result, our first contribution is a structure-preserving existence result - we show that there exists a rank-k Hankel approximation to H matching the error bound of Beckermann and Townsend. Our result can be interpreted as a finite-dimensional analog of the widely applicable AAK theorem, which shows that the optimal low-rank approximation of an infinite Hankel operator is itself Hankel. Armed with our existence result, and leveraging the well-known Vandermonde structure of Hankel matrices, we achieve our sublinear time algorithm using a sampling-based approach that relies on universal ridge leverage score bounds for Vandermonde matrices.},
+	language = {en},
+	urldate = {2025-12-13},
+	publisher = {arXiv},
+	author = {Kapralov, Michael and Musco, Cameron and Sheth, Kshiteej},
+	month = nov,
+	year = {2025},
+	note = {arXiv:2511.21418 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms, Mathematics - Numerical Analysis},
+}
+
+@misc{boutsidis_near-optimal_2013,
+	title = {Near-{Optimal} {Column}-{Based} {Matrix} {Reconstruction}},
+	url = {http://arxiv.org/abs/1103.0995},
+	doi = {10.48550/arXiv.1103.0995},
+	abstract = {We consider low-rank reconstruction of a matrix using a subset of its columns and we present asymptotically optimal algorithms for both spectral norm and Frobenius norm reconstruction. The main tools we introduce to obtain our results are: (i) the use of fast approximate SVD-like decompositions for column-based matrix reconstruction, and (ii) two deterministic algorithms for selecting rows from matrices with orthonormal columns, building upon the sparse representation theorem for decompositions of the identity that appeared in [1].},
+	language = {en},
+	urldate = {2025-12-13},
+	publisher = {arXiv},
+	author = {Boutsidis, Christos and Drineas, Petros and Magdon-Ismail, Malik},
+	month = jun,
+	year = {2013},
+	note = {arXiv:1103.0995 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms},
+}
+
+@incollection{musco_sublinear_2024,
+	title = {Sublinear {Time} {Low}-{Rank} {Approximation} of {Toeplitz} {Matrices}},
+	url = {https://epubs.siam.org/doi/abs/10.1137/1.9781611977912.183},
+	abstract = {Abstract We present a sublinear time algorithm for computing a near optimal low-rank approximation to any positive semidefinite (PSD) Toeplitz matrix T ∈ ℝd×d, given noisy access to its entries. In particular, given entrywise query access to T + E for an arbitrary noise matrix E ∈ ℝd×d, integer rank k≤d, and error parameter δ {\textgreater} 0, our algorithm runs in time poly(k, log(d/δ)) and outputs (in factored form) a Toeplitz matrix with rank poly(k, log(d/δ)) satisfying, for some fixed constant C, Here ‖ · ‖F is the Frobenius norm and Tk is the best (not necessarily Toeplitz) rank-k approximation to T in the Frobenius norm, given by projecting T onto its top k eigenvectors. Our robust low-rank approximation primitive can be applied in several settings. When E = 0, we obtain the first sublinear time near-relative-error low-rank approximation algorithm for PSD Toeplitz matrices, resolving the main open problem of Kapralov et al. SODA ‘23, which gave an algorithm with sublinear query complexity but exponential runtime. Our algorithm can also be applied to approximate the unknown Toeplitz covariance matrix of a multivariate Gaussian distribution, given sample access to this distribution. By doing so, we resolve an open question of Eldar et al. SODA ‘20, improving the state-of-the-art error bounds and achieving a polynomial rather than exponential (in the sample size) runtime. Our algorithm is based on applying sparse Fourier transform techniques to recover a low-rank Toeplitz matrix using its Fourier structure. Our key technical contribution is the first polynomial time algorithm for discrete time off-grid sparse Fourier recovery, which may be of independent interest. We also contribute a structural heavy-light decomposition result for PSD Toeplitz matrices, which allows us to apply this primitive to low-rank Toeplitz matrix recovery.},
+	booktitle = {Proceedings of the 2024 {Annual} {ACM}-{SIAM} {Symposium} on {Discrete} {Algorithms} ({SODA})},
+	author = {Musco, Cameron and Sheth, Kshiteej},
+	year = {2024},
+	pages = {5084--5117},
+}
+
+@inproceedings{bakshi_robust_2020,
+	address = {Durham, NC, USA},
+	title = {Robust and {Sample} {Optimal} {Algorithms} for {PSD} {Low} {Rank} {Approximation}},
+	copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+	isbn = {978-1-7281-9621-3},
+	url = {https://ieeexplore.ieee.org/document/9317950/},
+	doi = {10.1109/FOCS46700.2020.00054},
+	urldate = {2025-11-05},
+	booktitle = {2020 {IEEE} 61st {Annual} {Symposium} on {Foundations} of {Computer} {Science} ({FOCS})},
+	publisher = {IEEE},
+	author = {Bakshi, Ainesh and Chepurko, Nadiia and Woodruff, David P.},
+	month = nov,
+	year = {2020},
+	pages = {506--516},
+}
+
+@inproceedings{bakshi_sublinear_2018,
+	title = {Sublinear {Time} {Low}-{Rank} {Approximation} of {Distance} {Matrices}},
+	volume = {31},
+	url = {https://proceedings.neurips.cc/paper_files/paper/2018/file/c45008212f7bdf6eab6050c2a564435a-Paper.pdf},
+	booktitle = {Advances in {Neural} {Information} {Processing} {Systems}},
+	publisher = {Curran Associates, Inc.},
+	author = {Bakshi, Ainesh and Woodruff, David},
+	editor = {Bengio, S. and Wallach, H. and Larochelle, H. and Grauman, K. and Cesa-Bianchi, N. and Garnett, R.},
+	year = {2018},
+}
+
+@article{chen_randomly_2025,
+	title = {Randomly pivoted {Cholesky}: {Practical} approximation of a kernel matrix with few entry evaluations},
+	volume = {78},
+	issn = {1097-0312},
+	shorttitle = {Randomly pivoted {Cholesky}},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/cpa.22234},
+	doi = {10.1002/cpa.22234},
+	abstract = {The randomly pivoted Cholesky algorithm (RPCholesky) computes a factorized rank-{\textbackslash}k{\textbackslash} approximation of an {\textbackslash}N {\textbackslash}times N{\textbackslash} positive-semidefinite (psd) matrix. RPCholesky requires only {\textbackslash}(k + 1)N{\textbackslash} entry evaluations and {\textbackslash}mathcal O(k{\textasciicircum}2 N){\textbackslash} additional arithmetic operations, and it can be implemented with just a few lines of code. The method is particularly useful for approximating a kernel matrix. This paper offers a thorough new investigation of the empirical and theoretical behavior of this fundamental algorithm. For matrix approximation problems that arise in scientific machine learning, experiments show that RPCholesky matches or beats the performance of alternative algorithms. Moreover, RPCholesky provably returns low-rank approximations that are nearly optimal. The simplicity, effectiveness, and robustness of RPCholesky strongly support its use in scientific computing and machine learning applications.},
+	language = {en},
+	number = {5},
+	urldate = {2025-08-06},
+	journal = {Communications on Pure and Applied Mathematics},
+	author = {Chen, Yifan and Epperly, Ethan N. and Tropp, Joel A. and Webber, Robert J.},
+	year = {2025},
+	pages = {995--1041},
+}
+
+@misc{wang_improving_2013,
+	title = {Improving {CUR} {Matrix} {Decomposition} and the {Nyström} {Approximation} via {Adaptive} {Sampling}},
+	url = {http://arxiv.org/abs/1303.4207},
+	doi = {10.48550/arXiv.1303.4207},
+	abstract = {The CUR matrix decomposition and the Nystro¨m approximation are two important lowrank matrix approximation techniques. The Nystro¨m method approximates a symmetric positive semideﬁnite matrix in terms of a small number of its columns, while CUR approximates an arbitrary data matrix by a small number of its columns and rows. Thus, CUR decomposition can be regarded as an extension of the Nystr¨om approximation.},
+	language = {en},
+	urldate = {2025-10-23},
+	publisher = {arXiv},
+	author = {Wang, Shusen and Zhang, Zhihua},
+	month = oct,
+	year = {2013},
+	note = {arXiv:1303.4207 [cs]},
+	keywords = {Computer Science - Machine Learning, Computer Science - Numerical Analysis},
+}
+
+@article{mirsky_symmetric_1960,
+	title = {{SYMMETRIC} {GAUGE} {FUNCTIONS} {AND} {UNITARILY} {INVARIANT} {NORMS}},
+	volume = {11},
+	issn = {0033-5606, 1464-3847},
+	url = {https://academic.oup.com/qjmath/article-lookup/doi/10.1093/qmath/11.1.50},
+	doi = {10.1093/qmath/11.1.50},
+	language = {en},
+	number = {1},
+	urldate = {2025-09-03},
+	journal = {The Quarterly Journal of Mathematics},
+	author = {Mirsky, L.},
+	year = {1960},
+	pages = {50--59},
+}
+
+@book{horn_matrix_2017,
+	address = {New York, NY},
+	edition = {Second edition, corrected reprint},
+	title = {Matrix analysis},
+	isbn = {978-0-521-83940-2 978-0-521-54823-6},
+	language = {en},
+	publisher = {Cambridge University Press},
+	author = {Horn, Roger A. and Johnson, Charles R.},
+	year = {2017},
+}
+
+@misc{clarkson_low_2013,
+	title = {Low {Rank} {Approximation} and {Regression} in {Input} {Sparsity} {Time}},
+	url = {http://arxiv.org/abs/1207.6365},
+	doi = {10.48550/arXiv.1207.6365},
+	abstract = {We design a new distribution over poly(rε−1) × n matrices S so that for any ﬁxed n × d matrix A of rank r, with probability at least 9/10, SAx 2 = (1 ± ε) Ax 2 simultaneously for all x ∈ Rd. Such a matrix S is called a subspace embedding. Furthermore, SA can be computed in O(nnz(A))time, where nnz(A) is the number of non-zero entries of A. This improves over all previous subspace embeddings, which required at least Ω(nd log d) time to achieve this property. We call our matrices S sparse embedding matrices.},
+	language = {en},
+	urldate = {2025-08-10},
+	publisher = {arXiv},
+	author = {Clarkson, Kenneth L. and Woodruff, David P.},
+	month = apr,
+	year = {2013},
+	note = {arXiv:1207.6365 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms},
+}
+
+@inproceedings{williams_using_2000,
+	address = {Cambridge, MA, USA},
+	series = {{NIPS}'00},
+	title = {Using the {Nyström} method to speed up kernel machines},
+	abstract = {A major problem for kernel-based predictors (such as Support Vector Machines and Gaussian processes) is that the amount of computation required to find the solution scales as O(n3), where n is the number of training examples. We show that an approximation to the eigendecomposition of the Gram matrix can be computed by the Nyström method (which is used for the numerical solution of eigenproblems). This is achieved by carrying out an eigendecomposition on a smaller system of size m \&lt; n, and then expanding the results back up to n dimensions. The computational complexity of a predictor using this approximation is O(m2n). We report experiments on the USPS and abalone data sets and show that we can set m ≪ n without any significant decrease in the accuracy of the solution.},
+	urldate = {2025-08-10},
+	booktitle = {Proceedings of the 14th {International} {Conference} on {Neural} {Information} {Processing} {Systems}},
+	publisher = {MIT Press},
+	author = {Williams, Christopher K. I. and Seeger, Matthias},
+	month = jan,
+	year = {2000},
+	pages = {661--667},
+}
+
+@incollection{cox_analysis_1990,
+	title = {Analysis of the {Cholesky} decomposition of a semi-definite matrix},
+	isbn = {978-0-19-853564-5 978-1-383-02567-5},
+	url = {https://academic.oup.com/book/53391/chapter/422058562},
+	doi = {10.1093/oso/9780198535645.003.0010},
+	abstract = {Abstract
+            Perturbation theory is developed for the Cholesky decomposition of an n x n symmetric positive semi-definite matrix A of rank r. The matrix W = A ;A12 is found to play a key role in the perturbation bounds, where A11 and A12 are r x rand r x (n - r) submatrices of A respectively.},
+	language = {en},
+	urldate = {2025-08-10},
+	booktitle = {Reliable {Numerical} {Commputation}},
+	publisher = {Oxford University PressOxford},
+	author = {Higham, Nicholas J},
+	editor = {Cox, M G and Hammarling, S},
+	month = sep,
+	year = {1990},
+	pages = {161--186},
+}
+
+@incollection{zhang_basic_2005,
+	address = {New York},
+	title = {Basic {Properties} of the {Schur} {Complement}},
+	volume = {4},
+	isbn = {978-0-387-24271-2},
+	url = {http://link.springer.com/10.1007/0-387-24273-2_2},
+	doi = {10.1007/0-387-24273-2_2},
+	language = {en},
+	urldate = {2025-08-10},
+	booktitle = {The {Schur} {Complement} and {Its} {Applications}},
+	publisher = {Springer-Verlag},
+	author = {Horn, Roger A. and Zhang, Fuzhen},
+	editor = {Zhang, Fuzhen},
+	year = {2005},
+	note = {Series Title: Numerical Methods and Algorithms},
+	pages = {17--46},
+}
+
+@inproceedings{deshpande_adaptive_2006,
+	address = {Berlin, Heidelberg},
+	title = {Adaptive {Sampling} and {Fast} {Low}-{Rank} {Matrix} {Approximation}},
+	isbn = {978-3-540-38045-0},
+	doi = {10.1007/11830924_28},
+	abstract = {We prove that any real matrix A contains a subset of at most 4k/ε+ 2k log(k+1) rows whose span “contains” a matrix of rank at most k with error only (1+ε) times the error of the best rank-k approximation of A. We complement it with an almost matching lower bound by constructing matrices where the span of any k/2ε rows does not “contain” a relative (1+ε)-approximation of rank k. Our existence result leads to an algorithm that finds such rank-k approximation in time},
+	language = {en},
+	booktitle = {Approximation, {Randomization}, and {Combinatorial} {Optimization}. {Algorithms} and {Techniques}},
+	publisher = {Springer},
+	author = {Deshpande, Amit and Vempala, Santosh},
+	editor = {Díaz, Josep and Jansen, Klaus and Rolim, José D. P. and Zwick, Uri},
+	year = {2006},
+	pages = {292--303},
+}
+
+@misc{bhattacharjee_sublinear_2022,
+	title = {Sublinear {Time} {Eigenvalue} {Approximation} via {Random} {Sampling}},
+	url = {http://arxiv.org/abs/2109.07647},
+	doi = {10.48550/arXiv.2109.07647},
+	abstract = {We study the problem of approximating the eigenspectrum of a symmetric matrix \${\textbackslash}mathbf A {\textbackslash}in {\textbackslash}mathbb\{R\}{\textasciicircum}\{n {\textbackslash}times n\}\$ with bounded entries (i.e., \${\textbackslash}{\textbar}{\textbackslash}mathbf A{\textbackslash}{\textbar}\_\{{\textbackslash}infty\} {\textbackslash}leq 1\$). We present a simple sublinear time algorithm that approximates all eigenvalues of \${\textbackslash}mathbf\{A\}\$ up to additive error \${\textbackslash}pm {\textbackslash}epsilon n\$ using those of a randomly sampled \${\textbackslash}tilde \{O\}{\textbackslash}left ({\textbackslash}frac\{{\textbackslash}log{\textasciicircum}3 n\}\{{\textbackslash}epsilon{\textasciicircum}3\}{\textbackslash}right ) {\textbackslash}times {\textbackslash}tilde O{\textbackslash}left ({\textbackslash}frac\{{\textbackslash}log{\textasciicircum}3 n\}\{{\textbackslash}epsilon{\textasciicircum}3\}{\textbackslash}right )\$ principal submatrix. Our result can be viewed as a concentration bound on the complete eigenspectrum of a random submatrix, significantly extending known bounds on just the singular values (the magnitudes of the eigenvalues). We give improved error bounds of \${\textbackslash}pm {\textbackslash}epsilon {\textbackslash}sqrt\{{\textbackslash}text\{nnz\}({\textbackslash}mathbf\{A\})\}\$ and \${\textbackslash}pm {\textbackslash}epsilon {\textbackslash}{\textbar}{\textbackslash}mathbf A{\textbackslash}{\textbar}\_F\$ when the rows of \${\textbackslash}mathbf A\$ can be sampled with probabilities proportional to their sparsities or their squared \${\textbackslash}ell\_2\$ norms respectively. Here \${\textbackslash}text\{nnz\}({\textbackslash}mathbf\{A\})\$ is the number of non-zero entries in \${\textbackslash}mathbf\{A\}\$ and \${\textbackslash}{\textbar}{\textbackslash}mathbf A{\textbackslash}{\textbar}\_F\$ is its Frobenius norm. Even for the strictly easier problems of approximating the singular values or testing the existence of large negative eigenvalues (Bakshi, Chepurko, and Jayaram, FOCS '20), our results are the first that take advantage of non-uniform sampling to give improved error bounds. From a technical perspective, our results require several new eigenvalue concentration and perturbation bounds for matrices with bounded entries. Our non-uniform sampling bounds require a new algorithmic approach, which judiciously zeroes out entries of a randomly sampled submatrix to reduce variance, before computing the eigenvalues of that submatrix as estimates for those of \${\textbackslash}mathbf A\$. We complement our theoretical results with numerical simulations, which demonstrate the effectiveness of our algorithms in practice.},
+	language = {en},
+	urldate = {2025-08-09},
+	publisher = {arXiv},
+	author = {Bhattacharjee, Rajarshi and Dexter, Gregory and Drineas, Petros and Musco, Cameron and Ray, Archan},
+	month = jul,
+	year = {2022},
+	note = {arXiv:2109.07647 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms, Computer Science - Numerical Analysis, Mathematics - Numerical Analysis},
+}
+
+@article{martinsson_randomized_2020,
+	title = {Randomized numerical linear algebra: {Foundations} and algorithms},
+	volume = {29},
+	copyright = {https://www.cambridge.org/core/terms},
+	issn = {0962-4929, 1474-0508},
+	shorttitle = {Randomized numerical linear algebra},
+	url = {https://www.cambridge.org/core/product/identifier/S0962492920000021/type/journal_article},
+	doi = {10.1017/S0962492920000021},
+	abstract = {This survey describes probabilistic algorithms for linear algebraic computations, such as factorizing matrices and solving linear systems. It focuses on techniques that have a proven track record for real-world problems. The paper treats both the theoretical foundations of the subject and practical computational issues.
+            Topics include norm estimation, matrix approximation by sampling, structured and unstructured random embeddings, linear regression problems, low-rank approximation, subspace iteration and Krylov methods, error estimation and adaptivity, interpolatory and CUR factorizations, Nyström approximation of positive semidefinite matrices, single-view (‘streaming’) algorithms, full rank-revealing factorizations, solvers for linear systems, and approximation of kernel matrices that arise in machine learning and in scientific computing.},
+	language = {en},
+	urldate = {2025-08-09},
+	journal = {Acta Numerica},
+	author = {Martinsson, Per-Gunnar and Tropp, Joel A.},
+	month = may,
+	year = {2020},
+	pages = {403--572},
+}
+
+@misc{musco_recursive_2017,
+	title = {Recursive {Sampling} for the {Nyström} {Method}},
+	url = {http://arxiv.org/abs/1605.07583},
+	doi = {10.48550/arXiv.1605.07583},
+	abstract = {We give the ﬁrst algorithm for kernel Nystr¨om approximation that runs in linear time in the number of training points and is provably accurate for all kernel matrices, without dependence on regularity or incoherence conditions. The algorithm projects the kernel onto a set of s landmark points sampled by their ridge leverage scores, requiring just O(ns) kernel evaluations and O(ns2) additional runtime. While leverage score sampling has long been known to give strong theoretical guarantees for Nystr¨om approximation, by employing a fast recursive sampling scheme, our algorithm is the ﬁrst to make the approach scalable. Empirically we show that it ﬁnds more accurate, lower rank kernel approximations in less time than popular techniques such as uniformly sampled Nystr¨om approximation and the random Fourier features method.},
+	language = {en},
+	urldate = {2025-08-06},
+	publisher = {arXiv},
+	author = {Musco, Cameron and Musco, Christopher},
+	month = nov,
+	year = {2017},
+	note = {arXiv:1605.07583 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms, Computer Science - Machine Learning, Statistics - Machine Learning},
+}
+
+@misc{musco_sublinear_2019,
+	title = {Sublinear {Time} {Low}-{Rank} {Approximation} of {Positive} {Semidefinite} {Matrices}},
+	url = {http://arxiv.org/abs/1704.03371},
+	doi = {10.48550/arXiv.1704.03371},
+	abstract = {We show how to compute a relative-error low-rank approximation to any positive semidefinite (PSD) matrix in sublinear time, i.e., for any \$n {\textbackslash}times n\$ PSD matrix \$A\$, in \${\textbackslash}tilde O(n {\textbackslash}cdot poly(k/{\textbackslash}epsilon))\$ time we output a rank-\$k\$ matrix \$B\$, in factored form, for which \${\textbackslash}{\textbar}A-B{\textbackslash}{\textbar}\_F{\textasciicircum}2 {\textbackslash}leq (1+{\textbackslash}epsilon){\textbackslash}{\textbar}A-A\_k{\textbackslash}{\textbar}\_F{\textasciicircum}2\$, where \$A\_k\$ is the best rank-\$k\$ approximation to \$A\$. When \$k\$ and \$1/{\textbackslash}epsilon\$ are not too large compared to the sparsity of \$A\$, our algorithm does not need to read all entries of the matrix. Hence, we significantly improve upon previous \$nnz(A)\$ time algorithms based on oblivious subspace embeddings, and bypass an \$nnz(A)\$ time lower bound for general matrices (where \$nnz(A)\$ denotes the number of non-zero entries in the matrix). We prove time lower bounds for low-rank approximation of PSD matrices, showing that our algorithm is close to optimal. Finally, we extend our techniques to give sublinear time algorithms for low-rank approximation of \$A\$ in the (often stronger) spectral norm metric \${\textbackslash}{\textbar}A-B{\textbackslash}{\textbar}\_2{\textasciicircum}2\$ and for ridge regression on PSD matrices.},
+	language = {en},
+	urldate = {2025-08-06},
+	publisher = {arXiv},
+	author = {Musco, Cameron and Woodruff, David P.},
+	month = jan,
+	year = {2019},
+	note = {arXiv:1704.03371 [cs]},
+	keywords = {Computer Science - Data Structures and Algorithms, Computer Science - Machine Learning, Mathematics - Numerical Analysis},
+}
+
+@article{shawe-taylor_kernel_nodate,
+	title = {Kernel {Methods} for {Pattern} {Analysis}},
+	language = {en},
+	author = {Shawe-Taylor, John and Cristianini, Nello},
+}

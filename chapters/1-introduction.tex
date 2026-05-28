@@ -1,0 +1,39 @@
+% \section{Overview}
+In modern data analysis, some naturally-arising matrices are too large to compute and store efficiently. A canonical example comes from \emph{kernel methods} in machine learning. Given $n$ data points $x_1,\dots,x_n$ and a positive semidefinite kernel function $k(\cdot,\cdot)$, an associated kernel matrix $\bA \in \mathbb{R}^{n\times n}$ is defined entrywise by
+\[
+\bA_{ij} = k(x_i,x_j).
+\]
+Although we can compute any single entry $\bA_{ij}$ on demand, computing and storing all $n^2$ entries is prohibitively expensive when $n$, the size of the dataset, is large. Thus: \textit{how can we perform matrix computations when the input is available only through limited entry queries?} 
+
+A large body of work addresses this problem for tasks such as low-rank approximation, matrix-vector and matrix-matrix multiplication, least-squares regression problems, and spectral approximation. 
+
+\todo{revisit this exposition}
+
+A common approach is to work with a small sketch of the matrix obtained by sampling a subset of rows or columns. One natural and widely studied sampling rule is \emph{length-squared sampling}, in which a row or column is sampled with probability proportional to its squared $\ell_2$ norm. This rule appears, for example, in the randomized Kaczmarz method for solving linear systems \cite{needell_stochastic_2015} and in additive-error algorithms for low-rank approximation \cite{frieze_fast_2004}. However, a direct implementation of length-squared sampling must have access to the relevant row or column norms. If these norms are not already available, then forming the sampling distribution requires a preprocessing pass over the entire input matrix. For dense $n\times n$ matrices, this takes $\Theta(n^2)$ time.
+
+
+% The problem is compounded by downstream computations involving $\bA$: many linear algebra routines, including eigendecomposition and solving least-squares, typically require $O(n^3)$ arithmetic operations.
+
+% Fortunately, the kernel matrix $\bA$ often exhibits low-rank structure, meaning that it can be approximated by a much smaller matrix without significant loss of accuracy. Substituting $\bA$ with an appropriate low-rank approximation can yield speedups of several orders of magnitude in practice compared to direct methods, especially in kernel ridge regression and kernel spectral clustering \cite{chen_randomly_2025}. Given the practical significance, \textit{how can we compute accurate low-rank approximations for large kernel matrices efficiently?}
+
+\section{Our Results}
+The main technical contribution is an \(O(n)\)-time algorithm for length-squared sampling from an \(n \times n\) positive semidefinite (psd) matrix. Given entry-wise access to a psd matrix \(\mathbf{A}\), we sample column \(j\) with probability
+\[
+p_j = \frac{\|\mathbf{A}_{\ast, j}\|_2^2}{\|\mathbf{A}\|_F^2}.
+\]
+Our algorithm relies on psd structure and does not apply to arbitrary matrices. 
+
+We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling requires \(\Omega(n)\) entry queries in the worst case, even for psd matrices. 
+
+We next show how this sampling primitive can be used in several low-rank and spectral approximation problems for positive semidefinite matrices. We consider additive-error low-rank approximation, robust low-rank approximation, and eigenvalue approximation. In each application, the sampler replaces a length-squared column sampling step that would otherwise require computing all column norms.
+
+% \todo{mention first sublinear algorithm for eigenvalue approximation}
+% We then apply this sampling primitive to several problems in randomized matrix approximation. The applications focus on low-rank approximation of positive semidefinite matrices, including additive-error low-rank approximation, relative-error low-rank approximation, and robust low-rank approximation. We also discuss consequences for eigenvalue approximation. In each case, the role of the new sampler is to implement a length-squared column sampling step without first computing all column norms.
+
+Finally, we include numerical experiments comparing length-squared column sampling with other column-selection methods for low-rank approximation. The goal of these experiments is to identify regimes where length-squared sampling is a competitive practical choice.
+
+\section{Outline}
+\todo{todo}
+
+
+

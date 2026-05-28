@@ -1,0 +1,545 @@
+\section{Review of Literature}
+\label{sec:review}
+\subsection{Notation and preliminaries}
+\label{ssec:prelim}
+
+\subsubsection{Matrix norms}
+The Frobenius norm of a matrix $\bM\in\R^{n\times d}$ is denoted $\|\bM\|_F$. It is given by
+\[\|\bM\|_F = \sqrt{\sum_{i\in [n]}\sum_{j\in [d]} (\bM_{ij})^2}\]
+The trace norm of $\bM$ is denoted $\|\bM\|_\ast$ and given by
+\[\|\bM\|_\ast  = \tr\left(\sqrt{\bM^\top\bM}\right)\]
+where $\sqrt{\bM^\top\bM}$ is the psd square root of $\bM^\top\bM$. If $\bM$ itself is psd, then it follows that
+\[\|\bM\|_\ast = \tr(\bM).\]
+\begin{definition}
+    A norm $\|\cdot\|$ on $\R^{n\times d}$ is \textit{unitarily invariant} if for all orthogonal matrices $\bU\in \R^{n\times n}, \bV\in \R^{d\times d}$ and all matrices $\bM\in\R^{n\times d}$,
+    \[\|\bU\bM\bV\| = \|\bM\|.\]
+    The trace and Frobenius norms are unitarily invariant.
+\end{definition}
+
+\subsubsection{Eigendecomposition} Suppose $\bA\in\R^{n\times n}$ is a diagonalizable matrix. Then $\bA$ admits an eigendecomposition $\bA = \bQ\bLambda\bQ^{-1}$, where the columns of $\bQ\in \R^{n\times n}$ are eigenvectors of $\bA$ and $\bLambda$ is a diagonal matrix containing the corresponding eigenvalues. If $\bA$ is symmetric, then the eigenvectors of $\bA$ are orthogonal. In this case, we may write $\bA = \bQ\bLambda\bQ^\top$, where $\bQ$ has orthonormal columns.
+
+\subsubsection{Singular value decomposition}
+Given a matrix $\bM\in\R^{n\times d}$, we write $\bM = \bU\bSigma\bV^\top$ to denote the compact singular value decomposition (svd) of $\bM$. With $r = \rank(\bM)$, the matrices $\bU\in\R^{n\times r}$ and $\bV\in\R^{d\times r}$ have orthonormal columns while $\bSigma\in\R^{r\times r}$ is a diagonal matrix containing the nonzero singular values of $\bM$. In the outer product interpretation for matrix multiplication,
+\[\bM = \sum_{i=1}^r \sigma_i\bu_i\bv_i^\top\]
+where $\bu_i$ and $\bv_i$ are the $i$th columns of $\bU$ and $\bV$, respectively.
+
+\begin{definition}
+    Let $\bM \in \R^{n\times d}$ be a matrix with svd $\bM = \sum_{i=1}^r \sigma_i\bu_i\bv_i^\top$. Define
+    \[\bM_k := \sum_{i=1}^k \sigma_i\bu_i\bv_i^\top.\]
+\end{definition}
+\begin{theorem}[Eckart-Young-Mirsky]
+    Let $\bM\in \R^{n\times d}$ be a matrix. For any unitarily invariant norm $\|\cdot\|$, 
+    \[\|\bM - \bM_k\|\leq \|\bM - \bX\|\]
+    for all rank-$k$ matrices $\bX$. Alternatively,
+    \[\bM_k\in\argmin_{\rank(\bX) = k} \|\bM - \bX\|.\]
+\end{theorem}
+
+
+\subsubsection{Moore-Penrose pseudoinverse}
+The pseudoinverse of $\bM\in\R^{n\times d}$ is denoted by $\bM^\dagger$ and satisfies
+\begin{enumerate}
+    \item $\bM^\dagger\bM\bM^\dagger = \bM^\dagger$
+    \item $\bM\bM^\dagger\bM = \bM$
+    \item $\bM\bM^\dagger$ and $\bM^\dagger\bM$ are symmetric. 
+\end{enumerate}
+Moreover, the pseudoinverse exists for any real or complex-valued matrix and is unique. Using the singular value decomposition $\bM = \bU\bSigma\bV^\top$, the pseudoinverse can be computed explicitly as 
+\[\bM^\dagger = \bV\bSigma^{-1}\bU^\top.\]
+
+\subsubsection{Positive semi-definite matrices}
+A square matrix $\bA\in \R^{n\times n}$ is \textit{positive semi-definite (psd)} if
+\begin{enumerate}
+    \item $\bA$ is symmetric, and
+    \item $\bx^\top\bA\bx\geq 0$ for all $\bx\in \R^n$.
+\end{enumerate}
+
+\begin{proposition}
+    Let $\bA\in \R^{n\times n}$ be a symmetric matrix. The following are
+    equivalent:
+    \begin{enumerate}[before=\setlength\parskip{0pt}]
+        \item $\bA$ is psd
+        \item the eigenvalues of $\bA$ are nonnegative
+        \item $\bA = \bU^\top \bU$ for some matrix $\bU$.
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}\hfill
+
+    $(1)\Longrightarrow (2)$. Let $\bx$ be an eigenvector of $\bA$ with
+    eigenvalue
+    $\lambda$, so that $\bA\bx = \lambda\bx$. If $\bA$ is psd then
+    \begin{align*}
+        0\leq \bx^\top\bA\bx = \lambda\bx^\top\bx = \lambda \|\bx\|^2_2
+    \end{align*}
+    and hence $\lambda\geq 0$.
+
+    $(2)\Longrightarrow (3)$. The symmetric matrix $\bA$ has eigendecomposition
+    $\bA = \bQ\bLambda\bQ^\top$, where $\bQ$ is orthogonal and
+    $\mathbf{\Lambda}$ is a diagonal matrix containing the eigenvalues of $\bA$. If the eigenvalues are nonnegative then we can write
+    \[\bLambda = \bLambda^{1/2}\bLambda^{1/2} = \left(\bLambda^{1/2}\right)\left(\bLambda^{1/2}\right)^\top\]
+    where $\bLambda^{1/2}$ is the real diagonal matrix with $\left(\bLambda^{1/2}\right)_{ij} = (\bLambda)_{ij}^{1/2}$. Now,
+    \begin{align*}
+        \bA & = \bQ\mathbf\Lambda\bQ^\top \\
+            & = \bQ\left(\bLambda^{1/2}\right)\left(\bLambda^{1/2}\right)^\top\bQ^\top    \\
+            & = \left(\bQ\bLambda^{1/2}\right)\left(\bQ\bLambda^{1/2}\right)^\top.
+    \end{align*}
+    Setting $\bU = \left(\bQ\bLambda^{1/2}\right)^\top$ concludes the proof.
+
+    $(3)\Longrightarrow (1)$. Suppose $\bA = \bU^\top\bU$. For any
+    $\bx\in\R^n$, we
+    have
+    \begin{align*}
+        \bx^\top\bA\bx & = \bx^\top\bU^\top\bU\bx \\
+                       & = (\bU\bx)^\top\bU\bx    \\
+                       & = \|\bU\bx\|^2_2\geq 0.
+    \end{align*}
+\end{proof}
+
+\begin{proposition}{(Basic properties of psd matrices).}\label{prop:psd-props}\,
+    \begin{enumerate}
+        \item (Conjugation rule). If $\bA$ is psd and $\bB$ is a matrix, then $\bB^\top\bA\bB$ is psd.
+        \item (PSD $k$th root). If $\bA$ is psd, then for each $k\in \{2,3,\ldots\}$ there is a \textit{unique} psd matrix $\bB$ such that $\bB^k = \bA$. We denote the unique $k$th root of $\bA$ by $\bA^{1/k}$. 
+        \item If $\bA$ is psd, then so is $\bA^\dagger$.
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}\,
+    \begin{enumerate}
+        \item For any $\bx$,
+        \begin{align*}
+            \bx^\top\bB^\top\bA\bB\bx = (\bB\bx)^\top\bA(\bB\bx)\geq 0.
+        \end{align*}
+        
+        \item Let $\lambda_1 \geq \lambda_2\geq\cdots\geq\lambda_n$ be the eigenvalues of $\bA$, where $\lambda_1,\ldots, \lambda_r$ are positive ($r\leq n$). Consider the eigendecomposition
+        \[\bA = \bQ\bLambda\bQ^\top\]
+        where $\bQ$ is orthogonal and $\bLambda = \diag(\lambda_1, \ldots, \lambda_n)$. Using $\bB = \bQ\bLambda^{1/k}\bQ^\top$, we verify
+        \[\bB^k = \left(\bQ\bLambda^{1/k}\bQ^\top\right)^k = \bQ\bLambda\bQ^\top = \bA\]
+        as desired. Clearly $\bLambda^{1/k}$ is psd since its eigenvalues are nonnegative; it follows from (1) that $\bB$ is also psd. For uniqueness, let $p$ be a polynomial such that 
+        $$p(\lambda_i) = \lambda_i^{1/k}\qquad \text{for all } i\in [r]$$
+        and, if $r < n$, we additionally require $p(0) = 0$; it is a classic result that such a polynomial exists with real coefficients. We now observe that
+        \[p(\bLambda) = \bLambda^{1/k}\quad\text{and}\quad p(\bA) = p\left(\bQ\bLambda\bQ^\top\right) = \bQ p(\bLambda)\bQ^\top = \bB.\]
+        If $\bM$ is a matrix that commutes with $\bA$, then $\bM$ must also commute with $\bB = p(\bA)$; in particular, $\bB$ commutes with any psd matrix $\bC$ such that $\bC^k = \bA$.
+
+        At this point, we use a theorem that commutative, diagonalizable matrices are simultaneously diagonalizable \cite[Theorem 4.1.6]{horn_matrix_2017}. Applying this result to $\bB$ and $\bC$, we find that there is an orthogonal matrix $\bU$ such that
+        \[\bB = \bU\bLambda_1\bU^\top\quad\text{and}\quad\bC = \bU\bLambda_2\bU^\top\quad\]
+        for nonnegative diagonal matrices $\bLambda_1, \bLambda_2$. Now,
+        \[\bLambda_1^k = \bU^\top\bB^k\bU = \bU^\top\bC^k\bU = \bLambda_2^k.\]
+        Uniqueness of the nonnegative $k$th root of a positive real number implies 
+        \[\bLambda_1 = \left(\bLambda_1^k\right)^{1/k} = \left(\bLambda_2^k\right)^{1/k} = \bLambda_2\]
+        and hence $\bB = \bC$ as required.
+        
+        \item For any $\bx$,
+        \begin{align*}
+            \bx^\top\bA^\dagger\bx &= \bx^\top\bA^\dagger\bA\bA^\dagger\bx\\
+            &= \bx^\top\left(\bA^\dagger\right)^\top\bA\bA^\dagger\bx\\
+            &=\left(\bA^\dagger\bx\right)^\top\bA\left(\bA^\dagger\bx\right)\geq 0.
+        \end{align*}
+    \end{enumerate}
+\end{proof}
+
+\begin{definition}{(L\"owner order).}
+    Let $\bA, \bB\in\R^{n\times n}$ be psd. Define the
+    relation $\preceq$ where
+    \[\bA\preceq \bB\quad\text{if and only if}\quad\bB-\bA \text{ is psd}.\]
+    This defines a partial order on psd matrices, called the \textit{L\"owner order}. The notation $0\preceq \bA$ denotes that $\bA$ is psd.
+\end{definition}
+
+
+\begin{proposition}
+    \label{prop:lowner-eigenvalues}
+    Suppose $A\preceq B$ and let $\lambda_1(A)\geq\cdots\geq \lambda_n(A)$, $\lambda_1(B)\geq\cdots\geq \lambda_n(B)$ be the eigenvalues of $A$ and $B$, respectively. Then $\lambda_i(A)\geq \lambda_i(B)$.
+\end{proposition}
+
+\begin{proof}
+    The Courant-Fischer theorem gives an expression for the $k$th eigenvalue of $\bA$:
+    \[
+    \lambda_k(\bA) = \min_{\substack{S\subseteq \R^n\\\dim(S)=n-k+1}}\max_{\substack{\bx\in S\\\bx\neq 0}}\,\frac{\bx^\top\bA\bx}{\bx^\top\bx}.
+    \]
+    For any subspace $S\subset \R^n$, we have
+    \[\max_{\substack{\bx\in S\\\bx\neq 0}}\,\frac{\bx^\top\bA\bx}{\bx^\top\bx}\leq \max_{\substack{\bx\in S\\\bx\neq 0}}\,\frac{\bx^\top\bB\bx}{\bx^\top\bx}\]
+    since $\bA\preceq \bB$. In particular, $\lambda_k(\bA)\leq \lambda_k(\bB)$.
+\end{proof}
+
+\subsection{Nystr\"om approximation}
+The Nystr\"om approximation is a powerful tool for producing low-rank approximations of psd matrices. Its use in kernel machine learning was first popularized by Williams and Seeger \cite{williams_using_2000}. 
+
+Given a psd matrix $\bA \in \R^{n\times n}$ and an arbitrary matrix $\bOmega\in\R^{n\times k}$, the \textit{Nystr\"om approximation} of $\bA$ with respect to $\bOmega$ is defined as
+\[\bA\gen\bOmega := \bA\bOmega\left(\bOmega^\top\bA\bOmega\right)^\dagger\bOmega^\top\bA.\]
+One particularly notable property of the Nystr\"om approximation is that both $\bA\gen{\bOmega}$ and the residual, $\bA - \bA\gen{\bOmega}$, are psd:
+
+% Numerous low-rank approximation algorithms are based on the Nystr\"om approximation. The technique was first introduced by Williams and Seeger \cite{williams_using_2000} and later 
+
+\begin{proposition}\label{prop:nystrom-order}
+    $0\preceq \bA\gen\bOmega\preceq \bA$.
+\end{proposition}
+
+\begin{proof}\,
+    \begin{enumerate}
+    \item $(0\preceq\bA\gen{\bOmega})$. By the conjugation rule, $\bOmega^\top\bA\bOmega$ is psd. For any $\bx$,
+    \begin{align*}
+        \bx^\top\bA\gen{\bOmega}\bx &= \bx^\top\bA\bOmega\left(\bOmega^\top\bA\bOmega\right)^\dagger\bOmega^\top\bA\bx\\
+        &=\left(\bOmega^\top\bA\bx\right)^\top \left(\bOmega^\top\bA\bOmega\right)^\dagger\left(\bOmega^\top\bA\bx\right)\geq 0
+    \end{align*}
+    since $\left(\bOmega^\top\bA\bOmega\right)^\dagger$ is also psd.
+
+    \item $(\bA\gen{\bOmega}\preceq\bA)$. Since $\bA$ is psd, write $\bA = \bU^\top\bU$ for some matrix $\bU$. We decompose
+    \begin{align*}
+        \bA\gen{\bOmega} &= \bA\bOmega\left(\bOmega^\top\bA\bOmega\right)^\dagger\bOmega^\top\bA\\
+        &= \bU^\top\underbrace{\left[\left(\bU\bOmega\right)\left(\bOmega^\top\bA\bOmega\right)^\dagger\left(\bU\bOmega\right)^\top\right]}_{=: \bP}\bU.
+    \end{align*}
+    A direct computation shows that $\bP$ has the following properties:
+    \begin{enumerate}
+        \item $\bP$ is symmetric, i.e., $\bP^\top = \bP$;
+        \item $\bP$ is idempotent, i.e., $\bP^2 = \bP$.
+    \end{enumerate}
+   It follows that $\bI - \bP$ is symmetric and idempotent. Now, verify that $\bI - \bP$ is psd:
+    \begin{align*}
+        \bx^\top(\bI-\bP)\bx &= \bx^\top(\bI-\bP)^2\bx\\
+        &= \bx^\top(\bI-\bP)^\top(\bI-\bP)\bx\\
+        &= \|(\bI-\bP)\bx\|_2^2\geq 0.
+    \end{align*}
+    Finally, write
+    \begin{align*}
+        \bA - \bA\gen{\bOmega} &= \bU^\top\bU - \bU^\top\bP\bU\\
+        &=\bU^\top (\bI - \bP)\bU\\
+        &\succeq 0\qquad\text{(conjugation rule).}
+    \end{align*}
+    \end{enumerate}
+\end{proof}
+
+In low-rank psd approximation, we sometimes require the approximate matrix and its residual to be psd. Under these two constraints, it turns out that the Nystr\"om approximation is \textit{optimal}:
+
+\begin{theorem}{\cite{epperly_low-rank_2022}} 
+\label{thm:nystrom-opt}
+For any unitarily invariant norm $\|\cdot\|$,
+\[\bA\gen{\bOmega}\in\argmin_{\substack{\bB\in\matspan(\bA\bOmega)\\0\preceq \bB\preceq\bA}} \|\bA - \bB\|.\]
+\end{theorem}
+
+One special case for the Nystr\"om approximation is to let $\bOmega$ be an $n\times k$ column selection matrix. In this setting, computing $\bA\gen{\bOmega}$ requires only $nk$ entries of $\bA$.
+
+\begin{definition}
+    Let $S = \{s_1, s_2,\ldots, s_k\}\subseteq [n]$ be a set of indices and $\bOmega_S$ be the corresponding selection matrix,
+    \[\bOmega_S = \begin{bmatrix}
+        \be_{s_1} & \be_{s_1} & \cdots & \be_{s_k}
+    \end{bmatrix}\]
+    where $\be_i$ denotes the $i$th standard basis vector. The \textit{column Nystr\"om approximation} with respect to $S$, denoted $\bA\gen{S}$, is given by
+    \[\bA\gen{S} := \bA(:,S)\bA(S,S)^\dagger\bA(S,:) = \bA\gen{\bOmega_S}.\]
+Crucially, if we write $\bY = \bA(:, S)$ then 
+\[\bA\gen{S} = \bY\bY(S, :)^\dagger\bY^\top.\]
+In other words, we only need to read $|S|$ columns of $\bA$ to compute the full Nystr\"om approximation $\bA\gen{S}$.
+
+\end{definition}
+
+
+\subsection{Randomly Pivoted Cholesky}
+The Nystr\"om approximation is particularly powerful as a framework to design fast low-rank approximation algorithms. 
+To compute a rank-$k$ approximation for a matrix $\bA$, we can pick a set $S$ of $k$ columns, then output the Nystr\"om approximation $\bA\gen{S}$. 
+
+In the classical Nystr\"om method, the columns $S$ are picked uniformly at random from the input matrix \cite{williams_using_2000, drineas_nystrom_2005}. However, this approach does not have strong error guarantees: uniform sampling yields a poor approximation when the input matrix contains a small set of important columns. 
+
+Chen et al. \cite{chen_randomly_2025} studies an alternate sampling method that \textit{does} lead to strong theoretical guarantees. They consider the following procedure for column selection:
+\begin{algorithm}[ht]
+    \label{alg:rpc-adapt}
+    \DontPrintSemicolon
+    \caption{Adaptive random sampling}
+    \KwIn{psd matrix $\bA\in\R^{n\times n}$; approximation rank $k$}
+    Initially, $S\gets \varnothing$.\;
+    \For{$i = 1, \ldots, k$}{
+        sample a column $\displaystyle s_i \sim X:\quad \Pr[X = j] = \frac{(\bA - \bA\gen{S})_{jj}}{\tr(\bA - \bA\gen{S})}$. \;
+        $S\gets s_i$
+    }
+\end{algorithm}
+
+
+The procedure samples a column with probability proportional to the corresponding diagonal entry. It is \textit{adaptive} in the sense that these probabilities are recomputed at every step to remove the effect of the columns selected so far, i.e., the probabilities are determined by $\diag(\bA - \bA\gen{S})$.
+
+In order to avoid evaluating $\bA - \bA\gen{S}$ in every step, we can compute the approximation for $\bA$ in factored form using the pivoted partial Cholesky algorithm \cite{chen_randomly_2025}. This is outlined in Algorithm~\ref{alg:partial-cholesky}.
+
+% It turns out that we can compute $\llbracket\bA\rrbracket_r$ by taking the eigendecomposition of $\bA$:
+
+
+
+% \begin{theorem}{(Nystr\"om lower bound).}
+%     Given $r\geq 1$ and $\varepsilon > 0$, there exists a matrix $\bA\in
+%         \R^{n\times n}$ such that any rank-$k$ Nystr\"om approximation
+%     $\bA\gen{S}$
+%     with
+%     \[|S| < r/\varepsilon\]
+%     has error $\tr(\bA - \bA\gen{S}) > (1 +\varepsilon)\cdot \tr(\bA -
+%         \llbracket\bA\rrbracket_r)$.
+% \end{theorem}
+
+% \begin{proof}
+%     We construct the matrix $\bA$ directly:
+%     \[
+%         \bA = \underbrace{\begin{pmatrix}
+%                 \bB &     &        &     \\
+%                     & \bB &        &     \\
+%                     &     & \ddots &     \\
+%                     &     &        & \bB
+%             \end{pmatrix}}_{Mr\times Mr},
+%         \quad\text{where}\quad
+%         \bB = \underbrace{\begin{pmatrix}
+%                 1      & \delta & \cdots & \delta \\
+%                 \delta & 1      &        & \vdots \\
+%                 \vdots &        & \ddots &        \\
+%                 \delta & \cdots &        & 1
+%             \end{pmatrix}}_{r\times r}.
+%     \]
+%     The approximation error satisfies
+%     \begin{align*}
+%         \frac{\tr(\bA - \bA\gen{S})}{\tr(\bA - \llbracket\bA\rrbracket_r)}
+%          &=
+%         \frac{1}{r}\sum_{i=1}^r\frac{M-k_i}{M-1}\left(1+\frac{1}{\delta^{-1}+k_i-1}\right)\\[6pt]
+%         &\geq
+%         \frac{M-k}{M-1}\cdot\frac{1}{r}\sum_{i=1}^r\left(1+\frac{1}{\delta^{-1}+k_i-1}\right)
+%     \end{align*}
+%     \todo[inline,color=orange!60]{Finish this proof.}
+% \end{proof}
+
+\begin{algorithm}[ht]
+    \label{alg:partial-cholesky}
+    \DontPrintSemicolon
+    \caption{Pivoted partial Cholesky algorithm}
+    \KwIn{psd matrix $\bA\in\R^{n\times n}$; approximation rank $k$}
+    \KwOut{pivot set $S = \{s_1,\ldots, s_k\}$; matrix $\bF\in\R^{n\times k}$
+        satisfying $\bF\bF^\top = \bA\gen{S}$}
+    Initialize $\bF\gets \mathbf 0_{n\times k}$\;
+    \For{$i = 1\ldots k$}{
+        \vphantom{|}{\color{magenta} Select a pivot $s_i\in [n]$}\;
+        $\bg\gets \bA(:, s_i)$\;
+        $\bg\gets \bg - \bF(:, [i-1])\bF(s_i, [i-1])^\top$\;
+        \vspace{0.25em}
+        $\bF(:, i)\gets \bg \big / \sqrt{\bg(s_i)}$
+    }
+    \Return $\bF$
+\end{algorithm}
+
+The diagonal entries of the residual $\bR = \bA - \bA\gen{S}$ are then given by
+\[\diag(\bR^{(i)}) = \diag(\bR^{(i-1)}) - \frac{1}{\bR^{(i-1)}(s_i, s_i)}\cdot \left|\bR^{(i-1)}(:, s_i)\right|^2\]
+where $\bR^{(i)}$ denotes the Nystr\"om residual at step $i$ of the algorithm, and $\bR^{(0)} = \bA$.
+
+Randomly Pivoted Cholesky (\RPCholesky) selects pivots according to Algorithm~\ref{alg:rpc-adapt}. To serve as a baseline, we will also consider the greedy pivot selection method:
+\[\text{select pivot}\quad s_i \in \argmax_{1\leq j\leq n}\,{\bR^{(i)}(j, j)}\quad\text{with ties broken arbitrarily.}\]
+
+% ; we will compare a few options later in this section. Of course, we should first establish that the algorithm is correct.
+
+% \begin{theorem}
+%     The matrix $\bF$ returned by Algorithm~\ref{alg:partial-cholesky} satisfies
+%     \[\bF\bF^\top = \bA\gen S.\]
+% \end{theorem}
+% \begin{proof}
+%     For each $i\in[k]$, define the partial set $S_i = \{s_1,\ldots, s_i\}$ and
+%     let $\bF_i$ ($\bg_i$) be the value of the variable $\bF$ ($\bg$) after the
+%     $i$th iteration of the for-loop. We show by induction that
+%     \[\bF_i \bF_i^\top = \bA\gen{S_i}.\tag{$\ast$}\]
+
+%     For $i=1$, we have $\bg_1 = \bA(:, s_1)$ and
+%     \[\bF_1 = \frac{1}{\bA(s_1, s_1)^{1/2}}\begin{bmatrix}
+%             \bA(:, s_1) & \mathbf 0 & \cdots & \mathbf0
+%         \end{bmatrix}.\]
+%     Computing directly, we have
+%     \begin{align*}
+%         \bF_1\bF_1^\top & = \frac{1}{\bA(s_1, s_1)}\bA(:, s_1)\bA(:, s_1)^\top
+%         \\
+%                         & =\bA(:, s_1)\bA(s_1, s_1)^\dagger\bA(:, s_1)^\top
+%         \\
+%                         & = \bA\gen{S_1}
+%     \end{align*}
+%     as desired.
+
+%     Now, assume $(\ast)$ holds at step $i-1$.
+%     \todo[inline,color=orange!60]{Not quite sure how to complete this proof; look to \cite{zhang_basic_2005} for possible directions.}
+% \end{proof}
+
+% {\marginparwidth0.9in\todo[prepend,size=footnotesize,color=orange!60]{\cite[\S2.3.1]{chen_randomly_2025}
+%             uses argmin; not sure if this should be argmax instead?}}
+
+
+\begin{definition}
+    \label{def:r-epsilon}
+    A Nystr\"om approximation $\bA\gen{S}$ constructed from $k$ randomly selected columns is called an \textit{$(r, \varepsilon)$-approximation} if it satisfies
+    \[\E[\tr(\bA - \bA\gen{S})] \leq (1+\varepsilon)\cdot \tr(\bA -
+        \bA_r)\]
+\end{definition}
+
+
+
+\begin{theorem}{\cite{chen_randomly_2025}}
+    \label{thm:rpc-error}
+    Fix $r$ and $\varepsilon > 0$, and let $\bA$ be a psd matrix. The Nystr\"om approximation produced by $\RPCholesky$ is an $(r, \varepsilon)$-approximation for $\bA$ provided that
+    \[k \geq \frac{r}{\varepsilon} + r\log\left(\frac{1}{\varepsilon\eta}\right)\quad\text{where}\quad \eta := \frac{\tr(\bA - \bA_r)}{\tr(\bA)}.\]
+\end{theorem}
+
+\subsection{Adaptive sampling}
+Earlier work of Deshpande and Vempala \cite{deshpande_adaptive_2006} shows how to compute a fast low-rank approximation for an \textit{arbitrary} matrix $\bB$. Their procedure, called \textit{adaptive sampling}, turns out to be closely related to \RPCholesky. The algorithm is as follows:
+
+\begin{algorithm}[H]
+    \label{alg:adaptive-sampling}
+    \DontPrintSemicolon
+    \caption{Adaptive sampling}
+    \KwIn{Arbitrary matrix $\bB\in\R^{m\times n}$; approximation rank $k$}
+    Initially, $S\gets \varnothing$.\;
+    \For{$i = 1, \ldots, k$}{
+        sample a column $\displaystyle s_i \sim X:\quad \Pr[X = j] = \frac{\|\bB - \bP_{\bB S}\|^2}{\|\bB - \bP_{\bB S}\|^2_F}$. \;
+        $S\gets s_i$
+    }
+\end{algorithm}
+
+\vspace{1em}
+\noindent
+The final approximation to $\bB$ is $\bP_{\bB S}\bB$, where $\mathbf{P}_{\bB S}$ denotes the projection matrix onto the column span of $\bB S$. In the adaptive sampling procedure of \cite{deshpande_adaptive_2006}, we sample columns with probability weighted by the column norms. Note that computing all the column norms takes $\Theta(mn)$ entry evaluations each step, so this is not a sublinear algorithm. 
+
+Adaptive sampling attains an error guarantee in the Frobenius norm. Formally,
+
+\begin{theorem}[\cite{deshpande_adaptive_2006}]
+    \label{thm:adaptive-sampling-guarantee}
+    The matrix $\bP_{\bB S}\bB$ produced by adaptive sampling satisfies
+    \[\E\|\bB - \bP_{\bB S}\bB\|^2_F\leq (1 + \varepsilon)\cdot \|\bB - \bB_r\|^2_F\]
+    provided that $|S|\geq \tilde O(r/\varepsilon)$.
+\end{theorem}
+
+It turns out that the error guarantee for \RPCholesky \textit{implies} the guarantee for adaptive sampling.
+
+\begin{proof}[Theorem~\ref{thm:rpc-error} implies Theorem~\ref{thm:adaptive-sampling-guarantee}]
+
+Let $\mathbf{A}=\mathbf{B}^\top\mathbf{B}$, and let $S$ be a column selection matrix. Define
+\[
+\mathbf{R}_B := \mathbf{B}-\mathbf{P}_{\mathbf{B}S}\mathbf{B},
+\qquad
+\mathbf{R}_A := \mathbf{A}-\mathbf{A}\langle S\rangle,
+\]
+We show:
+\begin{enumerate}
+\item For every selection matrix $S$,
+\[
+\mathbf{R}_B^\top \mathbf{R}_B = \mathbf{R}_A.
+\]
+\item The index set $S_A$ produced by \RPCholesky\ on $\mathbf{A}$ has the same distribution as the index set $S_B$ produced by adaptive sampling on $\mathbf{B}$.
+\end{enumerate}
+
+Once (1) and (2) are established, applying (1) to the guarantee of Theorem~\ref{thm:rpc-error} yields
+\begin{align*}
+    (1+\varepsilon)\cdot \|\bB - \bB_r\|^2_F &= (1+\varepsilon)\cdot \tr(\bA - \bA_r)\\
+    &\geq \E\tr(\bA-\bA\gen{S})\\
+    &=\E\tr(\bR_\bB^\top \bR_\bB)\\
+    &= \E\|\bB-\bP_{\bB\bS}\bB\|^2_F.
+\end{align*}
+as desired.
+
+\vspace{1em}
+\noindent
+(1) Compute directly:
+\begin{align*}
+    \bR_{\bB}^\top\bR_{\bB} &= (\bB-\bP_{\bB\bS}\bB)^\top(\bB-\bP_{\bB\bS}\bB)\\
+    &= \bB^\top\bB - \bB^\top\bP_{\bB\bS}\bB - \bB^\top\bP_{\bB\bS}^\top\bB +\bB^\top\bP_{\bB\bS}^\top\bP_{\bB\bS}\bB\\
+    &=\bB^\top\bB - \bB^\top\bP_{\bB\bS}\bB\qquad\text{$\bP_{\bB\bS}$ is symmetric, idempotent}\\
+    &= \bA - \bB^\top\bB\bS(\bS^\top\bB^\top\bB\bS)^{-1}\bS^\top\bB^\top\bB\\
+    &= \bA - \bA\bS(\bS^\top\bA\bS)^{-1}\bS^\top\bA\\
+    &= \bA - \bA\gen{S}.
+\end{align*}
+
+\vspace{1em}
+\noindent
+(2) For each fixed set of indices $T \subseteq [n]$, let $S_T$ denote the corresponding column selection matrix.
+The residuals obtained after selecting exactly the set $T$ are notated
+\[
+\mathbf{R}_A(T) := \mathbf{A}-\mathbf{A}\langle S_T\rangle,
+\qquad
+\mathbf{R}_B(T) := \mathbf{B}-\mathbf{P}_{\mathbf{B}S_T}\mathbf{B}.
+\]
+By part (1), for every $T$ we have the identity
+\[
+\mathbf{R}_A(T) = \mathbf{R}_B(T)^\top \mathbf{R}_B(T).\tag{$\ast$}
+\]
+
+Now consider the two randomized procedures at iteration $i$, and condition on the event that the set selected so far equals $T$.
+Under this conditioning, \RPCholesky\ samples an index $j$ with probability
+\[
+p_{j,A}(T) \;=\; \frac{\mathbf{R}_A(T)_{jj}}{\mathrm{tr}(\mathbf{R}_A(T))}.
+\]
+Using ($\ast$),
+\[
+\mathbf{R}_A(T)_{jj}
+= \big(\mathbf{R}_B(T)^\top \mathbf{R}_B(T)\big)_{jj}
+= \|\mathbf{R}_B(T)_{:,j}\|_2^2
+\]
+and
+\[
+\mathrm{tr}(\mathbf{R}_A(T))
+= \mathrm{tr}\big(\mathbf{R}_B(T)^\top \mathbf{R}_B(T)\big)
+= \|\mathbf{R}_B(T)\|_F^2.
+\]
+Therefore,
+\[
+p_{j,A}(T)
+=\frac{\|\mathbf{R}_B(T)_{:,j}\|_2^2}{\|\mathbf{R}_B(T)\|_F^2}
+= p_{j,B}(T)
+\]
+which is exactly the adaptive-sampling probability at step $i$ conditioned on having previously selected $T$.
+
+Finally, since both algorithms start from the same initial set $T=\varnothing$ and, for every intermediate set $T$, assign the same conditional distribution to the next sampled index, it follows that the output index sets $S_A$ and $S_B$ have the same distribution.
+\end{proof}
+
+\subsection{Ridge leverage score sampling}
+
+Ridge leverage score (RLS) sampling is an alternative sampling technique for the Nystr\"om method. It has been used extensively in literature to produce strong theoretical guarantees for the Nystr\"om method. Notably, Musco and Musco \cite{musco_recursive_2017} analyzed RLS sampling to produce the first sublinear low-rank psd approximation algorithm with strong theoretical guarantees.
+
+Given a regularization parameter $\lambda>0$, the \emph{ridge leverage scores} of $\bA$
+are defined by
+\[
+\ell_\lambda \;=\; \diag\left(\bA(\bA +\lambda \bI)^{-1}\right).
+\]
+These scores quantify the “importance” of each column under $\lambda$-regularization. 
+
+The RLS sampling scheme is as follows. Choose an \emph{oversampling factor} $f>1$ and form inclusion probabilities
+\[
+p(i) \;=\; \min\{1,\; f\cdot \ell_\lambda(i)\},\qquad i=1,\dots,n.
+\]
+Then construct an index set $S\subseteq[n]$ by including each index $i$ independently with
+probability $p(i)$. Then, return the approximation $\bA\gen{S}$.
+
+Musco and Musco \cite{musco_recursive_2017} prove that, with appropriate parameter choices, RLS sampling achieves near-optimal trace
+error with high probability:
+
+\begin{theorem}[\cite{musco_recursive_2017}]
+\label{thm:rls-musco}
+For any psd $\bA$, there exist parameters $\lambda,f>0$ such that RLS sampling produces $\bA\gen{S}$ with
+\[
+\tr(\bA-\bA\gen{S})\leq (1+\varepsilon)\tr(\bA-\bA_r)
+\]
+with probability at least $1-\delta$, provided
+\[
+|S| = O\left(\frac{r}{\varepsilon}\log\!\left(\frac{r}{\delta\varepsilon}\right)\right).
+\]
+\end{theorem}
+
+Chen et al. \cite{chen_randomly_2025} provide a separate analysis of RLS sampling in the language of $(r, \varepsilon)$-approximation (Definition~\ref{def:r-epsilon}). As before, the relative error is defined as
+\[
+\eta := \frac{\tr(A-A_r)}{\tr(A)}.
+\]
+
+\begin{theorem}[\cite{chen_randomly_2025}]
+Fix $r\geq 1$ and $\varepsilon>0$. Run RLS sampling with
+\[
+\lambda \;=\; \frac{\varepsilon}{2r}\,\tr(\bA-\bA_r),
+\qquad
+f \;=\; 27\log\!\Big(\frac{4}{\eta}\Big(r+\frac{r}{\varepsilon}\Big)\Big).
+\]
+Then, with probability at least $1-\varepsilon\eta/2$, the Nystr\"om approximation $\bA\gen{S}$ satisfies
+\[
+\tr(\bA-\bA\gen{S})\;\le\;\Big(1+\frac{\varepsilon}{2}\Big)\tr(\bA-\bA_r)
+\quad\text{and}\quad
+\rank(\bA\gen{S})\;\le\;
+65\Big(r+\frac{r}{\varepsilon}\Big)\log\!\Big(\frac{4}{\eta}\Big(r+\frac{r}{\varepsilon}\Big)\Big).
+\]
+Moreover, defining $\widehat\bA^{(k)} = \bA\gen{S}$ if $\rank(\bA\gen{S})\le k$
+and $\widehat\bA^{(k)}=0$ otherwise, with
+\[
+k \;=\;
+65\left(r+\frac{r}{\varepsilon}\right)\log\!\left(\frac{4}{\eta}\left(r+\frac{r}{\varepsilon}\right)\right),
+\]
+one obtains
+\[
+\E\,\tr(\bA- \widehat\bA^{(k)})\;\le\;(1+\varepsilon)\tr(\bA-\bA_r).
+\]
+\end{theorem}

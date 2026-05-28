@@ -1,0 +1,61 @@
+\documentclass{article}
+\input{preamble}
+
+\title{Approximate Column Norm Sampling}
+\author{Aaron Tian}
+\date{\today}
+
+\begin{document}
+% \input{chapters/abstract}
+\maketitle
+
+% can we sample a small principal submatrix?
+
+% \section*{Column Norm Sampling}
+
+Let $A$ and $B$ be psd matrices. We show how to sample columns from $\bR := \bA - \bB$ in such a way that column $i$ is picked with probability
+\[p_i = \frac{\|\br_i\|^2_2}{\|\bR\|^2_F}\]
+for all $i$. Note that $\bR$ need not be psd. We begin with the following observation:
+\begin{lemma}
+    For psd matrices $\bA$ and $\bB$, the entries of $\bR := \bA - \bB$ satisfy
+    \[\bR_{ij}^2\leq (\bA + \bB)_{ii}(\bA + \bB)_{jj}\qquad\text{for all $i,j$.}\]
+\end{lemma}
+
+\begin{proof}
+    Since $\bA$ and $\bB$ are psd, we have
+    \[|\bA_{ij}|\leq \sqrt{\bA_{ii}\bA_{jj}}\qquad |\bB_{ij}|\leq \sqrt{\bB_{ii}\bB_{jj}}\qquad\text{for all $i,j$.}\]
+    Then $|\bR_{ij}|$ satisfies
+    \begin{align*}
+        |\bR_{ij}| &= |\bA_{ij} - \bB_{ij}|\\
+        &\leq \sqrt{\bA_{ii}\bA_{jj}} + \sqrt{\bB_{ii}\bB_{jj}}\\
+        &\leq\sqrt{(\bA_{ii} + \bB_{ii})(\bA_{jj} + \bB_{jj})}
+    \end{align*}
+    in which the desired result follows. The last inequality is be verified by squaring both sides and applying the AM-GM inequality to deduce
+    \[2\sqrt{\bA_{ii}\bA_{jj}\bB_{ii}\bB_{jj}}\leq \bA_{ii}\bB_{jj} + \bA_{jj}\bB_{ii}.\]
+\end{proof}
+
+We now describe the sampling procedure. One round is as follows:
+\begin{enumerate}
+    \item Sample indices $i,j$ independently from $\frac{\diag(\bA + \bB)}{\tr(\bA + \bB)}$
+    \item Accept $i$ with probability $\frac{\bR_{ij}^2}{(\bA+\bB)_{ii}(\bA+\bB)_{jj}}$.
+\end{enumerate}
+Then, continue in rounds and return the first accepted index. This procedure requires us to compute the diagonal entries of $\bA + \bB$, as well as one entry of $\bR$ per round. 
+
+\begin{lemma}
+    The sampling procedure above outputs $i$ with probability 
+    \[p_i = \frac{\|\br\|^2_2}{\|\bR\|^2_F}\]
+    for all $i$.
+\end{lemma}
+\begin{proof}
+    In any given round, the probability of outputting $i$ is 
+    \[\frac{(\bA + \bB)_{ii}}{\tr(\bA + \bB)}\sum_{j\in [n]}\frac{(\bA + \bB)_{jj}}{\tr(\bA + \bB)}\frac{\bR_{ij}^2}{(\bA+\bB)_{ii}(\bA+\bB)_{jj}} = \sum_{j\in [n]}\frac{\bR_{ij}^2}{\tr(\bA + \bB)^2} = \frac{\|\br_i\|^2_2}{\tr(\bA + \bB)^2}.\]
+
+    Moreover, summing over all $i$ gives the success probability 
+    \[\boxed{\beta = \frac{\|\bR\|^2_F}{\tr(\bA + \bB)^2}}\]
+    Thus, conditioned on success, the probability of outputting $i$ is precisely 
+    \[\frac{\|\br\|^2_2}{\|\bR\|^2_F}.\]
+\end{proof}
+
+\noindent
+It still remains to study the success probability $\beta$, since the expected number of rounds before success is $1/\beta$.
+\end{document}

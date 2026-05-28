@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{wl{3.6cm}cccccc}
+\toprule
+dataset & & $\eta_\ast$ & & & $\eta_F$ & \\
+\cmidrule(lr){2-4}
+\cmidrule(lr){5-7}
+& \RPCholesky2 & \RPCholesky & Opt & \RPCholesky2 & \RPCholesky & Opt \\
+\midrule
+yolanda & \textbf{1.38e-1} & 1.40e-1 & 8.71e-2 & \textbf{6.02e-3} & 6.30e-3 & 3.15e-3 \\
+mnist\_784 & \textbf{1.04e-1} & 1.09e-1 & 5.96e-2 & \textbf{4.67e-3} & 4.95e-3 & 1.97e-3 \\
+jannis & \textbf{1.07e-1} & 1.09e-1 & 5.42e-2 & \textbf{6.27e-3} & 6.52e-3 & 2.16e-3 \\
+volkert & \textbf{4.07e-2} & 4.31e-2 & 2.06e-2 & \textbf{2.09e-3} & 2.26e-3 & 7.16e-4 \\
+creditcard & \textbf{2.08e-2} & 2.32e-2 & 9.87e-3 & \textbf{1.39e-3} & 1.60e-3 & 5.04e-4 \\
+hls4ml\_lhc\_jets\_hlf & \textbf{3.98e-5} & 4.47e-5 & 1.07e-5 & \textbf{4.01e-6} & 4.77e-6 & 7.97e-7 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Relative trace and Frobenius error comparison between rank-1000 \RPCholesky\ and \RPCholesky2 methods when used to approximate a Gaussian kernel matrix. Each dataset is pruned to $10^4$ points and standardized, and we report the median across 10 trials. The error of the optimal rank-1000 approximation is included for reference.}
+\label{tab:rpc2-rel-error1000}
+\end{table}

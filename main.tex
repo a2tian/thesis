@@ -1,0 +1,42 @@
+\documentclass[12pt,reqno]{memoir}
+\usepackage[margin=1in]{geometry}
+\DisemulatePackage{setspace}
+\usepackage{setspace}
+\input{preamble}
+
+\title{Fast Length-Squared Sampling for Positive-Semidefinite Matrix Approximation}
+\author{Aaron Tian}
+\date{}
+% \date{\today}
+
+\begin{document}
+% \input{chapters/abstract}
+\maketitle
+\newpage
+\input{chapters/0-abstract}
+\newpage
+\tableofcontents
+\newpage
+\doublespacing
+\chapter{Introduction}
+\input{chapters/1-introduction}
+
+%Discuss these algorithms in greater detail: RPC, MM17, MW17, robust sublinear time low-rank approx which does column norm sampling, maybe original adaptive sampling paper
+
+\chapter{Background}
+\input{chapters/2-background}
+
+\chapter{Fast Length-Squared Sampling}
+\input{chapters/2-column-norm-sampling}
+
+\chapter{Matrix Approximation}
+\input{chapters/3-applications}
+
+\chapter{Numerical Experiments}
+
+
+\chapter{Discussion}
+\newpage
+\bibliographystyle{alpha}
+\bibliography{references}
+\end{document}

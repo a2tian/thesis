@@ -1,0 +1,352 @@
+
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\| #1 \|}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\clip}{\operatorname{clip}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bN}{\mathbf{N}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bS}{\mathbf{S}}
+\newcommand{\bQ}{\mathbf{Q}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{algorithm}{Algorithm}
+
+\title{Robust Low-Rank Approximation via Column-Norm Sampling}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+Let $\bB=\bA+\bN\in\R^{n\times n}$, where $\bA\succeq 0$ is an unknown positive semidefinite matrix and $\bN$ is an unknown perturbation. Bakshi, Chepurko, and Woodruff~\cite{BCW21} study robust low-rank approximation in this model under the assumptions
+\[
+    \norm{\bN}_F^2\leq \eta\norm{\bA}_F^2
+    \qquad\text{and}\qquad
+    \norm{\bN_{i,*}}_2^2\leq c\norm{\bA_{i,*}}_2^2
+    \quad\text{for all }i\in[n],
+\]
+where $c$ is a fixed constant. Their algorithm is parameterized by a measure of diagonal corruption:
+\[
+    \phi_{\max}:=\max_{i\in[n]}\frac{\bA_{ii}}{|\bB_{ii}|}.
+\]
+Their Theorem 5.11 gives a rank-$k$ approximation $\bX$ satisfying
+\[
+    \norm{\bA-\bX}_F^2
+    \leq
+    \norm{\bA-\bA_k}_F^2+(\varepsilon+\sqrt{\eta})\norm{\bA}_F^2
+\]
+using $\widetilde O(\phi_{\max}^2nk/\varepsilon)$ queries to $\bB$.
+
+\medskip
+% In this note, we show how to sample rows and columns from 
+
+% Throughout, assume
+% \[
+%     \norm{\bN}_F^2\leq \eta\norm{\bA}_F^2
+% \]
+% and suppose that we are given a number $\Phi\geq 1$ such that
+% \[
+%     \bA_{ii}\leq \Phi | \bB_{ii}|
+%     \qquad\text{for every }i\in[n].
+% \]
+% In the notation of Bakshi--Chepurko--Woodruff, one may take $\Phi=\phi_{\max}$ and $\rho=\sqrt{\eta}$.
+
+% \section{Clipping}
+Let $\Phi$ be a number satisfying $\Phi \geq \max\{1, \phi_{\max}\}$. We first define the clipped matrix $\widetilde{\bB}$ entrywise by
+\[
+    \widetilde{\bB}_{ij}
+    :=
+    \clip\!\left(
+        \bB_{ij},
+        -\Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|},
+        \Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|}
+    \right),
+\]
+where
+\[
+    \clip(x,-\tau,\tau):=\min\{\tau,\max\{-\tau,x\}\}.
+\]
+A query to $\widetilde{\bB}_{ij}$ is very efficient when the diagonal entries of $\bB$ are known. Bakshi, Chepurko, and Woodruff state that we can sample from $\widetilde \bB$ without increasing corruption to $\bA$~\cite{BCW21}. The following lemma formalizes this statement:
+
+\begin{lemma}[Clipping lemma]
+The clipped matrix satisfies
+\[
+    \widetilde{\bB}_{ij}^{\,2}
+    \leq
+    \Phi^2|\bB_{ii}|\,|\bB_{jj}|
+    \qquad\text{for all }i,j\in[n].
+\]
+Moreover, we may write
+\[\widetilde\bB = \bA + \widetilde\bN\]
+for some matrix $\widetilde\bN$ satisfying $\|\widetilde\bN\|^2_F\leq \|\bN\|^2_F$. 
+\end{lemma}
+
+\begin{proof}
+The first claim follows directly from the definition of clipping. For the
+second claim, we first note
+\[
+    \bA_{ii}\leq \Phi|\bB_{ii}|
+    \qquad\text{and}\qquad
+    \bA_{jj}\leq \Phi|\bB_{jj}|.
+\]
+by the definition of $\phi_{\max}$. Moreover, $\bA_{ij}^2\leq \bA_{ii}\bA_{jj}$ since $\bA$ is psd, so
+\[
+    |\bA_{ij}|
+    \leq
+    \Phi\sqrt{|\bB_{ii}|\,|\bB_{jj}|}.
+\]
+So the clipping interval for entry $ij$ contains 
+$\bA_{ij}$. In particular,
+\[
+    |\bB_{ij}-\bA_{ij}|
+    =
+    |\bB_{ij}-\widetilde{\bB}_{ij}|
+    +
+    |\widetilde{\bB}_{ij}-\bA_{ij}|
+    \geq
+    |\widetilde{\bB}_{ij}-\bA_{ij}|.
+\]
+Therefore
+\[
+    (\widetilde{\bB}_{ij}-\bA_{ij})^2
+    \leq
+    \left(\bB_{ij}-\bA_{ij}\right)^2
+    =
+    \bN_{ij}^2.
+\]
+Summing over all entries gives $\|\widetilde\bB - \bA\|^2_F\leq \|\bN\|^2_F$, which is the desired result.
+\end{proof}
+
+Given entry-wise access to $\bB$, we consider the following procedure to sample indices with probability proportional to the row (column) norms of $\widetilde\bB$. Let
+\[
+    D:=\sum_{i=1}^n |\bB_{ii}|.
+\]
+Assume $D>0$. In one trial, 
+\begin{enumerate}
+    \item Sample indices $i,j$ independently from $\frac{\diag(|\bB|)}{D}$.
+    \item Accept $i$ with probability
+    $\frac{\widetilde{\bB}_{ij}^{\,2}}{\Phi^2|\bB_{ii}|\,|\bB_{jj}|}.$
+\end{enumerate}
+
+\begin{lemma}
+Conditioned on acceptance,
+\[
+    p_i
+    =
+    \frac{\|\widetilde{\bB}_{i,*}\|_2^2}{\|\widetilde{\bB}\|_F^2}.
+\]
+Similarly, if the acceptance probability is changed to
+\[
+    \frac{\widetilde{\bB}_{ji}^{\,2}}
+    {\Phi^2|\bB_{ii}|\,|\bB_{jj}|},
+\]
+then
+\[
+    p_i
+    =
+    \frac{\|\widetilde{\bB}_{*,i}\|_2^2}{\|\widetilde{\bB}\|_F^2}.
+\]
+In either case, the expected number of trials until acceptance is at most
+$\Phi^2 n$.
+\end{lemma}
+
+\begin{proof}
+The acceptance probability is well-defined because the clipping lemma gives
+\[
+    \widetilde{\bB}_{ij}^{\,2}
+    \leq
+    \Phi^2|\bB_{ii}|\,|\bB_{jj}|.
+\]
+If $|\bB_{ii}|\,|\bB_{jj}|=0$, then the pair $(i,j)$ is sampled with probability
+zero, so the value of the acceptance rule on that pair is irrelevant.
+
+In one trial, the probability of outputting $i$ is
+\[
+    \frac{|\bB_{ii}|}{D}
+    \sum_{j=1}^n
+    \frac{|\bB_{jj}|}{D}
+    \cdot
+    \frac{\widetilde{\bB}_{ij}^{\,2}}
+    {\Phi^2|\bB_{ii}|\,|\bB_{jj}|}
+    =
+    \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}
+    {\phi_{\max}^2 D^2}.
+\]
+Summing over all indices gives total acceptance probability
+\[
+    \frac{\norm{\widetilde{\bB}}_F^2}{\Phi^2 D^2}
+\]
+and conditioning on acceptance, the probability of outputting $i$ is
+\[
+    \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}{\norm{\widetilde{\bB}}_F^2}.
+\]
+The column-norm statement is identical after replacing
+$\widetilde{\bB}_{ij}$ by $\widetilde{\bB}_{ji}$.
+
+It remains to bound the acceptance probability. Since
+$\Phi\geq 1$, the diagonal entries are not clipped, so
+\[
+    D^2
+    =
+    \left(\sum_{i=1}^n |\bB_{ii}|\right)^2
+    \leq
+    n\sum_{i=1}^n \bB_{ii}^2
+    =
+    n\sum_{i=1}^n \widetilde{\bB}_{ii}^{\,2}
+    \leq
+    n\norm{\widetilde{\bB}}_F^2.
+\]
+Thus the acceptance probability satisfies
+\[
+    \frac{\norm{\widetilde{\bB}}_F^2}{\Phi^2D^2}
+    \geq
+    \frac{1}{\Phi^2 n}.
+\]
+
+\end{proof}
+
+
+\section{Robust Low-Rank Approximation}
+We use the following result of Frieze, Kannan, and Vempala \cite{FKV04}. Let $\bM\in\R^{n\times n}$. Suppose one can sample rows of $\bM$ with
+probability exactly
+\[
+    p_i=\frac{\norm{\bM_{i,*}}_2^2}{\norm{\bM}_F^2}
+\]
+Then, using $O(k/\varepsilon)$ sampled rows, there
+is a randomized algorithm that outputs a rank-$k$ matrix $\bX$ satisfying
+\[
+    \norm{\bM-\bX}_F^2
+    \leq
+    \norm{\bM-\bM_k}_F^2+\varepsilon\norm{\bM}_F^2
+\]
+with constant probability.
+
+\begin{theorem}
+Let $\bM = \widetilde\bB$. Then the algorithm above outputs a rank-$k$ matrix $\bX$
+such that, with constant probability,
+\[
+    \norm{\bA-\bX}_F^2
+    \leq
+    \norm{\bA-\bA_k}_F^2
+    +
+    O(\varepsilon+\sqrt{\eta})\norm{\bA}_F^2.
+\]
+\end{theorem}
+
+\begin{proof}
+By mimicking equations 2.12 and 2.13 of \cite{BCW21}.
+% First define
+% \[
+%     \widetilde \bN=\widetilde{\bB}-\bA.
+% \]
+% By the clipping lemma,
+% \[
+%     \norm{\widetilde \bN}_F\leq \norm{\bN}_F\leq \sqrt{\eta}\norm{\bA}_F.
+% \]
+% Applying the guarantee of \cite{FKV04} to $\widetilde{\bB}$ gives
+% \[
+%     \norm{\widetilde{\bB}-\bX}_F^2
+%     \leq
+%     \norm{\widetilde{\bB}-\widetilde{\bB}_k}_F^2
+%     +
+%     \varepsilon\norm{\widetilde{\bB}}_F^2.
+% \]
+% Since $\bA_k$ is rank-$k$,
+% \[
+%     \norm{\widetilde{\bB}-\widetilde{\bB}_k}_F^2
+%     \leq
+%     \norm{\widetilde{\bB}-\bA_k}_F^2
+%     =
+%     \norm{\bA-\bA_k+\widetilde\bN}_F^2.
+% \]
+% Using Cauchy--Schwarz and $\norm{\bA-\bA_k}_F\leq\norm{\bA}_F$,
+% \[
+%     \norm{\bA-\bA_k+\widetilde\bN}_F^2
+%     \leq
+%     \norm{\bA-\bA_k}_F^2
+%     +
+%     O(\sqrt{\eta})\norm{\bA}_F^2.
+% \]
+% Also,
+% \[
+%     \norm{\widetilde{\bB}}_F
+%     \leq
+%     \norm{\bA}_F+\norm{\widetilde\bN}_F
+%     \leq
+%     (1+\sqrt{\eta})\norm{\bA}_F,
+% \]
+% so the guarantee implies
+% \[
+%     \norm{\widetilde{\bB}-\bX}_F^2
+%     \leq
+%     \norm{\bA-\bA_k}_F^2
+%     +
+%     O(\varepsilon+\sqrt{\eta})\norm{\bA}_F^2.
+% \]
+% Finally,
+% \[
+%     \norm{\bA-\bX}_F^2
+%     =
+%     \norm{\widetilde{\bB}-\bX-\widetilde\bN}_F^2.
+% \]
+% Since $\norm{\widetilde\bN}_F\leq\sqrt{\eta}\norm{\bA}_F$ and the preceding display also
+% bounds $\norm{\widetilde{\bB}-\bX}_F=O(\norm{\bA}_F)$, another application of
+% Cauchy--Schwarz gives
+% \[
+%     \norm{\bA-\bX}_F^2
+%     \leq
+%     \norm{\widetilde{\bB}-\bX}_F^2
+%     +
+%     O(\sqrt{\eta})\norm{\bA}_F^2.
+% \]
+% Combining the last two inequalities proves
+% \[
+%     \norm{\bA-\bX}_F^2
+%     \leq
+%     \norm{\bA-\bA_k}_F^2
+%     +
+%     O(\varepsilon+\sqrt{\eta})\norm{\bA}_F^2.
+% \]
+\end{proof}
+
+
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{BCW21}
+Ainesh Bakshi, Nadiia Chepurko, and David P. Woodruff.
+\newblock Robust and sample optimal algorithms for PSD low-rank approximation.
+\newblock \emph{arXiv:1912.04177v5}, 2021.
+
+\bibitem{FKV04}
+Alan Frieze, Ravi Kannan, and Santosh Vempala.
+\newblock Fast Monte-Carlo algorithms for finding low-rank approximations.
+\newblock \emph{Journal of the ACM}, 51(6):1025--1041, 2004.
+
+\end{thebibliography}
+
+\end{document}

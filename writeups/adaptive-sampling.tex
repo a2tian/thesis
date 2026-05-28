@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage[margin=1.5in]{geometry}
+\input{preamble}
+
+\title{Adaptive Sampling with a Symmetric Residual}
+\author{Aaron Tian}
+\date{\today}
+
+\begin{document}
+% \input{chapters/abstract}
+\maketitle
+
+Let $\bA\in \R^{n\times n}$ be a psd matrix. We modify the adaptive sampling procedure from \cite{deshpande_adaptive_2006} as follows:
+
+
+\begin{enumerate}
+    \item Start with a linear subspace $V$, and let $\bP_V$ be the orthogonal projector onto $V$.
+    \item Let $\bR_0 := \bA - \bP_V\bA\bP_V$ and $S := \varnothing$.
+    \item For $j = 1$ to $t$, do
+    \begin{enumerate}
+        \item Pick a sample $S_j$ of $s_j$ independent columns from $\bA$, where column $i$ is picked with probability 
+        \[p_i^{(j-1)}\geq c\cdot \frac{\|\bR_{j-1}(:, i)\|^2_2}{\|\bR_{j-1}\|^2_F}\]
+        for some fixed constant $c$.
+        \item $S\gets S\cup S_j$.
+        \item $\bR_{j} := \bA - \bP_{\matspan(V\cup S)}\bA\bP_{\matspan(V\cup S)}$.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{theorem}[One-round adaptive sampling]
+    \label{thm:adaptive-sampling}
+    For $t = 1$ in the adaptive sampling procedure above,
+    \[\E_{S_1}\left[\|\bA - \pi_{\matspan(V\cup S_1), k}(\bA)\|^2_F\right]\leq \|\bA - \bA_k\|^2_F + \frac{k}{cs_1}\|\bR_0\|^2_F.\]
+\end{theorem}
+
+Write $\bR_0 = \bA - \bB$ and observe that the original adaptive sampling procedure uses $\bB = \bP_V\bA$. However, the proof does not actually need $\bB = \bP_V\bA$; it only use the weaker assumption that the columns of $\bB$ lie in $\matspan(V)$. Thus, a direct adaptation of the original proof suffices.
+
+
+
+\begin{proof}
+    By mimicking the proof from \cite{deshpande_matrix_2006} (Theorem 2.1). Write the eigendecomposition for $\bA$ as
+    \[\bA = \sum_{j = 1}^n\lambda_j \bu_j\bu_j^\top\qquad \lambda_1 \geq \lambda_2\geq \cdots\geq \lambda_n\geq 0.\]
+    Our goal is to find vectors $\bw_1, \ldots, \bw_k \in \matspan(V\cup S_1)$ such that $W := \matspan\left\{\bw_1,\ldots, \bw_k\right\}$ is a good approximation to $\matspan\left\{\bu_1,\ldots, \bu_k\right\}$ in the sense that 
+    \[\E_{S_1}\left[\|\bA - \pi_W(\bA)\|^2_F\right]\leq \|\bA - \bA_k\|^2_F + \frac{k}{cs_1}\|\bR_0\|^2_F\]
+    in which case the theorem follows immediately.
+    
+    For each $j\in [n]$, define the random variable $X_j^{(\ell)}$ such that for $i = 1,\ldots, n$ and $\ell = 1,\ldots, s_1$, 
+    \[X_j^{(\ell)} = \frac{\bu_j(i)}{p_i}\bR_0(:, i)\qquad\text{with probability $p_i$.}\]
+    Then,
+    \begin{align*}
+        \E\left[X_j^{(\ell)}\right] &= \sum_{i = 1}^n p_i\cdot \frac{\bu_j(i)}{p_i}\bR_0(:, i)\\
+        &= \sum_{i = 1}^n \bu_j(i)\bR_0(:, i)\\
+        &= \bR_0 \bu_j
+    \end{align*}
+    Let $X_j = \frac{1}{s_1}\sum_{\ell = 1}^{s_1} X_j^{(\ell)}$ and note that $\E_{S_1}\left[X_j\right] = \bR_0 \bu_j$. Now, set 
+    \[\bw_j := (\bP_V\bA\bP_V)\bu_j + X_j.\]
+    Taking expectations,
+    \begin{align*}
+        \E[\bw_j] &= (\bP_V\bA\bP_V)\bu_j + \E[X_j]\\
+        &= (\bP_V\bA\bP_V)\bu_j + \bR_0\bu_j\\
+        &= \bA\bu_j\\
+        &= \lambda_j\bu_j.
+    \end{align*}
+    At this point, we seek a bound on $\E\left[\|\bw_j - \lambda_j\bu_j\|^2_2\right]$. We have
+    \begin{align*}
+         \E\left[\|\bw_j - \lambda_j\bu_j\|^2_2\right] &= \E\left[\|(\bP_V\bA\bP_V)\bu_j + X_j - \bA\bu_j\|^2_2\right]\\
+         &= \E\left[\|X_j - \bR_0\bu_j\|^2_2\right]\\
+         &= \E\left[\|X_j - \E[X_j]\|^2_2\right]\\
+         &= \E\left[\|X_j\|^2_2\right] - 2 \E\left[X_j\right]\cdot \bR_0u_j + \|\bR_0\bu_j\|^2_2\\
+         &= \E\left[\|X_j\|^2_2\right] -  \|\bR_0\bu_j\|^2_2.\\
+    \end{align*}
+    For the first term,
+    \begin{align*}
+         \E\left[\|X_j\|^2_2\right] &= \E\left[\left\|\frac{1}{s_1}\sum_{\ell = 1}^{s_1} X_j^{(\ell)}\right\|^2_2\right]\\
+         &= \frac{1}{s_1^2}\sum_{\ell = 1}^{s_1}\E\left[\|X_j^{(\ell)}\|^2_2\right] + \frac{2}{s_1^2}\sum_{1\leq \ell_1 < \ell_2\leq s_1}\E\left[X_j^{(\ell_1)}\cdot X_j^{(\ell_2)}\right]\\
+         &= \frac{1}{s_1^2}\sum_{\ell = 1}^{s_1}\E\left[\|X_j^{(\ell)}\|^2_2\right] + \frac{2}{s_1^2}\cdot \binom{s_1}{2}\|\bR_0\bu_j\|^2_2\qquad\text{$X_j^{(\ell_1)}, X_j^{(\ell_2)}$ are independent}\\
+         &= \frac{1}{s_1^2}\sum_{\ell = 1}^{s_1}\E\left[\|X_j^{(\ell)}\|^2_2\right] + \frac{s_1-1}{s_1}\|\bR_0\bu_j\|^2_2.\\
+    \end{align*}
+    Recalling the definition of $X_j^{(\ell)}$, 
+    \begin{align*}
+        \E\left[\|X_j^{(\ell)}\|^2_2\right] &= \sum_{i = 1}^n p_i\cdot  \left\|\frac{u_j(i)}{p_i}\bR_0(:, i)\right\|^2_2\\
+        &=\sum_{i = 1}^n\frac{\bu_j(i)^2}{p_i}\left\|\bR_0(:, i)\right\|^2_2.
+    \end{align*}
+    In particular, if $p_i$ satisfies $p_i\geq c\cdot \frac{\|\bR_0(:,i)\|^2_2}{\|\bR_0\|^2_F}$ then 
+    \[\E\left[\|X_j^{(\ell)}\|^2_2\right] \leq \frac{\|\bR_0\|^2_F}{c}\sum_{i = 1}^nu_j(i)^2 = \frac{\|\bR_0\|^2_F}{c}.\]
+    Putting everything together, 
+    \begin{align*}
+        \E\left[\|\bw_j - \lambda_j\bu_j\|^2_2\right] &= \E\left[\|X_j\|^2_2\right] -  \|\bR_0\bu_j\|^2_2\\
+        &= \frac{1}{s_1^2}\sum_{\ell = 1}^{s_1}\E\left[\|X_j^{(\ell)}\|^2_2\right] + \frac{s_1-1}{s_1}\|\bR_0\bu_j\|^2_2 - \|\bR_0\bu_j\|^2_2\\
+        &\leq \frac{1}{cs_1}{\|\bR_0\|^2_F} - \frac{1}{s}\|\bR_0\bu_j\|^2_2\\
+        &\leq \frac{1}{cs_1}{\|\bR_0\|^2_F}.
+    \end{align*}
+
+    Finally, take $W := \{\bw_1, \ldots, \bw_k\}\subseteq \matspan(V \cup S_1)$ and define
+    \[\bF := \sum_{j = 1}^k\bw_j\bu_j^\top.\]
+    Since $\col(\bF)\subseteq W$, we have
+    \[\|\bA - \pi_W(\bA)\|^2_F\leq \|\bA - \bF\|^2_F.\]
+    Moreover, 
+    \[(\bA - \bF)\bu_j = \begin{cases}
+        \lambda_j\bu_j - \bw_j&j\leq k\\
+        \lambda_j\bu_j&\text{otherwise.}
+    \end{cases}\]
+    Hence,
+    \[\E\left[\|\bA - \bF\|^2_F\right] = \sum_{j = 1}^k \E\left[\|\lambda_j\bu_j - \bw_j\|^2_2\right] + \sum_{j = k+1}^n \E\left[\|\lambda_j\bu_j\|^2_2\right]\]
+    yielding the final desired result
+    \begin{align*}
+        \E_{S_1}\left[\|\bA - \pi_W(\bA)\|^2_F\right]&\leq \E\left[\|\bA - \bF\|^2_F\right]\\
+        &= \sum_{j = 1}^k \E\left[\|\lambda_j\bu_j - \bw_j\|^2_2\right] + \sum_{j = k+1}^n \lambda_j^2\\
+        &\leq \|\bA - \bA_k\|^2_F + \frac{k}{cs_1}\|\bR_0\|^2_F.
+    \end{align*}
+\end{proof}
+
+\begin{corollary}
+Let 
+\[\alpha_j := \frac{2k}{cs_j}.\]
+After $t$ rounds of adaptive sampling, 
+\begin{align*}
+    &\E_{S_1,\ldots, S_{t}}\left[\|\bA - \pi_{\matspan(V\cup \cdots \cup S_{t+1}), k}(\bA)\|^2_F\right]\\&\leq \left(1 + \alpha_t + \alpha_t\alpha_{t-1}+ \cdots + \alpha_t\alpha_{t-1}\cdots\alpha_2\right)\|\bA - \bA_k\|^2_F + (\alpha_t\cdots \alpha_1)\|\bA - \pi_{V, k}(\bA)\|^2_F.
+\end{align*}
+\end{corollary}
+\begin{proof}
+    By induction on $t$. The case $t=1$ is just Theorem~\ref{thm:adaptive-sampling}. For the inductive step, applying Theorem~\ref{thm:adaptive-sampling} to $\matspan(V\cup S_1\cup\cdots\cup S_t)$ gives
+    \[\E_{S_{t+1}}\left[\|\bA - \pi_{\matspan(V\cup S_1\cup \cdots \cup S_{t+1}), k}(\bA)\|^2_F\right]\leq \|\bA - \bA_k\|^2_F + \frac{k}{cs_t}\|\bR_t\|^2_F.\]
+    Moreover, we note that 
+    \begin{align*}
+        \|\bR\|^2_F &= \|\bA - \bP\bA\bP\|^2_F\\
+        &\leq\|\bA - \bP\bA\|^2_F + \|\bP\bA - \bP\bA\bP\|^2_F\\
+        &\leq\|\bA - \bP\bA\|^2_F + \|\bA - \bA\bP\|^2_F\\
+        &= 2\cdot \|\bA - \bP\bA\|^2_F.
+    \end{align*}
+    Then, 
+    \begin{align*}
+        \E_{S_{t+1}}\left[\|\bA - \pi_{\matspan(V\cup S_1\cup \cdots \cup S_{t+1}), k}(\bA)\|^2_F\right]&\leq \|\bA - \bA_k\|^2_F + \frac{k}{cs_t}\|\bR_t\|^2_F\\
+        &\leq \|\bA - \bA_k\|^2_F + \frac{2k}{cs_t}\|\bA - \pi_{\matspan(V\cup S_1\cup \cdots \cup S_{t}), k}(\bA)\|^2_F.
+    \end{align*}
+    Taking expectation over $S_1,\ldots, S_t$ gives
+    \[\E_{S_1,\ldots, S_{t+1}}\left[\|\bA - \pi_{\matspan(V\cup \cdots \cup S_{t+1}), k}(\bA)\|^2_F\right]\leq \|\bA - \bA_k\|^2_F + \frac{2k}{cs_t}\E_{S_1,\ldots, S_{t}}\left[\|\bA - \pi_{\matspan(V\cup \cdots \cup S_{t}), k}(\bA)\|^2_F\right]\]
+    and applying the inductive hypothesis yields the desired result.
+\end{proof}
+
+\newpage
+\bibliographystyle{alpha}
+\bibliography{references}
+\end{document}

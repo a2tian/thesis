@@ -1,0 +1,112 @@
+We demonstrate how to sample columns from a psd matrix $\bA$ such that any column $i$ is picked with probability
+\[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+while reading $O(n)$ entries of $\bA$ and running in $O(n)$ time in expectation. We also give a matching lower bound showing that $\Omega(n)$ entry queries are necessary for length-squared sampling. 
+
+Our algorithm applies a well-known technique called \textit{rejection sampling}. Needell, Srebro, and Ward \cite{needell_stochastic_2015} use rejection sampling to obtain length-squared samples from an arbitrary matrix, assuming a known upper bound $B$ on the row norms: 
+\[\|a_i\|^2_2\leq B\qquad\text{for all $i$.}\]
+Our algorithm removes this assumption by leveraging psd structure.
+
+\begin{algorithm}[H]
+\caption{Fast Length-Squared Sampling}
+\label{alg:sampling-procedure}
+
+\noindent
+Let \(P\) be the diagonal distribution given by $P_i = \frac{\bA_{ii}}{\tr(\bA)}$.
+
+\smallskip
+\noindent
+Repeat the following in rounds until an index is accepted:
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Sample indices \(i,j \overset{\mathrm{i.i.d.}}{\sim} P\).
+
+    \item Accept and return \(i\) with probability
+    $\frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}}$.
+    Otherwise, reject.
+\end{enumerate}
+\end{algorithm}
+
+\begin{theorem}
+    \label{thm:fast-l2-sampling}
+    Algorithm~\ref{alg:sampling-procedure} outputs column $i$ with probability
+    \[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    for all $i$. Moreover, the expected number of rounds before acceptance is at most $n$.
+\end{theorem}
+
+\begin{proof}
+    The acceptance probability in each round is well-defined because $\bA_{ij}^2\leq\bA_{ii}\bA_{jj}$ holds for all $i,j\in [n]$ when $\bA$ is psd.
+    
+    In any given round, the probability of outputting $i$ is
+    \[\frac{\bA_{ii}}{\tr(\bA)}\sum_{j\in [n]} \frac{\bA_{jj}}{\tr(\bA)}\cdot \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}} = \sum_{j\in [n]}\frac{\bA_{ij}^2}{\tr(\bA)^2} = \frac{\|\ba_i\|^2_2}{\tr(\bA)^2}.\]
+    Moreover, summing over all indices gives the success probability
+    \[\beta := \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
+    for one round. Conditioning on success, the probability of outputting $i$ is thus
+    \[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    as desired. Finally, expand $\beta$ to obtain a lower bound on the acceptance probability:
+    \begin{align*}
+        \beta &= \frac{\|\bA\|^2_F}{\tr(\bA)^2}\\
+        &= \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}\lambda_k(\bA)\right)^2}\\
+        &\geq \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}1^2\right)\left(\sum_{k \in [n]}\lambda_k(\bA)^2\right)}\\
+        &= \frac{1}{n}.
+    \end{align*}
+    In particular, the expected number of rounds before the first acceptance is $1/\beta\leq n$.
+\end{proof}
+
+\begin{corollary}[Fixed-query length-squared sampling]
+    Suppose we modify Algorithm~\ref{alg:sampling-procedure} as follows:
+    \begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+        \item Run exactly $n$ rounds.
+        \item Return the first accepted index if any round accepts. 
+        \item Otherwise, return a uniformly random index.
+    \end{enumerate}
+    Then the modified sampling procedure outputs index $i$ with probability 
+    \[p_i\geq \left(1 - e^{-1}\right)\cdot\frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    while reading exactly $2n$ entries of $\bA$ and running in $O(n)$ time.
+\end{corollary}
+
+\begin{proof}
+Let 
+\[\beta = \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
+be the success probability for one round, as in the proof of Theorem~\ref{thm:fast-l2-sampling}.
+
+Suppose we run $k$ rounds of the sampling algorithm. The probability of at least one success is 
+$1 - (1-\beta)^k$,
+so the probability of outputting $i$ is at least
+\[\left[1 - (1-\beta)^k\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.\]
+In particular, in $n$ rounds the probability of outputting $i$ is
+\begin{align*}
+    p_i&\geq \left[1 - \left(1-\frac{1}{n}\right)^n\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\\
+    &\geq \left(1 - e^{-1}\right)\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.
+\end{align*}
+\end{proof}
+
+
+\begin{corollary}[Frobenius norm approximation]
+    Fix $\epsilon, \delta > 0$. Suppose we run $r$ rounds of Algorithm~\ref{alg:sampling-procedure}. Let $X$ be the number of accepted rounds and compute 
+    \[\widehat F := \frac{X}{r}\tr(\bA)^2.\]
+    If $r\geq 3n\log(2/\delta)/\epsilon^2$ then with probability at least $1-\delta$,
+    \[(1-\epsilon)\|\bA\|^2_F\leq \widehat F\leq(1+\epsilon)\|\bA\|^2_F.\]
+\end{corollary}
+
+\begin{proof}
+    Define the random variable
+    \[ X_i :=\begin{cases}1&\text{if round $i$ accepted}\\
+    0&\text{otherwise.}\end{cases}\]
+    Recall from the proof of Theorem~\ref{alg:sampling-procedure} that the acceptance probability for any round is
+    \[\beta = \frac{\|A\|^2_F}{\tr(\bA)^2}\]
+    so $\E X_i = \beta$.
+\end{proof}
+
+\section{Lower Bound for Length-Squared Sampling}
+

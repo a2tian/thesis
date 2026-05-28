@@ -1,0 +1,75 @@
+\section{Preliminaries}
+This section collects some relevant mathematical knowledge. Throughout, bold uppercase letters denote real-valued matrices and bold lowercase letters denote real-valued vectors. For a given matrix $\bM$, we write $\bM_{ij}$ for the entry at row $i$ and column $j$ of $\bM$. Moreover, we use $\bM_{i, *}$ to denote the $i$th row vector and $\bM_{*, i}$ to denote the $i$th column vector of $\bM$.
+\subsection{Low-Rank Approximation}
+Given a matrix $\bM\in \R^{n\times d}$ and target rank $k$, the low-rank approximation problem is to find a matrix $\widehat\bM$ of rank at most $k$ that approximates $\bM$. To measure the quality of the approximation, we consider the size of the \textit{residual matrix} $\bM - \widehat \bM$ with respect to some suitable matrix norm. We focus primarily on the \textit{Frobenius norm}, $\|\cdot\|_F$. A good approximation to $\bM$ should make $\|\bM - \widehat\bM\|_F$ small. 
+
+The \textit{singular value decomposition (svd)} yields an optimal rank-$k$ approximation to $\bM$ in the following manner. 
+Let $r = \rank(\bM)$ and write
+\[\bM = \sum_{i=1}^r\sigma_i\bu_i\bv_i^\top\]
+for the singular value decomposition of $\bM$, where $\sigma_1\geq\sigma_2\geq\cdots\geq \sigma_r\geq 0$ are the singular values of $\bM$, and the $\bu_i$ and $\bv_i$ are corresponding left and right singular vectors of $\bM$, respectively. The matrix $\bM_k$ is defined as
+\[\bM_k := \sum_{i=1}^k \sigma_i\bu_i\bv_i^\top.\]
+% Let $r = \rank(\bM)$ and write $\bM = \bU\bSigma\bV^\top$ for the svd of $\bM$. The matrices $\bU, \bV\in\R^{n\times r}$ contain the left and right singular vectors as columns, respectively, and $\bSigma = \diag(\sigma_1, \sigma_2, \ldots, \sigma_r)$ where $\sigma_1\geq \sigma_2\geq\cdots \geq \sigma_r$ are the singular values of $\bM$. Define
+% \[\bM_k := \bU\bSigma_k\bV^\top\]
+% \todo{rewrite this}
+% where $\bSigma_k\in \R^{r\times r}$ is the truncation of $\bSigma$ to the top-$k$ singular values: $\bSigma = \diag(\sigma_1,\ldots, \sigma_k, 0,\ldots, 0)$. Notice that $\bM_k$ has rank at most $k$.
+
+\begin{fact}
+    Let $\bM\in\R^{n\times d}$ and $\bM_k$ be as defined above. Then
+    \[\|\bM-\bM_k\|_F\leq \|\bM-\bX\|_F\]
+    for all matrices $\bX$ of rank at most $k$. In particular, $\bM_k$ is an optimal rank-$k$ approximation to $\bM$ with respect to $\|\cdot\|_F$.
+\end{fact}
+
+
+
+\subsection{Positive Semidefinite Matrices}
+A symmetric matrix $\bA\in\R^{n\times n}$ is \textit{positive semidefinite (psd)} if $\bx^\top\bA\bx\geq 0$ for all $\bx\in\R^n$. For symmetric matrices $\bA$, we have the following standard set of equivalences:
+\begin{enumerate}[itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt]
+    \item $\bA$ is psd
+    \item the eigenvalues of $\bA$ are nonnegative
+    \item $\bA = \bU^\top\bU$ for some matrix $\bU$.
+\end{enumerate}
+
+% In our length-squared sampling algorithm, we use the following structural fact:
+\begin{fact}
+    Let $\bA$ be an $n\times n$ psd matrix. For all $i,j\in [n]$, we have the inequality
+    \[\bA_{ij}^2\leq\bA_{ii}\bA_{jj}.\]
+\end{fact}
+\subsection{Nystr\"om Approximation}
+Let $\bA\in\R^{n\times n}$ be a psd matrix and $S\subset[n]$. Define
+\[\bC := \bA_{\ast, S}\qquad\bW := \bA_{S, S}\]
+We write $\widetilde \bA$ to denote the \textit{Nystr\"om approximation} of $\bA$ with index set $S$, where 
+\[\widetilde\bA = \bC\bW\bC^\top.\]
+Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are psd. Moreover, $\rank(\widetilde\bA) = |S|$.
+
+
+\section{Sampling Primitives for Matrix Approximation}
+A common technique used in query-efficient matrix algorithms is to construct a small sketch of the input via a subset of sampled rows or columns. Generally speaking, the quality and cost of the resulting approximation depend on how this subset is chosen. In this section, we review several sampling rules and their related results.
+
+% Throughout, $\bA\in \R^{n\times d}$ denotes a real-valued matrix. If $\bA$ is psd and $S\subset [n]$ is a subset of indices of size $k$, we write
+% \[\widetilde\bA = \bC\bW^{-1}\bC^\top\]
+% to denote the \textit{Nystr\"om approximation} of $\bA$, where $\bC = \bA_{\ast, S}$ is the $n\times k$ submatrix of columns of $\bA$ indexed by $S$, and $\bW = \bA_{S, S}$ is the $k\times k$ principal submatrix of $\bA$ indexed by $S$.
+
+\subsection{Uniform Sampling}
+The uniform sampling method picks $k$ rows or columns uniformly at random, either with or without replacement. A clear advantage of uniform sampling is that it is data agnostic: it generates a sample without using any information about the matrix. Moreover, uniform sampling is often effective in practice \cite{}.
+\todo{citation needed}
+
+\paragraph{Nystr\"om approximation.}
+Uniform sampling appears in the seminal work of Williams and Seeger \cite{williams_using_2000} on the Nystr\"om method. They show that a Nystr\"om approximation with uniformly sampled index set can substantially reduce the cost of kernel computations without a significant loss in accuracy in practice. 
+
+Subsequent work shows that the performance of uniform sampling depends on the coherence of the relevant singular or eigenspaces \cite{talwalkar_matrix_2010, gittens_spectral_2011}. Informally, coherence measures whether the important directions of the matrix are spread evenly or concentrated on a small number of coordinates. When the coherence is small, important directions are well-spread among the rows or columns, so uniform sampling is likely to capture them. When the coherence is large, a small uniform sample may miss important directions with high probability. Consequently, strong worst-case guarantees for uniform sampling typically require incoherence assumptions or a large sample size \cite{kumar_sampling_2012}.
+
+\subsubsection{TODO}
+
+
+\subsection{Length-Squared Sampling}
+
+
+\subsection{Leverage Score Sampling}
+
+
+\subsection{Adaptive Sampling}
+
+
+\section{Sublinear Low-Rank Approximation}
