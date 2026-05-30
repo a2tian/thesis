@@ -1,23 +1,111 @@
 \section{Frobenius Norm Approximation}
 \label{sec:frobenius-norm-approximation}
 
-The acceptance probability of Algorithm~\ref{alg:sampling-procedure} gives an immediate estimator for $\|\bA\|_F^2$. This section records the estimator separately because it will be used again in the eigenvalue approximation application.
+In this section, we extend our techniques to estimate $\|\bA\|_F^2$. 
 
-\begin{corollary}[Frobenius norm approximation]
-    Fix $\epsilon, \delta > 0$. Suppose we run $r$ rounds of Algorithm~\ref{alg:sampling-procedure}. Let $X$ be the number of accepted rounds and compute 
+\begin{lemma}
+\label{lem:frobenius-norm-approximation}
+    Fix $0 <\epsilon, \delta < 1$. Suppose we run $r$ rounds of Algorithm~\ref{alg:sampling-procedure}. Let $X$ be the number of accepted rounds and compute 
     \[\widehat F := \frac{X}{r}\tr(\bA)^2.\]
     If $r\geq 3n\log(2/\delta)/\epsilon^2$ then with probability at least $1-\delta$,
     \[(1-\epsilon)\|\bA\|^2_F\leq \widehat F\leq(1+\epsilon)\|\bA\|^2_F.\]
-\end{corollary}
+\end{lemma}
 
 \begin{proof}
-    Define the random variable
-    \[ X_i :=\begin{cases}1&\text{if round $i$ accepted}\\
-    0&\text{otherwise.}\end{cases}\]
-    Recall from the proof of Theorem~\ref{thm:fast-l2-sampling} that the acceptance probability for any round is
+    Let $X_i$ be an indicator random variable where $X_i = 1$ if round $i$ is accepted and $X_i=0$ otherwise. Recall from the proof of Theorem~\ref{thm:fast-l2-sampling} that the acceptance probability for any round is
     \[\beta = \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
-    so $\E X_i = \beta$.
+    so $\E X_i = \beta$. Since the rounds are independent,
+    \[
+        X=\sum_{i=1}^r X_i
+    \]
+    is a sum of independent indicator random variables with $\E X = r\beta.$
+    By the Chernoff bound,
+    \[
+        \Pr\left[|X-r\beta|\geq \epsilon r\beta\right]
+        \leq 2\exp\left(-\frac{\epsilon^2 r\beta}{3}\right).
+    \]
+    From the proof of Theorem~\ref{thm:fast-l2-sampling}, we also have
+    $\beta\geq 1/n$. Therefore, if
+    \(
+        r\geq {3n\log(2/\delta)}/{\epsilon^2},
+    \)
+    then
+    \[
+        2\exp\left(-\frac{\epsilon^2 r\beta}{3}\right)
+        \leq
+        2\exp\left(-\frac{\epsilon^2 r}{3n}\right)
+        \leq \delta.
+    \]
+    Thus, with probability at least $1-\delta$,
+    \[
+        (1-\epsilon)\beta
+        \leq
+        \frac{X}{r}
+        \leq
+        (1+\epsilon)\beta.
+    \]
+    Multiplying through by $\tr(\bA)^2$ gives
+    \[
+        (1-\epsilon)\|\bA\|_F^2
+        \leq
+        \widehat F
+        \leq
+        (1+\epsilon)\|\bA\|_F^2,
+    \]
+    as desired.
 \end{proof}
+
+\todo{add exposition}
+
+\begin{algorithm}[H]
+\caption{Frobenius Norm Approximation}
+\label{alg:frobenius-norm-approximation}
+
+\noindent
+Let \(P\) be the diagonal distribution with $P_i = \bA_{ii}/\tr(\bA)$.
+
+\smallskip
+Set \(r=\left\lceil 3n\log(200)/\epsilon^2\right\rceil\). Run the following procedure for \(r\) independent rounds:
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Sample indices \(i,j\overset{\mathrm{i.i.d.}}{\sim}P\).
+
+    \item Accept with probability
+    \(
+        \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}}.
+    \)
+\end{enumerate}
+
+\smallskip
+\noindent
+Let \(X\) be the number of accepted rounds. Return
+\[
+    \widehat F:=\frac{X}{r}\tr(\bA)^2.
+\]
+\end{algorithm}
+
+\begin{theorem}
+\label{thm:frobenius-norm-approximation-algorithm}
+Let \(\bA\in\R^{n\times n}\) be psd, and fix \(0<\epsilon < 1\). With probability at least 0.99, the estimate \(\widehat F\) returned by Algorithm~\ref{alg:frobenius-norm-approximation} satisfies
+\[
+    (1-\epsilon)\|\bA\|_F^2
+    \leq
+    \widehat F
+    \leq
+    (1+\epsilon)\|\bA\|_F^2.
+\]
+Moreover, the algorithm reads only \(O(n/\epsilon^2)\) entries of \(\bA\).
+\end{theorem}
+
+\begin{proof}
+The error guarantee on $\widehat F$ follows from Lemma~\ref{lem:frobenius-norm-approximation} applied to $\delta  = 0.01$. The query complexity is also immediate from the choice of $r$.
+\end{proof}
+
 
 \section{Additive Error Low-Rank Approximation}
 \todo[inline]{add exposition}
