@@ -22,7 +22,9 @@ p_j = \frac{\|\mathbf{A}_{\ast, j}\|_2^2}{\|\mathbf{A}\|_F^2}.
 \]
 Our algorithm relies on psd structure and does not apply to arbitrary matrices. 
 
-We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling requires \(\Omega(n)\) entry queries in the worst case, even for psd matrices. 
+We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling needs to query \(\Omega(n)\) off-diagonal entries in the worst case.
+
+\todo{make sure this lower bound claim is precise}
 
 We next show how this sampling primitive can be used in several low-rank and spectral approximation problems for positive semidefinite matrices. We consider additive-error low-rank approximation, robust low-rank approximation, and eigenvalue approximation. In each application, the sampler replaces a length-squared column sampling step that would otherwise require computing all column norms.
 

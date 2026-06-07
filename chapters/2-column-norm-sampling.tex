@@ -6,6 +6,8 @@ Our algorithm applies a well-known technique called \textit{rejection sampling}.
 \[\|a_i\|^2_2\leq B\qquad\text{for all $i$.}\]
 Our algorithm removes this assumption by leveraging psd structure.
 
+\todo{revisit this exposition}
+
 \begin{algorithm}[H]
 \caption{Fast Length-Squared Sampling}
 \label{alg:sampling-procedure}
@@ -56,6 +58,8 @@ Repeat the following in rounds until an index is accepted:
     \end{align*}
     In particular, the expected number of rounds before the first acceptance is $1/\beta\leq n$.
 \end{proof}
+
+
 
 \begin{corollary}[Fixed-query length-squared sampling]
     Suppose we modify Algorithm~\ref{alg:sampling-procedure} as follows:

@@ -1,0 +1,376 @@
+In this section, we derive a simple algorithm for computing additive error low-rank approximations to a psd matrix using the length-squared sampling procedure of Chapter~\ref{chapter:fast-sample}. Applying a result of Drineas, Kannan, and Mahoney~\cite{drineas_fast_2006-1}, we compute an approximate basis for the top $k$-dimensional left singular subspace of $\bA$ from $O(k/\epsilon^2)$ columns sampled by squared column norms. Then, we use a well-known leverage score sampling guarantee to approximately project $\bA$ onto this subspace. Given entry-wise access to $\bA\in\R^{n\times n}$, our algorithm outputs matrices $\bX, \bY\in\R^{n\times k}$ satisfying
+\[\|\bA - \bX\bY^\top\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon\|\bA\|^2_F\]
+with constant probability, using $O(nk/\epsilon^2)$ entries of $\bA$ and $O(nk^2/\epsilon^4)$ arithmetic in expectation.
+
+Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their result is sample-optimal, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm.
+
+
+We begin with the following theorem due to Drineas, Kannan, and Mahoney~\cite{drineas_fast_2006-1}, which shows that one can compute a good approximation to the top $k$-dimensional left singular subspace of $\bA$ from $O(k/\epsilon^2)$ columns sampled by squared column norms.
+
+\begin{lemma}[\cite{drineas_fast_2006-1}, Theorem~4]
+\label{thm:dkm06}
+    Let $\bA\in\R^{m\times n}$ be a nonzero matrix and $1\leq k\leq c\leq n$. Let $p_1, \ldots, p_n$ satisfy
+    \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}.\]
+    Now, suppose $i_1, i_2, \ldots, i_c$ are $c$ independent samples from the squared column-norm distribution on $\bA$, and let $\bC\in\R^{m\times c}$ be the matrix whose columns are given by
+    \[\bC_{*, j} := \frac{1}{\sqrt{cp_{i_j}}}\bA_{*, i_j}.\]
+    Finally, let $\bH\in\R^{m\times k}$ be a matrix containing the top-$k$ left singular vectors of $\bC$ as columns. We have the following:
+    \begin{enumerate}[(a)]
+        \item Fix $\delta\in(0,1)$ and let $\eta=1+\sqrt{8\log(1/\delta)}$. If $c\geq 4k\eta^2/\epsilon^2$, then with probability at least $1-\delta$,
+    \[\|\bA - \bH\bH^\top\bA\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
+        \item If $c\geq 4k/\epsilon^2$, then 
+        \[\E\|\bA - \bH\bH^\top\bA\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]
+        \item If $c\geq 4/\epsilon^2$, then
+        \[\E\|\bA - \bH\bH^\top\bA\|^2_2\leq \|\bA - \bA_k\|^2_2 + \epsilon \|\bA\|^2_F.\]
+    \end{enumerate}
+\end{lemma}
+
+\todo{remark on how to compute $\bH$}
+
+With constant probability, Lemma~\ref{thm:dkm06} produces a matrix $\bH$ with orthonormal columns such that $\bH\bH^\top\bA$, the projection of $\bA$ onto the subspace spanned by $\bH$, yields an additive error approximation to $\bA$. To produce an explicit factorization, we need to regress the columns of $\bA$ onto the basis $\bH$, i.e., compute $\bH^\top\bA$, so that setting $\bX = \bH$ and $\bY^\top = \bH^\top \bA$ yields an additive error approximation $\bX\bY^\top$. However, computing $\bH^\top\bA$ requires us to read all of $\bA$, so instead we estimate this matrix by sampling
+rows of \(\bA\) according to the leverage scores of \(\bH\). We state and prove the needed guarantee below for completeness. Closely related results appear in Lemma 8 of \cite{drineas_fast_2006} and Lemma 2.2.14 of \cite{musco_power_2018}.
+
+\begin{lemma}
+\label{lem:probabilistic-right-factor}
+Let \(\bA\in\R^{n\times n}\), and let
+\(\bH\in\R^{n\times k}\) have orthonormal columns. Let $q$ be the leverage score distribution on $\bH$, where
+\[
+    q_i = \frac{\ell_i}{k},\qquad \ell_i = \|\bH_{i,*}\|^2_2.
+\]
+Suppose \(i_1,\ldots, i_t\) are independent samples from \(q\), and construct the matrix $\widehat\bZ\in\R^{k\times n}$ given by
+\[
+    \widehat{\bZ}
+    :=
+    \frac{1}{t}\sum_{r=1}^t
+    \frac{\bH_{i_r,*}^{\top}\bA_{i_r,*}}{q_{i_r}}
+    .
+\]
+Then for every \(\delta\in(0,1)\), with probability at least \(1-\delta\),
+\[
+    \|\bA-\bH\widehat{\bZ}\|_F^2
+    \leq
+    \|\bA-\bH\bH^\top\bA\|_F^2
+    +
+    \frac{k}{\delta t}\|\bA\|_F^2.
+\]
+\end{lemma}
+
+\begin{proof}
+For a sample \(i\sim q\), define
+\[
+    \bR_j=\frac{\bH_{i,*}^{\top}\bA_{i,*}}{q_{i}}.
+\]
+Then
+\[
+    \E[\bR]
+    =
+    \sum_{i:\ell_i>0} q_i
+    \frac{\bH_{i,*}^{\top}\bA_{i,*}}{q_i}
+    =
+    \bH^\top\bA.
+\]
+Since the samples are independent, we have
+\(
+    \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    \leq
+    \frac{1}{t}\E\|\bR\|_F^2.
+\)
+Moreover,
+\[
+\begin{aligned}
+    \E\|\bR\|_F^2
+    &=
+    \sum_{i:\ell_i>0}
+    q_i
+    \left\|
+        \frac{\bH_{i,*}^{\top}\bA_{i,*}}{q_i}
+    \right\|_F^2  \\
+    &=
+    \sum_{i:\ell_i>0}
+    \frac{\|\bH_{i,*}^{\top}\bA_{i,*}\|_F^2}{q_i}\\
+    &=\sum_{i:\ell_i>0}\frac{\|\bH_{i,*}\|_2^2\|\bA_{i,*}\|_2^2}{q_i}\\
+    &={k\cdot \|\bA_{i,*}\|_2^2} \qquad\text{using \(q_i=\ell_i/k\).}
+\end{aligned}
+\]
+Thus,
+\[
+    \E\|\bR\|_F^2
+    \leq
+    k\sum_{i=1}^n \|\bA_{i,*}\|_2^2
+    =
+    k\|\bA\|_F^2
+\qquad\text{and}\qquad
+    \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    \leq
+    \frac{k}{t}\|\bA\|_F^2.
+\]
+By Markov's inequality,
+\[
+    \|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    \leq
+    \frac{k}{\delta t}\|\bA\|_F^2\qquad\text{with probability at least \(1-\delta\).}\tag{$\ast$}
+\]
+
+Finally, let \(\bP=\bH\bH^\top\). Since \(\bP\) is the orthogonal projector
+onto \(\operatorname{range}(\bH)\), we have the orthogonal decomposition
+\[
+    \bA-\bH\widehat{\bZ}
+    =
+    (\bI-\bP)\bA+\bH(\bH^\top\bA-\widehat{\bZ}).
+\]
+Thus,
+\[
+    \|\bA-\bH\widehat{\bZ}\|_F^2
+    =
+    \|\bA-\bH\bH^\top\bA\|_F^2
+    +
+    \|\bH(\widehat{\bZ}-\bH^\top\bA)\|_F^2.
+\]
+Since \(\bH\) has orthonormal columns,
+\(
+    \|\bH(\widehat{\bZ}-\bH^\top\bA)\|_F
+    =
+    \|\widehat{\bZ}-\bH^\top\bA\|_F.
+\)
+Recalling $(\ast)$ completes the proof.
+\end{proof}
+
+We are now ready to state the main theorem of this section.
+
+\begin{algorithm}[H]
+\caption{Sublinear PSD Low-Rank Approximation}
+\label{alg:sublinear-psd-low-rank}
+
+\noindent
+\textbf{Input:} psd matrix
+\(\bA\in\R^{n\times n}\), target rank \(k\in[n]\), accuracy
+parameter \(\epsilon\in (0,1)\).
+
+\smallskip
+Let
+\(
+    c=\lceil Ck/\epsilon^2\rceil
+    % \qquad
+    % t=\left\lceil \frac{2k}{\epsilon}\right\rceil.
+\)
+and $t = \lceil C'k/\epsilon\rceil$ for some absolute constants $C, C'$.
+
+\smallskip
+Run the following procedure:
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Run Algorithm~\ref{alg:sampling-procedure} $c$ times on $\bA$, producing
+    \(
+        i_1,\ldots,i_c
+    \)
+    sampled by squared column norms.
+
+    \item Read the full columns
+    \(
+        \bA_{*,i_1},\ldots,\bA_{*,i_c}
+    \)
+    and form the matrix \(\bB\in\R^{n\times c}\) whose \(r\)-th column is
+    \[
+        \bB_{*,r}
+        =
+        \frac{\bA_{*,i_r}}{\|\bA_{*,i_r}\|_2}.
+    \]
+
+    \item Let \(\bH\in\R^{n\times k}\) have orthonormal columns spanning a top-\(k\) left singular subspace of \(\bB\).
+
+    \item Let $q$ be the leverage score distribution on $\bH$ with
+    \(
+        q_i=\frac{\|\bH_{i,*}\|_2^2}{k}
+    \)
+    Sample indices
+    \(
+        j_1,\ldots,j_t \overset{\mathrm{i.i.d.}}{\sim} q.
+    \)
+    \item Query the full rows
+    \(
+        \bA_{j_1,*},\ldots,\bA_{j_t,*}.
+    \)
+    and set
+    \[
+        \widehat{\bY}
+        =
+        \frac{1}{t}\sum_{r=1}^t
+        \frac{\bA_{j_r,*}^{\top}\bH_{j_r,*}}{q_{j_r}}
+        \in\R^{n\times k}.
+    \]
+
+    \item Return
+    \(
+        \bX=\bH,
+        % \qquad
+        \bY=\widehat{\bY}.
+    \)
+\end{enumerate}
+\end{algorithm}
+
+
+\begin{theorem}
+\label{thm:sublinear-psd-low-rank}
+Let \(\bA\in\R^{n\times n}\) be a nonzero psd matrix, let
+\(1\leq k\leq n\), and let \(\epsilon\in(0,1)\). 
+There are absolute constants \(C,C'>0\) such that
+Algorithm~\ref{alg:sublinear-psd-low-rank}, run with
+\[
+    c=\left\lceil \frac{Ck}{\epsilon^2}\right\rceil,
+    \qquad
+    t=\left\lceil \frac{C'k}{\epsilon}\right\rceil,
+\]
+returns matrices \(\bX,\bY\in\R^{n\times k}\) satisfying
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2+\epsilon\|\bA\|_F^2
+\]
+with probability at least \(2/3\). The algorithm queries $O(nk/\epsilon^2)$ entries of $\bA$ and uses $O(nk^2/\epsilon^4)$ arithmetic operations in expectation.
+\end{theorem}
+
+\begin{proof}
+Let
+\(
+    \eta=1+\sqrt{8\log 6}
+\)
+and fix constants
+\[
+    C\geq 16\eta^2,
+    \qquad
+    C'\geq 12.
+\]
+We first prove the approximation guarantee.
+
+Let \(i_1,\ldots,i_c\) be the column indices sampled in Step 1 of
+Algorithm~\ref{alg:sublinear-psd-low-rank}. Let \(\widetilde{\bC}\) denote the
+matrix of sampled columns appearing in Lemma~\ref{thm:dkm06}. We have
+\begin{align*}
+    \widetilde{\bC}_{*,r}
+    &=
+    \frac{1}{\sqrt{c p_{i_r}}}\bA_{*,i_r}\\
+    &=\frac{\|\bA\|_F}{\sqrt c}
+    \frac{\bA_{*,i_r}}{\|\bA_{*,i_r}\|_2}\qquad\text{since \(p_i=\|\bA_{*,i}\|_2^2/\|\bA\|_F^2\)}\\
+    &=
+    \frac{\|\bA\|_F}{\sqrt c}\bB_{*,r}.
+\end{align*}
+Thus
+\(
+    \widetilde{\bC}
+    =
+    \frac{\|\bA\|_F}{\sqrt c}\bB,
+\)
+is a scalar multiple of $\bB$, so \(\widetilde{\bC}\) and \(\bB\) have the same top \(k\) left singular
+subspaces. In particular, the matrix \(\bH\) computed in Step 3 is also a valid
+choice of \(\bH\) for Lemma~\ref{thm:dkm06}.
+
+Apply Lemma~\ref{thm:dkm06}(a) with accuracy parameter \(\epsilon/2\) and
+failure probability \(\delta=1/6\). Since
+\[
+    c
+    \geq
+    \frac{16k\eta^2}{\epsilon^2}
+    =
+    \frac{4k\eta^2}{(\epsilon/2)^2},
+\]
+we have, with probability at least \(5/6\),
+\[
+    \|\bA-\bH\bH^\top\bA\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \frac{\epsilon}{2}\|\bA\|_F^2.
+    \tag{1}
+\]
+
+Now condition on \(\bH\) produced by the algorithm. Let
+\(
+    \widehat{\bZ}=\widehat{\bY}^{\top}.
+\)
+Applying Lemma~\ref{lem:probabilistic-right-factor} with
+\(\delta=1/6\), we obtain, with probability at least \(5/6\),
+\begin{align*}
+    \|\bA-\bH\widehat{\bZ}\|_F^2
+    &\leq
+    \|\bA-\bH\bH^\top\bA\|_F^2
+    +
+    \frac{6k}{t}\|\bA\|_F^2\\
+    &\leq\|\bA-\bH\bH^\top\bA\|_F^2
+    +
+    \frac{\epsilon}{2}\|\bA\|_F^2.
+    \qquad\text{since \(t\geq 12k/\epsilon\)}. \tag{2}
+\end{align*}
+By a union bound, \((1)\) and \((2)\) occur simultaneously with
+probability at least \(2/3\), in which case we have
+\[
+\begin{aligned}
+    \|\bA-\bX\bY^\top\|_F^2
+    &=
+    \|\bA-\bH\widehat{\bY}^{\top}\|_F^2  \\
+    &=
+    \|\bA-\bH\widehat{\bZ}\|_F^2 \\
+    &\leq
+    \|\bA-\bH\bH^\top\bA\|_F^2
+    +
+    \frac{\epsilon}{2}\|\bA\|_F^2 \\
+    &\leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \epsilon\|\bA\|_F^2.
+\end{aligned}
+\]
+This proves the claimed additive error guarantee.
+
+It remains to bound the query complexity and time complexity. The \(c\) calls to
+Algorithm~\ref{alg:sampling-procedure} use \(O(nc)\) entry queries in
+expectation. Step 2 reads \(c\) full columns of \(\bA\), using \(nc\) further
+entry queries. Step 5 reads \(t\) full rows of \(\bA\), using \(nt\) entry
+queries. Therefore the total expected number of entry queries to $\bA$ is
+\[
+    O(nc+nt)
+    =
+    O\!\left(
+        n\frac{k}{\epsilon^2}
+        +
+        n\frac{k}{\epsilon}
+    \right)
+    =
+    O\!\left(\frac{nk}{\epsilon^2}\right),
+\]
+since \(\epsilon\in(0,1)\).
+
+For the arithmetic bound, forming and normalizing \(\bB\in\R^{n\times c}\) costs \(O(nc)\)
+operations after the sampled columns have been read. To compute a top \(k\)
+left singular subspace for \(\bB\) we compute \(\bB^\top\bB\in\R^{c\times c}\) and its svd, which requires 
+\(
+    O(nc^2+c^3)
+\)
+arithmetic. For \(c\leq n\), this is \(O(nc^2)\), hence
+\(
+    O\left({nk^2}/{\epsilon^4}\right).
+\)
+Computing all leverage scores of \(\bH\) costs \(O(nk)\), and sampling from the
+leverage score distribution can be done after an \(O(n)\)-time preprocessing
+step. Finally, forming \(\widehat{\bY}\) from the \(t\) sampled rows costs
+\(O(ntk)\) arithmetic operations, since each sampled row contributes an
+\(n\times k\) outer product. This is 
+\(
+    O\left({nk^2}/{\epsilon}\right),
+\)
+which is dominated by \(O(nk^2/\epsilon^4)\) for \(\epsilon\in(0,1)\). The
+expected arithmetic cost of the sampling procedure contributes \(O(nc)\), which
+is also dominated. Thus the total expected arithmetic complexity is
+\[
+    O\!\left(\frac{nk^2}{\epsilon^4}\right).
+\]
+
+% If \(c>n\), then \(k/\epsilon^2=\Omega(n)\), and one may instead read all of
+% \(\bA\) and compute a rank-\(k\) truncated SVD directly. This uses
+% \(O(n^2)\subseteq O(nk/\epsilon^2)\) entry queries and
+% \(O(n^3)\subseteq O(nk^2/\epsilon^4)\) arithmetic, so the stated bounds still
+% hold after this standard fallback. This completes the proof.
+\end{proof}
