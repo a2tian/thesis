@@ -6,14 +6,14 @@ Our algorithm applies a well-known technique called \textit{rejection sampling}.
 \[\|a_i\|^2_2\leq B\qquad\text{for all $i$.}\]
 Our algorithm removes this assumption by leveraging psd structure.
 
-\todo{revisit this exposition}
+\todo{revisit this exposition. add intuition?}
 
 \begin{algorithm}[H]
 \caption{Fast Length-Squared Sampling}
 \label{alg:sampling-procedure}
 
 \noindent
-Let \(P\) be the diagonal distribution given by $P_i = \frac{\bA_{ii}}{\tr(\bA)}$.
+Let \(d\) be the diagonal distribution given by $d_i = \frac{\bA_{ii}}{\tr(\bA)}$.
 
 \smallskip
 \noindent
@@ -25,7 +25,7 @@ Repeat the following in rounds until an index is accepted:
     topsep=0.45em,
     parsep=0pt
 ]
-    \item Sample indices \(i,j \overset{\mathrm{i.i.d.}}{\sim} P\).
+    \item Sample indices \(i,j \overset{\mathrm{i.i.d.}}{\sim} d\).
 
     \item Accept and return \(i\) with probability
     $\frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}}$.
@@ -53,7 +53,7 @@ Repeat the following in rounds until an index is accepted:
     \begin{align*}
         \beta &= \frac{\|\bA\|^2_F}{\tr(\bA)^2}\\
         &= \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}\lambda_k(\bA)\right)^2}\\
-        &\geq \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}1^2\right)\left(\sum_{k \in [n]}\lambda_k(\bA)^2\right)}\\
+        &\geq \frac{\sum_{k \in [n]}\lambda_k(\bA)^2}{\left(\sum_{k \in [n]}1^2\right)\left(\sum_{k \in [n]}\lambda_k(\bA)^2\right)}\qquad\text{by Cauchy-Schwarz}\\
         &= \frac{1}{n}.
     \end{align*}
     In particular, the expected number of rounds before the first acceptance is $1/\beta\leq n$.

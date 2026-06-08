@@ -1,0 +1,439 @@
+We now give a sublinear algorithm for additive error eigenvalue
+approximation of psd matrices. The basic algorithmic template is due to
+Bhattacharjee et al.~\cite{bhattacharjee_sublinear_2022}, who sample and rescale a small principal submatrix according squared row norms, zero out certain entries to control variance, then return its eigenvalues together with additional zeros. Swartworth
+and Woodruff~\cite{swartworth_tight_2024} improve on the analysis of this
+procedure, showing that
+\[
+    O\!\left(
+        \frac{1}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+    \right)
+\]
+squared row-norm samples suffice for additive
+\(\epsilon\|\bA\|_F\) eigenvalue approximation. 
+
+The algorithms of \cite{bhattacharjee_sublinear_2022, swartworth_tight_2024} apply more broadly to symmetric matrices, but they assume access to the exact row norms, as well as the Frobenius norm, of the input. These quantities are not available to us in the entry query model unless we read the entire input. Instead, we specialize to psd matrices, which allows us to use Algorithm~\ref{alg:sampling-procedure} to sample rows by squared row norm, as well as Algorithm~\ref{alg:frobenius-norm-approximation} to estimate the Frobenius norm.
+
+We first recall the approximation guarantee that we seek.
+
+\begin{definition}[Additive eigenvalue approximation]
+\label{def:additive-eigenvalue-approximation}
+Let \(\bA\in\R^{n\times n}\) be symmetric. We say that a sequence
+\(
+    \widehat\lambda_1
+    \geq
+    \widehat\lambda_2
+    \geq
+    \cdots
+    \geq
+    \widehat\lambda_n
+\)
+is an additive \(\epsilon\)-approximation to the spectrum of \(\bA\) if
+\[
+    |\widehat\lambda_i-\lambda_i(\bA)|
+    \leq
+    \epsilon
+    \qquad
+    \text{for every } i\in[n].
+\]
+\end{definition}
+
+We also isolate the zeroing rule of \cite{swartworth_tight_2024} in the following
+definition. We introduce a new parameter $F_0$ in order to accommodate for the $(1\pm\epsilon)$ estimate that we use in place of $\|\bA\|^2_F$.
+
+\begin{definition}
+\label{def:eigenvalue-zeroed-matrix}
+Let \(\bA\in\R^{n\times n}\) be symmetric, let
+\(\epsilon\in(0,1)\), and let \(F_0>0\). We define
+\[
+    \mathsf Z_{\epsilon,F_0}(\bA)\in\R^{n\times n}
+\]
+entrywise by
+\[
+    \bigl(\mathsf Z_{\epsilon,F_0}(\bA)\bigr)_{ij}
+    =
+    {
+    \begin{cases}
+    0,
+        & i=j,\\
+    0,
+        & i\neq j
+        \text{ and }
+        \|\bA_{i,*}\|_2^2\|\bA_{j,*}\|_2^2
+        \leq
+        \displaystyle
+        \frac{\epsilon^2 F_0|\bA_{ij}|^2}
+        {c\log^4 n},\\
+    \bA_{ij},
+        & \text{otherwise},
+    \end{cases}
+    }
+\]
+where \(c>0\) is a fixed absolute constant. When
+\(F_0=\|\bA\|_F^2\), we abbreviate
+\[
+    \mathsf Z_{\epsilon}(\bA)
+    :=
+    \mathsf Z_{\epsilon,\|\bA\|_F^2}(\bA).
+\]
+\end{definition}
+We are now ready to state the following theorem of Swartworth and Woodruff:
+
+\begin{lemma}[\cite{swartworth_tight_2024}, Theorem 7.8]
+\label{lem:sw-row-norm-eigenvalue}
+Let \(\bA\in\R^{n\times n}\) be a symmetric matrix, and let \(\epsilon\in(0,1)\). Let $q$ be the squared row norm distribution on $\bA$, where $q_i = \|\bA_{i,*}\|^2_2/\|\bA\|^2_F$.
+Suppose \(i_1,\ldots,i_{m_0}\) are independent samples from $q$, where
+\[
+    m_0 \geq
+    \frac{C_0}{\epsilon^2}\log^4 n\log^2\frac{1}{\epsilon}
+\]
+for a sufficiently large absolute constant \(C_0\). Define the sampling
+matrix \(\bS\in\R^{m\times n}\) by
+\[
+    \bS_{r,*}=\frac{\be_{i_r}^{\top}}{\sqrt{m_0 q_{i_r}}}.
+\]
+Then, with probability at least \(5/6\), the eigenvalues of
+\(
+    \bS\mathsf Z_{\epsilon}(\bA)\bS^\top,
+\)
+together with \(n-m_0\) additional zeros, form an additive \(\epsilon\|\bA\|_F\)-approximation to the spectrum of \(\bA\).
+\end{lemma}
+
+The preceding lemma assumes access to quantities that are not directly
+available in the entry-query model. First, the zeroing rule defining \(\mathsf Z_{\epsilon}(\bA)\) requires access to
+\(\|\bA\|_F^2\). We replace this quantity by an estimate \(\widehat F\) given by Algorithm~\ref{alg:frobenius-norm-approximation}. After sampling an index \(i_r\), we query the full row
+\(\bA_{i_r,*}\) and rescale by \(\|\bA_{i_r,*}\|_2^2\) instead of $\bA_{i_r,*}\|_2^2/\|\bA\|^2_F$. The algorithm
+below is the resulting implementable version of Lemma~\ref{lem:sw-row-norm-eigenvalue}.
+
+\begin{algorithm}[H]
+\caption{Sublinear PSD Eigenvalue Approximation}
+\label{alg:sublinear-psd-eigenvalue}
+
+\noindent
+\textbf{Input:} nonzero psd matrix \(\bA\in\R^{n\times n}\), accuracy
+parameter \(\epsilon\in(0,1)\).
+
+\smallskip
+Let \(C>0\) be a sufficiently large absolute constant, and set
+\[
+    m =
+    \left\lceil
+    \frac{C}{\epsilon^2}
+    \log^4 n
+    \log^2\frac{1}{\epsilon}
+    \right\rceil .
+\]
+
+\smallskip
+Run the following procedure:
+
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Run Algorithm~\ref{alg:frobenius-norm-approximation} with
+    accuracy parameter \(\epsilon/4\), producing an estimate
+    \(\widehat F\) for \(\|\bA\|_F^2\).
+
+    \item Run Algorithm~\ref{alg:sampling-procedure}
+    \(m\) times on \(\bA\), producing $i_1,\ldots,i_m$ sampled by squared row norms.
+
+    \item Query the full rows
+    \(
+        \bA_{i_1,*},\ldots,\bA_{i_m,*}
+    \)
+    and compute
+    \(
+        \rho_r = \|\bA_{i_r,*}\|_2^2
+    \)
+    for each \(r\in[m]\).
+    \item Form the matrix \(\bG\in\R^{m\times m}\) entry-wise as given by
+    \[
+        \bG_{rt}
+        =
+        \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
+        \bigl(\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bigr)_{i_r i_t}.
+    \]
+
+    \item Compute the eigenvalues
+    \(
+        \widehat\lambda_1\geq \widehat\lambda_2\geq\cdots\geq \widehat\lambda_m
+    \)
+    of \(\bG\).
+
+    \item Return
+    \(
+        \widehat\lambda_1\geq \widehat\lambda_2\geq\cdots\geq \widehat\lambda_m
+    \)
+    together with \(n-m\) additional zeros.
+\end{enumerate}
+\end{algorithm}
+
+
+
+\begin{theorem}
+\label{thm:sublinear-psd-eigenvalue}
+Let \(\bA\in\R^{n\times n}\) be a psd matrix, and let
+\(\epsilon\in(0,1)\). There is an absolute constant \(C>0\) such that
+Algorithm~\ref{alg:sublinear-psd-eigenvalue}, run with
+\[
+    m =
+    \left\lceil
+    \frac{C}{\epsilon^2}
+    \log^4 n
+    \log^2\frac{1}{\epsilon}
+    \right\rceil,
+\]
+returns an $\epsilon\|\bA\|_F$ additive approximation to the spectrum of $\bA$ with probability at least \(2/3\). The algorithm queries
+\[
+    O\!\left(
+        \frac{n}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+    \right)
+\]
+entries of \(\bA\) in expectation, and uses
+\[
+    O\!\left(
+        \frac{n}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+        +
+        \frac{1}{\epsilon^6}
+        \log^{12} n
+        \log^6\frac{1}{\epsilon}
+    \right)
+\]
+arithmetic operations in expectation.
+\end{theorem}
+
+\begin{proof}
+If \(m\geq n\), we may query all entries of \(\bA\) and compute its
+eigenvalues exactly. This satisfies the desired error guarantee. Moreover,
+in this case \(n^2\leq nm\) and \(n^3\leq m^3\), so the query and
+arithmetic bounds are also consistent with the claimed bounds. Thus, for
+the remainder of the proof, assume that \(m<n\).
+
+% We first prove correctness. 
+% By Theorem~\ref{thm:frobenius-norm-approximation-algorithm}, Step 1
+% returns an estimate \(\widehat F\) satisfying
+% \[
+%     \left(1-\frac{\epsilon}{4}\right)\|\bA\|_F^2
+%     \leq
+%     \widehat F
+%     \leq
+%     \left(1+\frac{\epsilon}{4}\right)\|\bA\|_F^2
+% \]
+% with probability at least \(0.99\). Condition on this event.
+We first prove correctness. Condition on $\widehat F$ produced by Step 1 of the algorithm and the indices $i_1,\ldots, i_m$ sampled in Step 2. We show that the matrix $\bG$ in Step 4 of the algorithm is a scalar multiple of $\bS\mathsf Z_{\alpha}(\bA)\bS^\top$ produced by Lemma~\ref{lem:sw-row-norm-eigenvalue} with sampled indices $i_1,\ldots, i_m$ and accuracy parameter $\alpha :=(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. 
+
+In Step 3 we compute
+\(
+    \rho_r=\|\bA_{i_r,*}\|_2^2
+\)
+, so the rescaling used in Step 4 satisfies
+\[
+    \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}
+    =
+    \frac{\widehat F}{\|\bA\|_F^2}
+    \cdot
+    \frac{1}{m\sqrt{q_{i_r}q_{i_t}}}\qquad q_i=\|\bA_{i,*}\|^2_2/\|\bA\|^2_F.
+\]
+This gives
+\begin{align*}
+    \bG_{rt}
+    &=
+    \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
+    \mathsf Z_{\epsilon/4, \widehat F}(\bA)_{i_r i_t} \\
+    &=
+    \frac{\widehat F}{\|\bA\|_F^2}
+    \cdot
+    \frac{\mathsf Z_{\alpha}(\bA)_{i_r i_t}}{m\sqrt{q_{i_r}q_{i_t}}} \\
+    &=
+    \frac{\widehat F}{\|\bA\|_F^2}
+    \cdot
+    (\bS\mathsf Z_{\alpha}(\bA)\bS^\top)_{i_r i_t}
+\end{align*}
+so $\bG = (\widehat F/\|\bA\|^2_F)\cdot \bS\mathsf Z_{\alpha}(\bA)\bS^\top$. We have the equality \(\mathsf Z_{\epsilon/4, \widehat F}(\bA)=\mathsf Z_{\alpha}(\bA)\) due to 
+\[
+    \frac{\epsilon^2}{16}\widehat F
+    =
+    \left(
+        \frac{\epsilon}{4}
+        \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}
+    \right)^2
+    \|\bA\|_F^2,
+\]
+so the thresholds in Definition~\ref{def:eigenvalue-zeroed-matrix} agree.
+
+Now, condition on the event that Step 1 satisfies
+\[
+    \left(1-\frac{\epsilon}{4}\right)\|\bA\|_F^2
+    \leq
+    \widehat F
+    \leq
+    \left(1+\frac{\epsilon}{4}\right)\|\bA\|_F^2.
+\]
+In this case, we readily check that
+\[
+    \frac{\epsilon}{8}\leq\frac{\epsilon}{4}
+    \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\leq\frac{\epsilon}{2}.
+\]
+In particular, we may pick the constant $C$ sufficiently large compared to $C_0$ of Lemma~\ref{lem:sw-row-norm-eigenvalue} in order to apply the lemma with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
+\(5/6\), if
+\(
+    \nu_1\geq\cdots\geq\nu_m
+\)
+are the eigenvalues of \(\bS\mathsf Z_{\alpha}(\bA)\bS^\top\), together with \(n-m\)
+additional zeros, then
+\[
+    |\nu_i-\lambda_i(\bA)|
+    \leq
+    \frac{\epsilon}{2}\|\bA\|_F
+    \qquad
+    \text{for every } i\in[n].
+\]
+Finally, let
+\(
+\widehat\lambda_1\geq\cdots\geq\widehat\lambda_m
+\)
+be the eigenvalues of \(\bG\), again together with \(n-m\) additional
+zeros. Since
+\(
+    \bG
+    =
+    ({\widehat F}/{\|\bA\|_F^2})\cdot 
+    \bS\mathsf Z_{\alpha}(\bA)\bS^\top
+\)
+and \(\widehat F>0\), we have
+\(
+    \widehat\lambda_i
+    =
+    ({\widehat F}/{\|\bA\|_F^2})\nu_i
+\)
+for all $i\in[n]$. It follows that
+\begin{align*}
+    |\widehat\lambda_i-\lambda_i(\bA)|
+    &=
+    \left|
+        \frac{\widehat F}{\|\bA\|_F^2}\nu_i
+        -
+        \lambda_i(\bA)
+    \right| \\
+    &\leq
+    \frac{\widehat F}{\|\bA\|_F^2}
+    |\nu_i-\lambda_i(\bA)|
+    +
+    \left|
+        \frac{\widehat F}{\|\bA\|_F^2}-1
+    \right|
+    |\lambda_i(\bA)| \\
+    &\leq
+    \left(1+\frac{\epsilon}{4}\right)
+    \frac{\epsilon}{2}\|\bA\|_F
+    +
+    \frac{\epsilon}{4}\|\bA\|_F \\
+    &\leq
+    \epsilon\|\bA\|_F.
+\end{align*}
+Here we used
+\(
+    |\lambda_i(\bA)|
+    \leq
+    \|\bA\|_F
+\)
+and \(\epsilon\in(0,1)\). Thus the returned sequence is an
+\(\epsilon\|\bA\|_F\) additive approximation to the spectrum of \(\bA\).
+
+Taking a union bound over the failure of the Frobenius norm estimate and
+the failure of Lemma~\ref{lem:sw-row-norm-eigenvalue}, the total success
+probability is at least
+\[
+    1-\frac{1}{100}-\frac{1}{6}
+    >
+    \frac{2}{3}.
+\]
+
+
+It remains to bound the query and arithmetic complexity. Step 1 runs
+Algorithm~\ref{alg:frobenius-norm-approximation} with accuracy parameter
+\(\epsilon/4\). By Theorem~\ref{thm:frobenius-norm-approximation-algorithm},
+this costs
+\(
+    O\left({n}/{\epsilon^2}\right)
+\)
+entry queries and arithmetic operations, which is dominated by the final
+bound.
+
+By Theorem~\ref{thm:fast-l2-sampling}, each call to
+Algorithm~\ref{alg:sampling-procedure} uses \(O(n)\) entry queries and
+\(O(n)\) arithmetic operations in expectation. Since Step 2 makes
+\[
+    m =
+    O\!\left(
+        \frac{1}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+    \right)
+\]
+independent calls, Step 2 uses
+\[
+    O(nm)
+    =
+    O\!\left(
+        \frac{n}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+    \right)
+\]
+entry queries and arithmetic operations in expectation.
+
+Step 3 queries \(m\) full rows of \(\bA\), for a total of \(nm\) entry
+queries. Computing the row norms
+also costs \(O(nm)\) arithmetic operations.
+
+Step 4 forms \(\bG\in\R^{m\times m}\). No additional entry queries are
+needed, since every entry \(\bA_{i_r i_t}\) is contained in the sampled
+row \(\bA_{i_r,*}\). Each entry of \(\bG\) can be computed in constant
+arithmetic time from \(\widehat F\), \(\rho_r\), \(\rho_t\), and
+\(\bA_{i_r i_t}\), so forming \(\bG\) costs \(O(m^2)\) arithmetic
+operations. Since \(m<n\), this is bounded by \(O(nm)\).
+
+Finally, Step 5 computes the eigenvalues of the \(m\times m\) symmetric
+matrix \(\bG\), which costs \(O(m^3)\) arithmetic operations. Step 6
+adds \(n-m\) zeros to the returned sequence, costing at most \(O(n)\)
+additional arithmetic operations, which is dominated by the preceding
+terms.
+
+Therefore the total expected query complexity is
+\[
+    O(nm)
+    =
+    O\!\left(
+        \frac{n}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+    \right).
+\]
+The total expected arithmetic complexity is
+\(
+    O(nm+m^3).
+\)
+Substituting the value of \(m\), we obtain
+\[
+    O\!\left(
+        \frac{n}{\epsilon^2}
+        \log^4 n
+        \log^2\frac{1}{\epsilon}
+        +
+        \frac{1}{\epsilon^6}
+        \log^{12} n
+        \log^6\frac{1}{\epsilon}
+    \right).
+\]
+This completes the proof.
+\end{proof}

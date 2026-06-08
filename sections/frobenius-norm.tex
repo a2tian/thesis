@@ -1,6 +1,8 @@
 In this section, we extend our techniques to estimate the Frobenius norm of a psd matrix. Recall that in Algorithm~\ref{alg:sampling-procedure} of Chapter~\ref{chapter:fast-sample}, we proceed in rounds of adaptive sampling to obtain a length-squared sample. In the proof of Theorem~\ref{thm:fast-l2-sampling}, we show that the probability of acceptance for each round is $\|\bA\|^2_F/\tr(\bA)^2$. Thus, to estimate $\|\bA\|^2_F$, we simply estimate the acceptance probability and multiply by $\tr(\bA)^2$. 
 
-In Theorem~\ref{thm:frobenius-norm-approximation-algorithm}, we will show that using only $O(n/\epsilon^2)$ entries of $\bA$, one may compute an estimate $\widehat F$ that is within $(1\pm \epsilon)$ of $\|\bA\|^2_F$ with constant probability. If $1/\epsilon^2$ is small enough compared to $n$, our algorithm does need to read all entries of $\bA$. We begin with the following calculation to determine the number of rejection sampling rounds required to obtain an accurate estimate of the acceptance probability, and hence $\|\bA\|^2_F$.
+In Theorem~\ref{thm:frobenius-norm-approximation-algorithm}, we will show that using only $O(n/\epsilon^2)$ entries of $\bA$, one may compute an estimate $\widehat F$ that is within $(1\pm \epsilon)$ of $\|\bA\|^2_F$ with constant probability. If $1/\epsilon^2$ is small enough compared to $n$, our algorithm does need to read all entries of $\bA$. In Section~\ref{sec:eigenvalue-apporximation}, we apply this result to give a sublinear algorithm for approximating the full spectrum of a psd matrix.
+
+We begin with the following calculation to determine the number of rejection sampling rounds required to obtain an accurate estimate of the acceptance probability, and hence $\|\bA\|^2_F$.
 
 \begin{lemma}
 \label{lem:frobenius-norm-approximation}
@@ -14,9 +16,9 @@ In Theorem~\ref{thm:frobenius-norm-approximation-algorithm}, we will show that u
     Let $X_i$ be an indicator random variable where $X_i = 1$ if round $i$ is accepted and $X_i=0$ otherwise. Recall from the proof of Theorem~\ref{thm:fast-l2-sampling} that the acceptance probability for any round is
     \[\beta = \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
     so $\E X_i = \beta$. Since the rounds are independent,
-    \[
+    \(
         X=\sum_{i=1}^r X_i
-    \]
+    \)
     is a sum of independent indicator random variables with $\E X = r\beta.$
     By the Chernoff bound,
     \[
@@ -43,25 +45,18 @@ In Theorem~\ref{thm:frobenius-norm-approximation-algorithm}, we will show that u
         \leq
         (1+\epsilon)\beta.
     \]
-    Multiplying through by $\tr(\bA)^2$ gives
-    \[
-        (1-\epsilon)\|\bA\|_F^2
-        \leq
-        \widehat F
-        \leq
-        (1+\epsilon)\|\bA\|_F^2,
-    \]
-    as desired.
+    Multiplying through by $\tr(\bA)^2$ gives the desired result.
 \end{proof}
 
 We are now ready to state the algorithm. 
+\todo{anything to add here?}
 
 \begin{algorithm}[H]
 \caption{Frobenius Norm Approximation}
 \label{alg:frobenius-norm-approximation}
 
 \noindent
-Let \(P\) be the diagonal distribution with $P_i = \bA_{ii}/\tr(\bA)$.
+Let \(d\) be the diagonal distribution with $d_i = \bA_{ii}/\tr(\bA)$.
 
 \smallskip
 Set \(r=\left\lceil 3n\log(200)/\epsilon^2\right\rceil\). Run the following procedure for \(r\) independent rounds:
@@ -72,7 +67,7 @@ Set \(r=\left\lceil 3n\log(200)/\epsilon^2\right\rceil\). Run the following proc
     topsep=0.45em,
     parsep=0pt
 ]
-    \item Sample indices \(i,j\overset{\mathrm{i.i.d.}}{\sim}P\).
+    \item Sample indices \(i,j\overset{\mathrm{i.i.d.}}{\sim}d\).
 
     \item Accept with probability
     \(

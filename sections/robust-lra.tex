@@ -1,0 +1,318 @@
+In the previous section, we used the length-squared sampling procedure of Chapter~\ref{chapter:fast-sample} to obtain additive-error low-rank approximations to psd matrices in sublinear time. In this section, we show that the same approach is robust to a natural class of entry-wise perturbations. Our starting point is the robust low-rank approximation model of Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}. In this model, there is an underlying psd matrix \(\bA\), but we are only given entry-wise access to a corrupted matrix
+\[
+    \bB = \bA + \bN,
+\]
+where \(\bN\) is an arbitrary noise matrix with bounded Frobenius norm. Our goal is to compute a low-rank approximation to \(\bA\), despite only querying entries of \(\bB\).
+
+Bakshi, Chepurko, and Woodruff \cite{bakshi_robust_2020} consider this problem under three assumptions on the corruption. First, they assume that the noise is bounded by $\|\bA\|^2_F$ in the sense that
+\[
+    \|\bN\|_F^2 \leq \eta \|\bA\|_F^2. \tag{A1}
+\]
+Second, they assume that the noise is well-spread across the rows, in the sense that
+\[
+    \|\bN_{i,*}\|_2^2
+    \leq
+    c\|\bA_{i,*}\|_2^2
+    \qquad\text{for every }i\in[n],\tag{A2}
+\]
+where \(c>0\) is an absolute constant. Third, they assume access to the diagonal corruption parameter
+\[
+    \phi_{\max}
+    :=
+    \max_{i\in[n]} \frac{\bA_{ii}}{|\bB_{ii}|}.\tag{A3}
+\]
+Their algorithm returns rank-\(k\) approximation factors \(\bX, \bY\in\R^{n\times k}\) satisfying
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \bigl(\epsilon + O(\sqrt{\eta})\bigr)\|\bA\|_F^2
+\]
+with constant probability using
+\(
+    \widetilde{O}\left({\phi_{\max}^2 n k}/{\epsilon}\right)
+\)
+entries of \(\bB\), where $\widetilde O$ hides polylogarithmic factors in $n$, $k$, and $1/\epsilon$.
+
+The main theorem of this section obtains the same form of additive-error guarantee under assumptions \((A1)\) and \((A3)\), but it does not need the row-wise noise assumption \((A2)\).  Our approach is to modify the sampling algorithm of Chapter~\ref{chapter:fast-sample} to obtain length-squared samples from $\bB$ at the cost of $O(\phi_{\max}^2n)$ expected queries per sample. Then we apply the additive error algorithm of Section~\ref{sec:additive-lra} to obtain a low rank approximation to $\bB$, and thus to $\bA$. Our algorithm queries
+\(
+    O\left({\phi_{\max}^2 n k}/{\epsilon^2}\right)
+\)
+entries of \(\bB\) in expectation, so we incur an additional factor of \(1/\epsilon\) in the query complexity compared to \cite{bakshi_robust_2020}.
+
+\todo{introduce comparison table.}
+
+The main issue is that \(\bB\) need not be positive semidefinite, so the sampler of Chapter~\ref{chapter:fast-sample} cannot be applied directly. Fortunately, we can apply similar techniques after clipping the entries of $\bB$ according to the procedure of \cite{bakshi_robust_2020}, which we recall here.
+\begin{definition}
+\label{def:clipped-matrix}
+    Let $\bA\in\R^{n\times n}$ be psd and $\bB = \bA + \bN$. Define
+    \[
+    \phi_{\max}
+    :=
+    \max\left\{1,\, \max_{i\in[n]} \frac{\bA_{ii}}{|\bB_{ii}|}\right\}.
+    \]
+    For each \(i,j\in[n]\), define
+\[
+    \widetilde{\bB}_{ij}
+    =
+    \operatorname{clip}\left(
+        \bB_{ij},
+        -\phi_{\max}\sqrt{|\bB_{ii}|\,|\bB_{jj}|},
+        \phi_{\max}\sqrt{|\bB_{ii}|\,|\bB_{jj}|}
+    \right),
+\]
+where
+\[
+    \operatorname{clip}(x,-a,a)
+    :=
+    \begin{cases}
+        -a & x < -a,\\
+        x & -a \leq x \leq a,\\
+        a & x > a.
+    \end{cases}
+\]
+\end{definition}
+
+The following lemma, due to Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}, shows that clipping does not increase corruption to $\bA$. We prove it here for completeness.
+\begin{lemma}
+    \label{lem:clipping-lemma}
+    Let \(\bA\in\R^{n\times n}\) be psd, and let \(\bB=\bA+\bN\). Let $\widetilde\bB$ be as in Definition~\ref{def:clipped-matrix}. Then we may write
+    \[
+        \widetilde{\bB} = \bA+\widetilde{\bN}
+    \]
+    such that
+    \(
+        \|\widetilde{\bN}\|_F \leq \|\bN\|_F.
+    \)
+\end{lemma}
+
+\begin{proof}
+    We first note that
+\(
+    \bA_{ii}\leq \phi_{\max}|\bB_{ii}|
+\) and \(
+    \bA_{jj}\leq \phi_{\max}|\bB_{jj}|.
+\)
+by the definition of $\phi_{\max}$. Moreover, $\bA_{ij}^2\leq \bA_{ii}\bA_{jj}$ since $\bA$ is psd, so
+\[
+    |\bA_{ij}|
+    \leq
+    \phi_{\max}\sqrt{|\bB_{ii}|\,|\bB_{jj}|}.
+\]
+In particular, $\bA_{ij}$ lies in the clipping interval for entry $ij$, and clipping at entry $ij$ does not increase distance to $\bA_{ij}$. Thus,
+\[
+    (\widetilde{\bB}_{ij}-\bA_{ij})^2
+    \leq
+    \left(\bB_{ij}-\bA_{ij}\right)^2
+    =
+    \bN_{ij}^2.
+\]
+Summing over all entries gives $\|\widetilde\bB - \bA\|^2_F\leq \|\bN\|^2_F$, which is the desired result.
+\end{proof}
+
+Although \(\widetilde{\bB}\) is not necessarily positive semidefinite, the clipping threshold allows us to write
+\[
+    |\widetilde{\bB}_{ij}|^2
+    \leq
+    \phi_{\max}^2 |\bB_{ii}|\,|\bB_{jj}|\qquad\text{for all $i,j\in[n]$.}
+\]
+In Algorithm~\ref{alg:robust-sampler}, we use this identity to sample by squared column norms of $\widetilde B$.
+
+
+\begin{algorithm}[H]
+\caption{Fast Length-Squared Sampling (Robust LRA)}
+\label{alg:robust-sampler}
+
+\noindent
+Let $D = \sum_i |\bB_{ii}|$, and let \(d\) be the distribution given by $d_i = \frac{|\bB_{ii}|}{D}$.
+
+\smallskip
+\noindent
+Repeat the following in rounds until an index is accepted:
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Sample indices \(i,j \overset{\mathrm{i.i.d.}}{\sim} d\).
+
+    \item Accept and return \(i\) with probability
+    $\frac{\widetilde\bB_{ij}^2}{\phi_{\max}^2|B_{ii}||B_{jj}|}$.
+    Otherwise, reject.
+\end{enumerate}
+\end{algorithm}
+
+\begin{lemma}
+\label{lem:robust-sampler}
+Algorithm~\ref{alg:robust-sampler} outputs $i$ with probability
+\[
+    p_i
+    =
+    \frac{\|\widetilde{\bB}_{i,*}\|_2^2}{\|\widetilde{\bB}\|_F^2}.
+\]
+for all $i\in [n]$ and queries $O(\phi_{\max}^2 n)$ entries of $\bB$ in expectation.
+\end{lemma}
+
+\begin{proof}
+The acceptance probability is well-defined since
+\(
+    \widetilde{\bB}_{ij}^{\,2}
+    \leq
+    \phi_{\max}^2|\bB_{ii}|\,|\bB_{jj}|.
+\)
+
+In one trial, the probability of outputting $i$ is
+\[
+    \frac{|\bB_{ii}|}{D}
+    \sum_{j=1}^n
+    \frac{|\bB_{jj}|}{D}
+    \cdot
+    \frac{\widetilde{\bB}_{ij}^{\,2}}
+    {\phi_{\max}^2|\bB_{ii}|\,|\bB_{jj}|}
+    =
+    \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}
+    {\phi_{\max}^2 D^2}.
+\]
+Summing over all indices gives total acceptance probability
+\[
+    \frac{\norm{\widetilde{\bB}}_F^2}{\phi_{\max}^2 D^2}
+\]
+and conditioning on acceptance, the probability of outputting $i$ is
+\[
+    \frac{\norm{\widetilde{\bB}_{i,*}}_2^2}{\norm{\widetilde{\bB}}_F^2}.
+\]
+It remains to bound the acceptance probability. Since
+$\phi_{\max}\geq 1$, the diagonal entries are not clipped, so
+\[
+    D^2
+    =
+    \left(\sum_{i=1}^n |\bB_{ii}|\right)^2
+    \leq
+    n\sum_{i=1}^n \bB_{ii}^2
+    =
+    n\sum_{i=1}^n \widetilde{\bB}_{ii}^{\,2}
+    \leq
+    n\norm{\widetilde{\bB}}_F^2.
+\]
+Thus the acceptance probability satisfies
+\[
+    \frac{\norm{\widetilde{\bB}}_F^2}{\phi_{\max}^2D^2}
+    \geq
+    \frac{1}{\phi_{\max}^2 n}.
+\]
+This gives $\phi_{\max}^2 n$ rounds in expectation. In each round, we use one entry from $\widetilde \bB$, which is computed from the corresponding entry in $\bB$, along with two additional diagonal entries of $\bB$. This gives $O(\phi_{\max}^2 n)$ entry queries to $\bB$ in expectation.
+\end{proof}
+
+We now use the robust sampler in the additive-error low-rank approximation
+algorithm of Section~\ref{sec:additive-lra}. The algorithm is identical to
+Algorithm~\ref{alg:sublinear-psd-low-rank}, except that we run it on the clipped matrix
+\(\widetilde{\bB}\) and generate each length-squared column sample using
+Algorithm~\ref{alg:robust-sampler}.
+
+\begin{algorithm}[H]
+\caption{Robust Additive-Error Low-Rank Approximation}
+\label{alg:robust-additive-lra}
+
+\noindent
+\textbf{Input:} Entry-wise access to \(\bB=\bA+\bN\), target rank \(k\),
+accuracy parameter \(\epsilon\in(0,1)\), and \(\phi_{\max}\).
+
+\smallskip
+\noindent
+\textbf{Output:} Matrices \(\bX,\bY\in\R^{n\times k}\).
+
+\smallskip
+\noindent
+Let \(\widetilde{\bB}\) be the clipped matrix of
+Definition~\ref{def:clipped-matrix}.
+
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+    \item Use Algorithm~\ref{alg:robust-sampler} to draw
+    \(c=O(k/\epsilon^2)\) independent length-squared column samples from
+    \(\widetilde{\bB}\). 
+    
+    \item Query these columns and let \(\bC\) be the rescaled sampled column matrix as defined in Step 2 of Algorithm~\ref{alg:sublinear-psd-low-rank}.
+
+    \item Let \(\bH\in\R^{n\times k}\) be an orthonormal basis for the top
+    \(k\)-dimensional left singular subspace of \(\bC\).
+
+    \item Use the sampling procedure from Steps 4-5 of
+    Algorithm~\ref{alg:sublinear-psd-low-rank} to compute an approximation
+    \(\widehat{\bZ}\in\R^{k\times n}\) to \(\bH^\top\widetilde{\bB}\).
+
+    \item Return \(\bX=\bH\) and \(\bY=\widehat{\bZ}^{\top}\).
+\end{enumerate}
+\end{algorithm}
+
+\begin{theorem}
+\label{thm:robust-additive-lra}
+Let \(\bA\in\R^{n\times n}\) be psd, let \(\bB=\bA+\bN\), and suppose that
+\(
+    \|\bN\|_F^2 \leq \eta\|\bA\|_F^2
+\)
+for some \(\eta\in[0,1]\). Then Algorithm~\ref{alg:robust-additive-lra}
+returns matrices \(\bX,\bY\in\R^{n\times k}\) such that, with probability at
+least \(2/3\),
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    O(\epsilon+\sqrt{\eta})\|\bA\|_F^2.
+\]
+The algorithm queries
+\[
+    O\left(\frac{\phi_{\max}^2 n k}{\epsilon^2}\right)
+\]
+entries of \(\bB\) in expectation and uses
+\[
+    O\left(
+        \frac{n k^2}{\epsilon^4}
+        +
+        \frac{\phi_{\max}^2 n k}{\epsilon^2}
+    \right)
+\]
+arithmetic operations in expectation.
+\end{theorem}
+
+\begin{proof}
+The proof of Theorem~\ref{thm:sublinear-psd-low-rank} applies verbatim to
+\(\widetilde{\bB}\), once length-squared column samples from
+\(\widetilde{\bB}\) are supplied by Algorithm~\ref{alg:robust-sampler}. The
+positive semidefinite assumption in Theorem~\ref{thm:sublinear-psd-low-rank}
+is used only to obtain such samples efficiently.  Thus, with constant
+probability, Algorithm~\ref{alg:robust-additive-lra} returns
+\(\bX,\bY\in\R^{n\times k}\) satisfying
+\[
+    \|\widetilde{\bB}-\bX\bY^\top\|_F^2
+    \leq
+    \|\widetilde{\bB}-\widetilde{\bB}_k\|_F^2
+    +
+    \epsilon\|\widetilde{\bB}\|_F^2.\tag{$\ast$}
+\]
+Moreover, by the same query and time complexity analysis, together with
+Lemma~\ref{lem:robust-sampler}, the algorithm uses
+\[
+    O\left(\frac{\phi_{\max}^2 n k}{\epsilon^2}\right)
+\]
+queries to \(\bB\) in expectation and
+\[
+    O\left(
+        \frac{n k^2}{\epsilon^4}
+        +
+        \frac{\phi_{\max}^2 n k}{\epsilon^2}
+    \right)
+\]
+arithmetic operations in expectation. 
+
+Finally, we transfer this bound from \(\widetilde{\bB}\) back to \(\bA\). 
+\end{proof}

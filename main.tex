@@ -1,7 +1,7 @@
 \documentclass[12pt,reqno]{memoir}
 \usepackage[margin=1in]{geometry}
-\DisemulatePackage{setspace}
-\usepackage{setspace}
+% \usepackage{setspace}
+
 \input{preamble}
 
 \title{Fast Length-Squared Sampling for Positive-Semidefinite Matrix Approximation}
@@ -15,7 +15,11 @@
 \newpage
 \tableofcontents
 \newpage
-\doublespacing
+% \doublespacing
+\DoubleSpacing
+% \setDisplayskipStretch{0.5} % try 0.5 first; use 1.0 for full doubling
+% \setstretch{2}
+% \renewcommand{\arraystretch}{0.1}
 \chapter{Introduction}
 \input{chapters/1-introduction}
 

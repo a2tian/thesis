@@ -24,8 +24,6 @@ We begin with the following theorem due to Drineas, Kannan, and Mahoney~\cite{dr
     \end{enumerate}
 \end{lemma}
 
-\todo{remark on how to compute $\bH$}
-
 With constant probability, Lemma~\ref{thm:dkm06} produces a matrix $\bH$ with orthonormal columns such that $\bH\bH^\top\bA$, the projection of $\bA$ onto the subspace spanned by $\bH$, yields an additive error approximation to $\bA$. To produce an explicit factorization, we need to regress the columns of $\bA$ onto the basis $\bH$, i.e., compute $\bH^\top\bA$, so that setting $\bX = \bH$ and $\bY^\top = \bH^\top \bA$ yields an additive error approximation $\bX\bY^\top$. However, computing $\bH^\top\bA$ requires us to read all of $\bA$, so instead we estimate this matrix by sampling
 rows of \(\bA\) according to the leverage scores of \(\bH\). We state and prove the needed guarantee below for completeness. Closely related results appear in Lemma 8 of \cite{drineas_fast_2006} and Lemma 2.2.14 of \cite{musco_power_2018}.
 
@@ -134,7 +132,7 @@ Since \(\bH\) has orthonormal columns,
 Recalling $(\ast)$ completes the proof.
 \end{proof}
 
-We are now ready to state the main theorem of this section.
+We are now ready to state the main algorithm of this section.
 
 \begin{algorithm}[H]
 \caption{Sublinear PSD Low-Rank Approximation}
@@ -343,7 +341,7 @@ queries. Therefore the total expected number of entry queries to $\bA$ is
 \]
 since \(\epsilon\in(0,1)\).
 
-For the arithmetic bound, forming and normalizing \(\bB\in\R^{n\times c}\) costs \(O(nc)\)
+For the arithmetic bound, forming and rescaling \(\bB\in\R^{n\times c}\) costs \(O(nc)\)
 operations after the sampled columns have been read. To compute a top \(k\)
 left singular subspace for \(\bB\) we compute \(\bB^\top\bB\in\R^{c\times c}\) and its svd, which requires 
 \(

@@ -18,6 +18,8 @@
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{float}
+\usepackage{etoolbox}
+\usepackage{xfp}
 
 \floatstyle{plaintop}
 \restylefloat{algorithm}
@@ -63,9 +65,10 @@
 \newcommand{\bC}{\mathbf{C}}
 \newcommand{\bD}{\mathbf{D}}
 \newcommand{\bE}{\mathbf{E}}
-\newcommand{\bI}{\mathbf{I}}
 \newcommand{\bF}{\mathbf{F}}
+\newcommand{\bG}{\mathbf{G}}
 \newcommand{\bH}{\mathbf{H}}
+\newcommand{\bI}{\mathbf{I}}
 \newcommand{\bJ}{\mathbf{J}}
 \newcommand{\bK}{\mathbf{K}}
 \newcommand{\bM}{\mathbf{M}}
@@ -122,9 +125,6 @@
 \DeclareMathOperator*{\matspan}{span}
 \DeclareMathOperator*{\Hypergeometric}{Hypergeometric}
 
-
-
-
 \makeatletter
 \newcommand\fs@thesisruled{%
   \def\@fs@pre{\hrule height 0.4pt \kern 4pt}%
@@ -138,3 +138,11 @@
 
 \floatstyle{thesisruled}
 \restylefloat{algorithm}
+
+\makeatletter
+\patchcmd{\env@cases}
+  {\def\arraystretch{1.2}}
+  {\def\arraystretch{\fpeval{1.2/\baselinestretch}}}
+  {}
+  {\PackageWarning{mythesis}{Could not patch cases spacing}}
+\makeatother
