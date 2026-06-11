@@ -13,7 +13,68 @@ procedure, showing that
 squared row-norm samples suffice for additive
 \(\epsilon\|\bA\|_F\) eigenvalue approximation. 
 
-The algorithms of \cite{bhattacharjee_sublinear_2022, swartworth_tight_2024} apply more broadly to symmetric matrices, but they assume access to the exact row norms, as well as the Frobenius norm, of the input. These quantities are not available to us in the entry query model unless we read the entire input. Instead, we specialize to psd matrices, which allows us to use Algorithm~\ref{alg:sampling-procedure} to sample rows by squared row norm, as well as Algorithm~\ref{alg:frobenius-norm-approximation} to estimate the Frobenius norm.
+The algorithms of \cite{bhattacharjee_sublinear_2022, swartworth_tight_2024} apply more broadly to symmetric matrices, but they assume access to the exact row norms, as well as the Frobenius norm, of the input. These quantities are not available to us in the entry query model unless we read the entire input. Instead, we specialize to psd matrices, which allows us to use Algorithm~\ref{alg:sampling-procedure} to sample rows by squared row norm, as well as Algorithm~\ref{alg:frobenius-norm-approximation} to estimate the Frobenius norm. The comparison is summarized in Table~\ref{tab:eigenvalue-comparison}. 
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}L{0.1\textwidth}L{0.3\textwidth}L{0.3\textwidth}C{0.3\textwidth}@{}}
+\toprule
+Result
+&
+Setting and assumptions
+&
+Guarantee
+&
+Query complexity
+\\
+\midrule
+\cite{bhattacharjee_sublinear_2022}
+&
+Symmetric matrices. Assumes access to exact row norms.
+&
+Additive \(\epsilon\|\bA\|_F\) approximation to the spectrum.
+&
+\[
+    \widetilde O\!\left(\frac{n}{\epsilon^8}\right)
+\]
+\\
+\midrule
+\cite{swartworth_tight_2024}
+&
+Symmetric matrices. Assumes access to exact row norms.
+&
+Additive \(\epsilon\|\bA\|_F\) approximation to the spectrum.
+&
+\[
+    \widetilde O\!\left(
+        \frac{n}{\epsilon^2}
+    \right)
+\]
+\\
+\midrule
+This work
+&
+Psd matrices. Entry-wise access only.
+&
+Additive \(\epsilon\|\bA\|_F\) approximation to the spectrum.
+&
+\[
+    \widetilde O\!\left(
+        \frac{n}{\epsilon^2}
+    \right) 
+\]
+in expectation
+\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Comparison of additive-error eigenvalue approximation guarantees.
+Here, \(\widetilde O\) hides polylogarithmic factors in $n$ and $1/\epsilon$.}
+\label{tab:eigenvalue-comparison}
+\end{table}
 
 We first recall the approximation guarantee that we seek.
 
@@ -103,7 +164,7 @@ together with \(n-m_0\) additional zeros, form an additive \(\epsilon\|\bA\|_F\)
 The preceding lemma assumes access to quantities that are not directly
 available in the entry-query model. First, the zeroing rule defining \(\mathsf Z_{\epsilon}(\bA)\) requires access to
 \(\|\bA\|_F^2\). We replace this quantity by an estimate \(\widehat F\) given by Algorithm~\ref{alg:frobenius-norm-approximation}. After sampling an index \(i_r\), we query the full row
-\(\bA_{i_r,*}\) and rescale by \(\|\bA_{i_r,*}\|_2^2\) instead of $\bA_{i_r,*}\|_2^2/\|\bA\|^2_F$. The algorithm
+\(\bA_{i_r,*}\) and rescale by \(\|\bA_{i_r,*}\|_2^2\) instead of $\|\bA_{i_r,*}\|_2^2/\|\bA\|^2_F$. The algorithm
 below is the resulting implementable version of Lemma~\ref{lem:sw-row-norm-eigenvalue}.
 
 \begin{algorithm}[H]

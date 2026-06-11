@@ -39,9 +39,77 @@ The main theorem of this section obtains the same form of additive-error guarant
 \(
     O\left({\phi_{\max}^2 n k}/{\epsilon^2}\right)
 \)
-entries of \(\bB\) in expectation, so we incur an additional factor of \(1/\epsilon\) in the query complexity compared to \cite{bakshi_robust_2020}.
+entries of \(\bB\) in expectation, so we incur an additional factor of \(1/\epsilon\) in the query complexity compared to \cite{bakshi_robust_2020}. The comparison is summarized in Table~\ref{tab:robust-lra-comparison}.
 
-\todo{introduce comparison table.}
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{0.12\textwidth}p{0.20\textwidth}p{0.4\textwidth}>{\centering\arraybackslash}p{0.25\textwidth}@{}}
+\toprule
+Result
+&
+Assumptions
+&
+Guarantee
+&
+Query complexity
+
+\\
+\midrule
+\cite{bakshi_robust_2020}
+&
+\((A1)\), \((A2)\), and \((A3)\)
+&
+\(\bX,\bY\in\R^{n\times k}\) satisfying
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \bigl(\epsilon+O(\sqrt{\eta})\bigr)\|\bA\|_F^2
+\]
+with constant probability.
+&
+\[
+    \widetilde O\!\left(
+        \frac{\phi_{\max}^2 n k}{\epsilon}
+    \right)
+\]
+
+\\
+\midrule
+This work
+&
+\((A1)\) and \((A3)\).
+&
+\(\bX,\bY\in\R^{n\times k}\) satisfying
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    O(\epsilon+\sqrt{\eta})\|\bA\|_F^2 
+\]
+with constant probability.
+&
+\[
+    O\!\left(
+        \frac{\phi_{\max}^2 n k}{\epsilon^2}
+    \right)
+\]
+in expectation
+
+\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Comparison of robust additive-error low-rank approximation guarantees.
+Here \(\widetilde O\) hides polylogarithmic factors in \(n\), \(k\), and
+\(1/\epsilon\).}
+\label{tab:robust-lra-comparison}
+\end{table}
 
 The main issue is that \(\bB\) need not be positive semidefinite, so the sampler of Chapter~\ref{chapter:fast-sample} cannot be applied directly. Fortunately, we can apply similar techniques after clipping the entries of $\bB$ according to the procedure of \cite{bakshi_robust_2020}, which we recall here.
 \begin{definition}
@@ -75,7 +143,7 @@ where
 \end{definition}
 
 The following lemma, due to Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}, shows that clipping does not increase corruption to $\bA$. We prove it here for completeness.
-\begin{lemma}
+\begin{lemma}[\cite{bakshi_robust_2020}]
     \label{lem:clipping-lemma}
     Let \(\bA\in\R^{n\times n}\) be psd, and let \(\bB=\bA+\bN\). Let $\widetilde\bB$ be as in Definition~\ref{def:clipped-matrix}. Then we may write
     \[
@@ -289,8 +357,8 @@ The proof of Theorem~\ref{thm:sublinear-psd-low-rank} applies verbatim to
 \(\widetilde{\bB}\), once length-squared column samples from
 \(\widetilde{\bB}\) are supplied by Algorithm~\ref{alg:robust-sampler}. The
 positive semidefinite assumption in Theorem~\ref{thm:sublinear-psd-low-rank}
-is used only to obtain such samples efficiently.  Thus, with constant
-probability, Algorithm~\ref{alg:robust-additive-lra} returns
+is used only to obtain such samples efficiently.  Thus, with
+probability at least 2/3, Algorithm~\ref{alg:robust-additive-lra} returns
 \(\bX,\bY\in\R^{n\times k}\) satisfying
 \[
     \|\widetilde{\bB}-\bX\bY^\top\|_F^2
@@ -315,4 +383,120 @@ queries to \(\bB\) in expectation and
 arithmetic operations in expectation. 
 
 Finally, we transfer this bound from \(\widetilde{\bB}\) back to \(\bA\). 
+% By Lemma~\ref{lem:clipping-lemma} and the assumption on
+% \(\bN\),
+% \[
+%     \|\widetilde{\bB}-\bA\|_F^2
+%     \leq
+%     \|\bN\|_F^2
+%     \leq
+%     \eta\|\bA\|_F^2.
+% \]
+% The preceding argument applied to \(\widetilde{\bB}\) gives, with probability
+% at least \(2/3\),
+% \[
+%     \|\widetilde{\bB}-\bX\bY^\top\|_F^2
+%     \leq
+%     \|\widetilde{\bB}-\bA_k\|_F^2
+%     +
+%     \epsilon\|\widetilde{\bB}\|_F^2,
+% \]
+% since \(\bA_k\) has rank at most \(k\).
+If \(\eta=0\), then \(\widetilde{\bB}=\bA\), and the desired guarantee follows
+immediately from \((\ast)\). Thus assume \(\eta>0\). We first bound
+\[
+\begin{aligned}
+    \|\bA-\bX\bY^\top\|_F^2
+    &=
+    \|(\widetilde{\bB}-\bX\bY^\top)-(\widetilde{\bB}-\bA)\|_F^2 \\
+    &\leq
+    (1+\sqrt{\eta})\|\widetilde{\bB}-\bX\bY^\top\|_F^2
+    +
+    \left(1+\frac{1}{\sqrt{\eta}}\right)
+    \|\widetilde{\bB}-\bA\|_F^2.
+\end{aligned}
+\]
+Here we used the triangle inequality and bounded the cross term by
+\[
+    2\|\widetilde{\bB}-\bX\bY^\top\|_F
+    \|\widetilde{\bB}-\bA\|_F
+    \leq
+    \sqrt{\eta}\|\widetilde{\bB}-\bX\bY^\top\|_F^2
+    +
+    \frac{1}{\sqrt{\eta}}\|\widetilde{\bB}-\bA\|_F^2.
+\]
+Now, we recall \(\|\widetilde{\bB}-\bA\|_F^2\leq \|\bN\|^2_F\leq \eta\|\bA\|_F^2\) due to Lemma~\ref{lem:clipping-lemma}. We have
+\[
+\begin{aligned}
+    \|\bA-\bX\bY^\top\|_F^2 &\leq (1+\sqrt{\eta})
+    \|\widetilde{\bB}-\bX\bY^\top\|_F^2
+    +
+    O(\sqrt{\eta})\|\bA\|_F^2\\
+    &\leq
+    (1+\sqrt{\eta})
+    \left(
+    \|\widetilde{\bB}-\widetilde{\bB}_k\|_F^2
+    +
+    \epsilon\|\widetilde{\bB}\|_F^2
+    \right)
+    +
+    O(\sqrt{\eta})\|\bA\|_F^2 \\
+    &\leq
+    (1+\sqrt{\eta})
+    \left(
+        \|\widetilde{\bB}-\bA_k\|_F^2
+        +
+        \epsilon\|\widetilde{\bB}\|_F^2
+    \right)
+    +
+    O(\sqrt{\eta})\|\bA\|_F^2.
+\end{aligned}
+\]
+For the second inequality, we use $(\ast)$. For the third inequality, we view $\bA_k$ as a rank-$k$ approximation to $\widetilde\bB$ and note the optimality of $\widetilde\bB_k$.
+
+It remains to compare \(\|\widetilde{\bB}-\bA_k\|_F^2\) and
+\(\|\bA-\bA_k\|_F^2\). Again using the cross-term bound,
+\[
+\begin{aligned}
+    \|\widetilde{\bB}-\bA_k\|_F^2
+    &=
+    \|(\bA-\bA_k)+(\widetilde{\bB}-\bA)\|_F^2 \\
+    &\leq
+    (1+\sqrt{\eta})\|\bA-\bA_k\|_F^2
+    +
+    \left(1+\frac{1}{\sqrt{\eta}}\right)
+    \|\widetilde{\bB}-\bA\|_F^2 \\
+    &\leq
+    (1+\sqrt{\eta})\|\bA-\bA_k\|_F^2
+    +
+    O(\sqrt{\eta})\|\bA\|_F^2.
+\end{aligned}
+\]
+Since \(\|\bA-\bA_k\|_F\leq \|\bA\|_F\), this implies
+\[
+    (1+\sqrt{\eta})\|\widetilde{\bB}-\bA_k\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    O(\sqrt{\eta})\|\bA\|_F^2.
+\]
+Also,
+\[
+    \|\widetilde{\bB}\|_F^2
+    \leq
+    \left(\|\bA\|_F+\|\widetilde{\bB}-\bA\|_F\right)^2
+    \leq
+    (1+\sqrt{\eta})^2\|\bA\|_F^2
+    \leq
+    4\|\bA\|_F^2,
+\]
+where we used \(\eta\leq 1\). Combining our various bounds gives
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    O(\epsilon+\sqrt{\eta})\|\bA\|_F^2.
+\]
+This completes the proof.
 \end{proof}

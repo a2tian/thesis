@@ -2,7 +2,88 @@ In this section, we derive a simple algorithm for computing additive error low-r
 \[\|\bA - \bX\bY^\top\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon\|\bA\|^2_F\]
 with constant probability, using $O(nk/\epsilon^2)$ entries of $\bA$ and $O(nk^2/\epsilon^4)$ arithmetic in expectation.
 
-Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their result is sample-optimal, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm.
+Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their result is sample-optimal, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm. The comparison is summarized in Table~\ref{tab:additive-lra-comparison}. 
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}L{0.10\textwidth}L{0.23\textwidth}L{0.35\textwidth}C{0.2\textwidth}C{0.2\textwidth}@{}}
+\toprule
+Result
+&
+Assumptions
+&
+Guarantee
+&
+Query complexity
+&
+Arithmetic complexity
+\\
+\midrule
+\cite{bakshi_robust_2020}
+&
+Psd matrix with entry-wise access.
+&
+\(\bX,\bY\in\R^{n\times k}\) such that
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \epsilon\|\bA\|_F^2 .
+\]
+&
+\[
+    \widetilde O\!\left(
+        \frac{nk}{\epsilon}
+    \right)
+\]
+&
+\[
+    \widetilde O\!\left(
+        n\left(\frac{k}{\epsilon}\right)^{\omega-1}
+    \right)
+\]
+\\
+\midrule
+This work
+&
+Psd matrix with entry-wise access. 
+&
+\(\bX,\bY\in\R^{n\times k}\) such that
+\[
+    \|\bA-\bX\bY^\top\|_F^2
+    \leq
+    \|\bA-\bA_k\|_F^2
+    +
+    \epsilon\|\bA\|_F^2 .
+\]
+&
+\[
+    O\!\left(
+        \frac{nk}{\epsilon^2}
+    \right)
+\]
+in expectation
+&
+\[
+    O\!\left(
+        \frac{nk^2}{\epsilon^4}
+    \right)
+\]
+in expectation
+\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Comparison of additive-error low-rank approximation guarantees for
+positive semidefinite matrices. Here \(\omega\) is the matrix multiplication
+exponent, and \(\widetilde O\) hides polylogarithmic factors in the relevant
+parameters.}
+\label{tab:additive-lra-comparison}
+\end{table}
 
 
 We begin with the following theorem due to Drineas, Kannan, and Mahoney~\cite{drineas_fast_2006-1}, which shows that one can compute a good approximation to the top $k$-dimensional left singular subspace of $\bA$ from $O(k/\epsilon^2)$ columns sampled by squared column norms.
@@ -351,9 +432,7 @@ arithmetic. For \(c\leq n\), this is \(O(nc^2)\), hence
 \(
     O\left({nk^2}/{\epsilon^4}\right).
 \)
-Computing all leverage scores of \(\bH\) costs \(O(nk)\), and sampling from the
-leverage score distribution can be done after an \(O(n)\)-time preprocessing
-step. Finally, forming \(\widehat{\bY}\) from the \(t\) sampled rows costs
+Computing all leverage scores of \(\bH\) costs \(O(nk)\). Finally, forming \(\widehat{\bY}\) from the \(t\) sampled rows costs
 \(O(ntk)\) arithmetic operations, since each sampled row contributes an
 \(n\times k\) outer product. This is 
 \(
