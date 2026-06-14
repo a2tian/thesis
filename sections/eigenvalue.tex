@@ -457,10 +457,9 @@ Step 3 queries \(m\) full rows of \(\bA\), for a total of \(nm\) entry
 queries. Computing the row norms
 also costs \(O(nm)\) arithmetic operations.
 
-Step 4 forms \(\bG\in\R^{m\times m}\). No additional entry queries are
-needed, since every entry \(\bA_{i_r i_t}\) is contained in the sampled
-row \(\bA_{i_r,*}\). Each entry of \(\bG\) can be computed in constant
-arithmetic time from \(\widehat F\), \(\rho_r\), \(\rho_t\), and
+In Step 4, we form \(\bG\in\R^{m\times m}\). No additional entry queries are
+needed since every entry \(\bA_{i_r i_t}\) is contained in the sampled
+row \(\bA_{i_r,*}\). Each entry of \(\bG\) can be computed with constant arithmetic from \(\widehat F\), \(\rho_r\), \(\rho_t\), and
 \(\bA_{i_r i_t}\), so forming \(\bG\) costs \(O(m^2)\) arithmetic
 operations. Since \(m<n\), this is bounded by \(O(nm)\).
 

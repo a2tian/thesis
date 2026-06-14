@@ -80,8 +80,7 @@ in expectation
 \end{adjustbox}
 \caption{Comparison of additive-error low-rank approximation guarantees for
 positive semidefinite matrices. Here \(\omega\) is the matrix multiplication
-exponent, and \(\widetilde O\) hides polylogarithmic factors in the relevant
-parameters.}
+exponent, and \(\widetilde O\) hides polylogarithmic factors in $n$, $k$, and $1/\epsilon$.}
 \label{tab:additive-lra-comparison}
 \end{table}
 
@@ -94,7 +93,7 @@ We begin with the following theorem due to Drineas, Kannan, and Mahoney~\cite{dr
     \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}.\]
     Now, suppose $i_1, i_2, \ldots, i_c$ are $c$ independent samples from the squared column-norm distribution on $\bA$, and let $\bC\in\R^{m\times c}$ be the matrix whose columns are given by
     \[\bC_{*, j} := \frac{1}{\sqrt{cp_{i_j}}}\bA_{*, i_j}.\]
-    Finally, let $\bH\in\R^{m\times k}$ be a matrix containing the top-$k$ left singular vectors of $\bC$ as columns. We have the following:
+    Finally, let $\bH\in\R^{m\times k}$ be an orthonormal basis for the subspace spanned by the top-$k$ left singular vectors of $\bC$. We have the following:
     \begin{enumerate}[(a)]
         \item Fix $\delta\in(0,1)$ and let $\eta=1+\sqrt{8\log(1/\delta)}$. If $c\geq 4k\eta^2/\epsilon^2$, then with probability at least $1-\delta$,
     \[\|\bA - \bH\bH^\top\bA\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon \|\bA\|^2_F.\]

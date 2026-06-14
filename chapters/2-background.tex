@@ -28,6 +28,7 @@ A symmetric matrix $\bA\in\R^{n\times n}$ is \textit{positive semidefinite (psd)
 \end{enumerate}
 
 \begin{fact}
+    \label{fact:psd-inequality}
     Let $\bA$ be an $n\times n$ psd matrix. For all $i,j\in [n]$, we have the inequality
     \[\bA_{ij}^2\leq\bA_{ii}\bA_{jj}.\]
 \end{fact}
@@ -37,6 +38,12 @@ Let $\bA\in\R^{n\times n}$ be a psd matrix and $S\subset[n]$. Define
 We write $\widetilde \bA$ to denote the \textit{Nystr\"om approximation} of $\bA$ with index set $S$, where 
 \[\widetilde\bA = \bC\bW^{-1}\bC^\top.\]
 Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are psd. Moreover, $\rank(\widetilde\bA) = |S|$.
+
+% \todo{add subsection on rejection sampling?}
+
+
+\section{Sublinear Low-Rank Approximation}
+
 
 
 \section{Sampling Primitives for Matrix Approximation}
@@ -63,4 +70,3 @@ Subsequent work shows that the performance of uniform sampling depends on the co
 \subsection{Adaptive Sampling}
 
 
-\section{Sublinear Low-Rank Approximation}

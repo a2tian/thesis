@@ -1,20 +1,23 @@
 In this chapter, we demonstrate how to sample columns from a psd matrix $\bA$ such that any column $i$ is picked with probability
-\[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
-while reading $O(n)$ entries of $\bA$ and running in $O(n)$ time in expectation. We also give a matching lower bound showing that $\Omega(n)$ entry queries are necessary for length-squared sampling. 
+\[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
+while reading only $O(n)$ entries of $\bA$ in expectation. In section~\ref{sec:p-power-sampling}, we generalize our techniques to sample with probability proportional to $\|\bA_{*,i}\|^p_p$, where $\|\cdot\|_p$ is the vector $\ell_p$ norm. In section~\ref{sec:sampling-lower-bound}, we prove that any algorithm for length-squared sampling must read $\Omega(n)$ off-diagonal entries in the worst case. 
 
-Our algorithm applies a well-known technique called \textit{rejection sampling}. One known application of this technique is due to Needell, Srebro, and Ward \cite{needell_stochastic_2015}, who use rejection sampling to obtain length-squared samples from an arbitrary matrix assuming a known upper bound $B$ on the row norms, i.e., 
+Our algorithm applies a well-known technique called \textit{rejection sampling}. One related application of this technique is due to Needell, Srebro, and Ward \cite{needell_stochastic_2015}, who use rejection sampling to obtain length-squared samples from an arbitrary matrix assuming a known upper bound $B$ on the row norms, i.e., 
 \[\|a_i\|^2_2\leq B\qquad\text{for all $i$.}\]
-Given $B$, one can obtain a length-squared sample using $O(n^2B/\|\bA\|^2_F)$ entry queries in expectation. However, this is still $O(n^2)$ expected queries when $B = \Theta(\|\bA\|^2_F)$. Using psd structure, we can avoid this additional assumption and achieve only linear dependence on $n$. We present our approach below.
+Given such a bound, one can obtain a length-squared sample using $O(n^2B/\|\bA\|^2_F)$ entry queries in expectation. However, the cost of this approach can still match that of reading the full input, for example when $B = \Omega(\|\bA\|_F^2)$. In the psd setting, we avoid the need for an external row-norm upper bound and obtain a sampler whose expected query complexity depends only linearly on $n$. We present the algorithm below.
 
 \begin{algorithm}[H]
 \caption{Fast Length-Squared Sampling}
 \label{alg:sampling-procedure}
 
+\textbf{Input:} psd matrix
+\(\bA\in\R^{n\times n}\).
+\smallskip
+
 \noindent
 Let \(d\) be the diagonal distribution given by $d_i = \frac{\bA_{ii}}{\tr(\bA)}$.
-
-\smallskip
-\noindent
+% \smallskip
+% \noindent
 Repeat the following in rounds until an index is accepted:
 \begin{enumerate}[
     label=\arabic*.,
@@ -31,10 +34,38 @@ Repeat the following in rounds until an index is accepted:
 \end{enumerate}
 \end{algorithm}
 
+Here, we use the diagonal as a proposal distribution for rejection sampling. Indeed, we note
+\begin{align}
+    \begin{split}
+    p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F} &= \frac{1}{\|\bA\|^2_F}\sum_{j=1}^n \bA_{ij}^2\\
+    &\leq \frac{1}{\|\bA\|^2_F}\sum_{j=1}^n\bA_{ii}\bA_{jj}\qquad\text{by Fact~\ref{fact:psd-inequality}.}\\
+    &=\frac{1}{\|\bA\|^2_F}\bA_{ii}\tr(\bA)\\
+    &=\frac{\tr(\bA)^2}{\|\bA\|^2_F}\cdot\frac{\bA_{ii}}{\tr(\bA)} = \frac{\tr(\bA)^2}{\|\bA\|^2_F} d_i
+    \end{split}
+\end{align}
+so the diagonal distribution $d$ is a valid proposal distribution with constant $M := \tr(\bA)^2/\|\bA\|^2_F$. At this point, we would like to sample $i\sim d$ and accept with probability
+\[\frac{p_i}{Md_i} = \frac{\|\bA_{*, i}\|^2_2}{\bA_{ii}\tr(\bA)},\]
+but computing this quantity would require reading the entire column $i$ at the cost of $n$ entry queries per round. Our main observation is that we can implement the accept probability without reading $\bA_{*, i}$ in the following manner.
+
+Let $J\sim d$ be a random index sampled from the diagonal distribution $d$, and consider the random variable $X_i := \frac{\bA_{iJ}^2}{\bA_{ii}\bA_{JJ}}$. Since $\bA$ is psd, $X_i$ takes on values in the range $[0,1]$. Thus, after observing $X_i = x$, the variable
+\[Y_i:= \begin{cases}
+    1&\text{with probability $x$}\\
+    0&\text{otherwise}
+\end{cases}\]
+is well-defined. Now, we have
+\begin{align}
+\begin{split}
+    \Pr[Y_i = 1] &= \sum_x\Pr[Y_i = 1\mid X_i = x]\cdot \Pr[X_i = x]\\
+    &=\E[X_i] = \sum_{J\in [n]}\frac{\bA_{JJ}}{\tr(\bA)}\frac{\bA_{iJ}^2}{\bA_{ii}\bA_{JJ}}\\
+    &=\frac{\|\bA_{*, i}\|^2_2}{\bA_{ii}\tr(\bA)}
+\end{split}
+\end{align}
+which is exactly the probability we need. Moreover, observing $Y_i$ only requires us to read the entries $\bA_{iJ}, \bA_{ii}$, and $\bA_{JJ}$. With this technique in mind, we may view Algorithm~\ref{alg:sampling-procedure} as a standard application of rejection sampling. Nonetheless, we give a self-contained theorem statement and proof of correctness below. 
+
 \begin{theorem}
     \label{thm:fast-l2-sampling}
     Algorithm~\ref{alg:sampling-procedure} outputs column $i$ with probability
-    \[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
     for all $i$. Moreover, the expected number of rounds before acceptance is at most $n$.
 \end{theorem}
 
@@ -42,11 +73,11 @@ Repeat the following in rounds until an index is accepted:
     The acceptance probability in each round is well-defined because $\bA_{ij}^2\leq\bA_{ii}\bA_{jj}$ holds for all $i,j\in [n]$ when $\bA$ is psd.
     
     In any given round, the probability of outputting $i$ is
-    \[\frac{\bA_{ii}}{\tr(\bA)}\sum_{j\in [n]} \frac{\bA_{jj}}{\tr(\bA)}\cdot \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}} = \sum_{j\in [n]}\frac{\bA_{ij}^2}{\tr(\bA)^2} = \frac{\|\ba_i\|^2_2}{\tr(\bA)^2}.\]
+    \[\frac{\bA_{ii}}{\tr(\bA)}\sum_{j\in [n]} \frac{\bA_{jj}}{\tr(\bA)}\cdot \frac{\bA_{ij}^2}{\bA_{ii}\bA_{jj}} = \sum_{j\in [n]}\frac{\bA_{ij}^2}{\tr(\bA)^2} = \frac{\|\bA_{*, i}\|^2_2}{\tr(\bA)^2}.\]
     Moreover, summing over all indices gives the success probability
     \[\beta := \frac{\|\bA\|^2_F}{\tr(\bA)^2}\]
     for one round. Conditioning on success, the probability of outputting $i$ is thus
-    \[p_i = \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
+    \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
     as desired. Finally, expand $\beta$ to obtain a lower bound on the acceptance probability:
     \begin{align*}
         \beta &= \frac{\|\bA\|^2_F}{\tr(\bA)^2}\\
@@ -57,7 +88,7 @@ Repeat the following in rounds until an index is accepted:
     In particular, the expected number of rounds before the first acceptance is $1/\beta\leq n$.
 \end{proof}
 
-Theorem~\ref{thm:fast-l2-sampling} gives an exact length-squared sampler whose query complexity is bounded in expectation. In some settings, however, it may be preferable to have a fixed query budget that does not depend on the random number of rejection sampling rounds. The next corollary gives such a fixed-query variant. Using exactly $2n$ entry queries, we can sample from a distribution that is at most a constant factor from the length-squared distribution.
+Theorem~\ref{thm:fast-l2-sampling} gives an exact length-squared sampler whose query complexity is bounded in expectation. In some settings, however, it may be preferable to have a fixed query budget that does not depend on the random number of rejection sampling rounds. The next corollary shows that using exactly $2n$ entry queries, we can sample from a distribution that is at most a constant factor from the length-squared distribution.
 
 \begin{corollary}[Fixed-query length-squared sampling]
     Suppose we modify Algorithm~\ref{alg:sampling-procedure} as follows:
@@ -73,8 +104,8 @@ Theorem~\ref{thm:fast-l2-sampling} gives an exact length-squared sampler whose q
         \item Otherwise, return a uniformly random index.
     \end{enumerate}
     Then the modified sampling procedure outputs index $i$ with probability 
-    \[p_i\geq \left(1 - e^{-1}\right)\cdot\frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\]
-    while reading exactly $2n$ entries of $\bA$ and running in $O(n)$ time.
+    \[p_i\geq \left(1 - e^{-1}\right)\cdot\frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
+    while reading exactly $2n$ entries of $\bA$.
 \end{corollary}
 
 \begin{proof}
@@ -85,12 +116,41 @@ be the success probability for one round, as in the proof of Theorem~\ref{thm:fa
 Suppose we run $k$ rounds of the sampling algorithm. The probability of at least one success is 
 $1 - (1-\beta)^k$,
 so the probability of outputting $i$ is at least
-\[\left[1 - (1-\beta)^k\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.\]
+\[\left[1 - (1-\beta)^k\right]\cdot \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}.\]
 In particular, in $n$ rounds the probability of outputting $i$ is
 \begin{align*}
-    p_i&\geq \left[1 - \left(1-\frac{1}{n}\right)^n\right]\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}\\
-    &\geq \left(1 - e^{-1}\right)\cdot \frac{\|\ba_i\|^2_2}{\|\bA\|^2_F}.
+    p_i&\geq \left[1 - \left(1-\frac{1}{n}\right)^n\right]\cdot \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\\
+    &\geq \left(1 - e^{-1}\right)\cdot \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}.
 \end{align*}
+We query the $n$ diagonal entries upfront, followed by one entry per round for a total of $2n$ entry queries as required.
 \end{proof}
 
+% \section[Fast Lp Sampling]{Fast $\ell_p$ Sampling}
+% \label{sec:p-power-sampling}
+
+
+% \begin{theorem}
+% Let \(\bA\in\mathbb{R}^{n\times n}\) be nonzero and positive semidefinite, and fix \(p>0\).
+% Define
+% \[
+% D_p=\sum_{i=1}^n \bA_{ii}^{p/2},
+% \qquad
+% q_i=\frac{\bA_{ii}^{p/2}}{D_p}.
+% \]
+% Consider the following rejection sampler. In each round, sample
+% \(i,j\overset{\mathrm{i.i.d.}}{\sim}q\), and accept \(i\) with probability
+% \[
+% \frac{|\bA_{ij}|^p}{\bA_{ii}^{p/2}\bA_{jj}^{p/2}}.
+% \]
+% Then, conditioned on acceptance, the output index \(i\) is distributed as
+% \[
+% \Pr[i]
+% =
+% \frac{\|\bA_{*,i}\|_p^p}
+% {\sum_{\ell=1}^n \|\bA_{*,\ell}\|_p^p}.
+% \]
+% Moreover, the expected number of rounds before acceptance is at most \(n\).
+% \end{theorem}
+
 \section{Lower Bound for Length-Squared Sampling}
+\label{sec:sampling-lower-bound}
