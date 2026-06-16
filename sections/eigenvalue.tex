@@ -214,31 +214,27 @@ Run the following procedure:
     \(
         \bA_{i_1,*},\ldots,\bA_{i_m,*}
     \)
-    % and compute
-    % \(
-    %     \rho_r = \|\bA_{i_r,*}\|_2^2
-    % \)
-    % for each \(r\in[m]\).
-    and define the sampling matrix \(\widehat \bS\in\R^{m\times n}\) by
+    and, for each \(r\in[m]\), set
     \[
-        \bS_{r,*}'
+        \widehat q_{i_r}
         :=
-        \sqrt{\frac{\widehat F}{m \|\bA_{i_r, *}\|^2_2}}\,
+        \frac{\|\bA_{i_r,*}\|_2^2}{\widehat F}.
+    \]
+    Define the sampling matrix \(\widehat \bS\in\R^{m\times n}\) by
+    \[
+        \widehat \bS_{r,*}
+        :=
+        \frac{\be_{i_r}^{\top}}{\sqrt{m\widehat q_{i_r}}}
+        =
+        \sqrt{\frac{\widehat F}{m\|\bA_{i_r,*}\|_2^2}}\,
         \be_{i_r}^{\top}
         \qquad\text{for } r=1,\ldots,m.
     \]
-    % Form the matrix \(\bG\in\R^{m\times m}\) entry-wise as given by
-    % \[
-    %     \bG_{rt}
-    %     =
-    %     \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
-    %     \bigl(\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bigr)_{i_r i_t}.
-    % \]
     \item Compute the eigenvalues
     \(
         \widehat\lambda_1\geq \widehat\lambda_2\geq\cdots\geq \widehat\lambda_m
     \)
-    of \(\bG:=\bS'^\top\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bS'\).
+    of \(\widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top\).
 
     \item Return
     \(
@@ -304,36 +300,37 @@ the remainder of the proof, assume that \(m<n\).
 %     \left(1+\frac{\epsilon}{4}\right)\|\bA\|_F^2
 % \]
 % with probability at least \(0.99\). Condition on this event.
-We first prove correctness. Condition on $\widehat F$ produced by Step 1 of the algorithm and the indices $i_1,\ldots, i_m$ sampled in Step 2. We show that the matrix $\bG$ in Step 4 of the algorithm is a scalar multiple of $\bS\mathsf Z_{\alpha}(\bA)\bS^\top$ produced by Theorem~\ref{thm:sw-row-norm-eigenvalue} with sampled indices $i_1,\ldots, i_m$ and accuracy parameter $\alpha :=(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. 
-
-In Step 3 we compute
-\(
-    \rho_r=\|\bA_{i_r,*}\|_2^2
-\)
-, so the rescaling used in Step 4 satisfies
+We first prove correctness. Condition on \(\widehat F\) produced by Step 1
+of the algorithm and the indices \(i_1,\ldots,i_m\) sampled in Step 2. Let
+\(\bS\) be the sampling matrix from Theorem~\ref{thm:sw-row-norm-eigenvalue}
+formed using the same sampled indices and the exact sampling probabilities
+\(q_i=\|\bA_{i,*}\|_2^2/\|\bA\|_F^2\). Set
 \[
-    \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}
-    =
-    \frac{\widehat F}{\|\bA\|_F^2}
-    \cdot
-    \frac{1}{m\sqrt{q_{i_r}q_{i_t}}}\qquad q_i=\|\bA_{i,*}\|^2_2/\|\bA\|^2_F.
+    \alpha
+    :=
+    \frac{\epsilon}{4}\sqrt{\frac{\widehat F}{\|\bA\|_F^2}}.
 \]
-This gives
-\begin{align*}
-    \bG_{rt}
-    &=
-    \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
-    \mathsf Z_{\epsilon/4, \widehat F}(\bA)_{i_r i_t} \\
-    &=
-    \frac{\widehat F}{\|\bA\|_F^2}
-    \cdot
-    \frac{\mathsf Z_{\alpha}(\bA)_{i_r i_t}}{m\sqrt{q_{i_r}q_{i_t}}} \\
-    &=
-    \frac{\widehat F}{\|\bA\|_F^2}
-    \cdot
-    (\bS\mathsf Z_{\alpha}(\bA)\bS^\top)_{i_r i_t}
-\end{align*}
-so $\bG = (\widehat F/\|\bA\|^2_F)\cdot \bS\mathsf Z_{\alpha}(\bA)\bS^\top$. We have the equality \(\mathsf Z_{\epsilon/4, \widehat F}(\bA)=\mathsf Z_{\alpha}(\bA)\) due to 
+For each sampled index, Step 3 sets
+\[
+    \widehat q_{i_r}
+    =
+    \frac{\|\bA_{i_r,*}\|_2^2}{\widehat F}
+    =
+    \frac{\|\bA\|_F^2}{\widehat F}\,q_{i_r}.
+\]
+Therefore
+\[
+    \widehat \bS_{r,*}
+    =
+    \frac{\be_{i_r}^{\top}}{\sqrt{m\widehat q_{i_r}}}
+    =
+    \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\,
+    \frac{\be_{i_r}^{\top}}{\sqrt{m q_{i_r}}}
+    =
+    \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\,\bS_{r,*},
+\]
+and hence \(\widehat \bS=\sqrt{\widehat F/\|\bA\|_F^2}\,\bS\). We also have
+\(\mathsf Z_{\epsilon/4, \widehat F}(\bA)=\mathsf Z_{\alpha}(\bA)\) because
 \[
     \frac{\epsilon^2}{16}\widehat F
     =
@@ -344,6 +341,13 @@ so $\bG = (\widehat F/\|\bA\|^2_F)\cdot \bS\mathsf Z_{\alpha}(\bA)\bS^\top$. We 
     \|\bA\|_F^2,
 \]
 so the thresholds in Definition~\ref{def:eigenvalue-zeroed-matrix} agree.
+Consequently,
+\[
+    \widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top
+    =
+    \frac{\widehat F}{\|\bA\|_F^2}\,
+    \bS\mathsf Z_{\alpha}(\bA)\bS^\top.
+\]
 
 Now, condition on the event that Step 1 satisfies
 \[
@@ -376,10 +380,11 @@ Finally, let
 \(
 \widehat\lambda_1\geq\cdots\geq\widehat\lambda_m
 \)
-be the eigenvalues of \(\bG\), again together with \(n-m\) additional
-zeros. Since
+be the eigenvalues of
+\(\widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top\),
+again together with \(n-m\) additional zeros. Since
 \(
-    \bG
+    \widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top
     =
     ({\widehat F}/{\|\bA\|_F^2})\cdot 
     \bS\mathsf Z_{\alpha}(\bA)\bS^\top
@@ -471,14 +476,15 @@ Step 3 queries \(m\) full rows of \(\bA\), for a total of \(nm\) entry
 queries. Computing the row norms
 also costs \(O(nm)\) arithmetic operations.
 
-In Step 4, we form \(\bG\in\R^{m\times m}\). No additional entry queries are
-needed since every entry \(\bA_{i_r i_t}\) is contained in the sampled
-row \(\bA_{i_r,*}\). Each entry of \(\bG\) can be computed with constant arithmetic from \(\widehat F\), \(\rho_r\), \(\rho_t\), and
-\(\bA_{i_r i_t}\), so forming \(\bG\) costs \(O(m^2)\) arithmetic
-operations. Since \(m<n\), this is bounded by \(O(nm)\).
-
-Finally, Step 5 computes the eigenvalues of the \(m\times m\) symmetric
-matrix \(\bG\), which costs \(O(m^3)\) arithmetic operations. Step 6
+In Step 4, we form the \(m\times m\) matrix
+\(\widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top\).
+No additional entry queries are needed since every entry \(\bA_{i_r i_t}\)
+is contained in the sampled row \(\bA_{i_r,*}\). Each entry can be computed
+with constant arithmetic from \(\widehat F\), \(\widehat q_{i_r}\),
+\(\widehat q_{i_t}\), and \(\bA_{i_r i_t}\), so forming this matrix costs
+\(O(m^2)\) arithmetic operations. Since \(m<n\), this is bounded by
+\(O(nm)\). Computing its eigenvalues costs \(O(m^3)\) arithmetic operations.
+Step 5
 adds \(n-m\) zeros to the returned sequence, costing at most \(O(n)\)
 additional arithmetic operations, which is dominated by the preceding
 terms.
