@@ -2,7 +2,7 @@ In this section, we derive a simple algorithm for computing additive error low-r
 \[\|\bA - \bX\bY^\top\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon\|\bA\|^2_F\]
 with constant probability, using $O(nk/\epsilon^2)$ entries of $\bA$ and $O(nk^2/\epsilon^4)$ arithmetic in expectation.
 
-Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their result is sample-optimal, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm. The comparison is summarized in Table~\ref{tab:additive-lra-comparison}. 
+Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite[Corollary 5.19]{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their work also achieves relative error approximation using $\tilde O(nk/\epsilon)$ entries, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. The relative error guarantee from $\tilde O(nk/\epsilon)$ entries is a strictly stronger result from a theoretical perspective. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm. The comparison is summarized in Table~\ref{tab:additive-lra-comparison}. 
 
 \todo{add remark about relative error approximation}
 
@@ -106,15 +106,15 @@ We begin with the following theorem due to Drineas, Kannan, and Mahoney~\cite{dr
     \end{enumerate}
 \end{lemma}
 
-With constant probability, Lemma~\ref{thm:dkm06} produces a matrix $\bH$ with orthonormal columns such that $\bH\bH^\top\bA$, the projection of $\bA$ onto the subspace spanned by $\bH$, yields an additive error approximation to $\bA$. To produce an explicit factorization, we need to regress the columns of $\bA$ onto the basis $\bH$, i.e., compute $\bH^\top\bA$, so that setting $\bX = \bH$ and $\bY^\top = \bH^\top \bA$ yields an additive error approximation $\bX\bY^\top$. However, computing $\bH^\top\bA$ requires us to read all of $\bA$, so instead we estimate this matrix by sampling
-rows of \(\bA\) according to the leverage scores of \(\bH\). We state and prove the needed guarantee below for completeness. Closely related results appear in Lemma 8 of \cite{drineas_fast_2006} and Lemma 2.2.14 of \cite{musco_power_2018}.
+With constant probability, Lemma~\ref{thm:dkm06} produces a matrix $\bH$ with orthonormal columns such that $\bH\bH^\top\bA$, the projection of $\bA$ onto the subspace spanned by $\bH$, yields an additive error approximation to $\bA$. To produce an explicit factorization, we would like to set $\bX = \bH$ and $\bY^\top = \bH^\top \bA$ so that $\bX\bY^\top$ yields an additive error approximation. However, computing $\bH^\top\bA$ requires us to read all of $\bA$, so we instead apply a standard matrix multiplication result to approximate $\bH^\top \bA$. We state and prove the needed guarantee below for completeness. A closely related result appears in Lemma 8 of \cite{drineas_fast_2006}.
+% and Lemma 2.2.14 of \cite{musco_power_2018}.
 
 \begin{lemma}
 \label{lem:probabilistic-right-factor}
 Let \(\bA\in\R^{n\times n}\), and let
 \(\bH\in\R^{n\times k}\) have orthonormal columns. Let $q$ be the leverage score distribution on $\bH$, where
 \[
-    q_i = \frac{\ell_i}{k},\qquad \ell_i = \|\bH_{i,*}\|^2_2.
+    q_i = \frac{\ell(i)}{k},\qquad \ell(i) = \|\bH_{i,*}\|^2_2.
 \]
 Suppose \(i_1,\ldots, i_t\) are independent samples from \(q\), and construct the matrix $\widehat\bZ\in\R^{k\times n}$ given by
 \[
@@ -149,15 +149,73 @@ Then
     \bH^\top\bA.
 \]
 Let \(\bR_1,\ldots,\bR_t\) be the independent copies of \(\bR\) used to
-form \(\widehat{\bZ}\). Since the samples are independent and
-\(\E[\bR]=\bH^\top\bA\), we have
+form \(\widehat{\bZ}\). 
+% Since the samples are independent and
+% \(\E[\bR]=\bH^\top\bA\), we have
+% \[
+%     \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+%     =
+%     \frac{1}{t}\E\|\bR-\bH^\top\bA\|_F^2
+%     \leq
+%     \frac{1}{t}\E\|\bR\|_F^2.
+% \]
+Since
 \[
-    \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    \widehat{\bZ}-\bH^\top\bA
     =
-    \frac{1}{t}\E\|\bR-\bH^\top\bA\|_F^2
-    \leq
-    \frac{1}{t}\E\|\bR\|_F^2.
+    \frac{1}{t}\sum_{r=1}^t
+    \left(\bR_r-\bH^\top\bA\right),
 \]
+we have
+\[
+\begin{aligned}
+    \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    &=
+    \E\left\|
+        \frac{1}{t}\sum_{r=1}^t
+        \left(\bR_r-\bH^\top\bA\right)
+    \right\|_F^2 \\
+    &=
+    \frac{1}{t^2}
+    \sum_{r=1}^t\sum_{s=1}^t
+    \E\operatorname{tr}\left[
+        \left(\bR_r-\bH^\top\bA\right)^\top
+        \left(\bR_s-\bH^\top\bA\right)
+    \right].
+\end{aligned}
+\]
+For \(r\neq s\), independence and
+\(\E[\bR_r-\bH^\top\bA]=0\) imply
+\(
+    \E\operatorname{tr}\left[
+        \left(\bR_r-\bH^\top\bA\right)^\top
+        \left(\bR_s-\bH^\top\bA\right)
+    \right]
+    =
+    0
+\)
+and so
+\[
+\begin{aligned}
+    \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    &=
+    \frac{1}{t^2}
+    \sum_{r=1}^t
+    \E\|\bR_r-\bH^\top\bA\|_F^2 \\
+    &=
+    \frac{1}{t}
+    \E\|\bR-\bH^\top\bA\|_F^2 \\
+    &\leq
+    \frac{1}{t}\E\|\bR\|_F^2,
+\end{aligned}
+\]
+% where the final inequality follows from
+% \[
+%     \E\|\bR-\bH^\top\bA\|_F^2
+%     =
+%     \E\|\bR\|_F^2-\|\bH^\top\bA\|_F^2.
+% \]
+% \todo{revisit this}
 Moreover,
 \[
 \begin{aligned}
@@ -173,7 +231,7 @@ Moreover,
     \frac{\|\bH_{i,*}^{\top}\bA_{i,*}\|_F^2}{q_i}\\
     &=\sum_{i:\ell_i>0}\frac{\|\bH_{i,*}\|_2^2\|\bA_{i,*}\|_2^2}{q_i}\\
     &=\sum_{i:\ell_i>0} k\|\bA_{i,*}\|_2^2
-        \qquad\text{using \(q_i=\ell_i/k\)}\\
+        \qquad\text{using \(q_i=\ell(i)/k\)}\\
     &\leq k\|\bA\|_F^2 .
 \end{aligned}
 \]

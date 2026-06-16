@@ -151,9 +151,9 @@ Let \(\bA\in\R^{n\times n}\) be a symmetric matrix, and let \(\epsilon\in(0,1)\)
 Suppose \(i_1,\ldots,i_{m_0}\) are independent samples from $q$, where
 \[
     m_0 \geq
-    \frac{C_0}{\epsilon^2}\log^4 n\log^2\frac{1}{\epsilon}
+    \frac{c}{\epsilon^2}\log^4 n\log^2\frac{1}{\epsilon}
 \]
-for a sufficiently large absolute constant \(C_0\). Define the sampling
+and $c$ is the same absolute constant as in Definition~\ref{def:eigenvalue-zeroed-matrix}. Define the sampling
 matrix \(\bS\in\R^{m\times n}\) by
 \[
     \bS_{r,*}=\frac{\be_{i_r}^{\top}}{\sqrt{m_0 q_{i_r}}}.
@@ -169,10 +169,9 @@ The preceding theorem assumes access to quantities that are not directly
 available in the entry-query model. First, the zeroing rule defining \(\mathsf Z_{\epsilon}(\bA)\) requires access to
 \(\|\bA\|_F^2\). We replace this quantity by an estimate \(\widehat F\) given by Algorithm~\ref{alg:frobenius-norm-approximation}. After sampling an index \(i_r\), we query the full row
 \(\bA_{i_r,*}\) and compute
-\(\rho_r=\|\bA_{i_r,*}\|_2^2\). In place of the exact sampling probability
-\(q_{i_r}=\rho_r/\|\bA\|_F^2\), we use the estimated probability
-\(\widehat q_{i_r}=\rho_r/\widehat F\), so the rescaling factor is
-\(1/\sqrt{m\widehat q_{i_r}}=\sqrt{\widehat F/(m\rho_r)}\). The algorithm
+\(\|\bA_{i_r,*}\|_2^2\). In place of the exact sampling probability
+\(q_{i_r}=\|\bA_{i_r,*}\|_2^2/\|\bA\|_F^2\), we use the estimated probability
+\(\widehat q_{i_r}=\|\bA_{i_r,*}\|_2^2/\widehat F\). The algorithm
 below is the resulting implementable version of Theorem~\ref{thm:sw-row-norm-eigenvalue}.
 
 \begin{algorithm}[H]
@@ -215,24 +214,31 @@ Run the following procedure:
     \(
         \bA_{i_1,*},\ldots,\bA_{i_m,*}
     \)
-    and compute
-    \(
-        \rho_r = \|\bA_{i_r,*}\|_2^2
-    \)
-    for each \(r\in[m]\).
-    \item Form the matrix \(\bG\in\R^{m\times m}\) entry-wise as given by
+    % and compute
+    % \(
+    %     \rho_r = \|\bA_{i_r,*}\|_2^2
+    % \)
+    % for each \(r\in[m]\).
+    and define the sampling matrix \(\widehat \bS\in\R^{m\times n}\) by
     \[
-        \bG_{rt}
-        =
-        \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
-        \bigl(\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bigr)_{i_r i_t}.
+        \bS_{r,*}'
+        :=
+        \sqrt{\frac{\widehat F}{m \|\bA_{i_r, *}\|^2_2}}\,
+        \be_{i_r}^{\top}
+        \qquad\text{for } r=1,\ldots,m.
     \]
-
+    % Form the matrix \(\bG\in\R^{m\times m}\) entry-wise as given by
+    % \[
+    %     \bG_{rt}
+    %     =
+    %     \frac{\widehat F}{m\sqrt{\rho_r\rho_t}}\,
+    %     \bigl(\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bigr)_{i_r i_t}.
+    % \]
     \item Compute the eigenvalues
     \(
         \widehat\lambda_1\geq \widehat\lambda_2\geq\cdots\geq \widehat\lambda_m
     \)
-    of \(\bG\).
+    of \(\bG:=\bS'^\top\mathsf Z_{\epsilon/4,\widehat F}(\bA)\bS'\).
 
     \item Return
     \(
@@ -352,7 +358,7 @@ In this case, we readily check that
     \frac{\epsilon}{8}\leq\frac{\epsilon}{4}
     \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\leq\frac{\epsilon}{2}.
 \]
-In particular, we may pick the constant $C$ sufficiently large compared to $C_0$ of Theorem~\ref{thm:sw-row-norm-eigenvalue} in order to apply the theorem with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
+In particular, we may pick the constant $C$ sufficiently large compared to $c$ of Theorem~\ref{thm:sw-row-norm-eigenvalue} in order to apply the theorem with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
 \(5/6\), if
 \(
     \nu_1\geq\cdots\geq\nu_m

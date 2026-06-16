@@ -19,7 +19,7 @@ We consider the problem of sampling a column with probability proportional to it
 \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
 where $\bA_{*, i}$ denotes the $i$th column of $\bA$. We show that for a psd matrix, we can draw such a sample without having to read all entries of the input. Our algorithm queries $O(n)$ entries of $\bA$ and runs in $O(n)$ time in expectation. If the number of needed samples is small compared to $n$, our algorithm offers significant speedup over pre-computing all the column norms. 
 
-We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling needs to query \(\Omega(n)\) off-diagonal entries in the worst case.
+% We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling needs to query \(\Omega(n)\) off-diagonal entries in the worst case.
 
 % \todo{make sure this lower bound claim is precise}
 
@@ -29,5 +29,5 @@ Finally, we show how this sampling primitive can be used in several low-rank and
 
 \section{Outline}
 \label{sec:introduction-outline}
-\todo{revisit outline at the end}
+% \todo{revisit outline at the end}
 

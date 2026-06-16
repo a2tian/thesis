@@ -62,6 +62,6 @@ queries to
 \)
 matching the optimal dependence on $n$, $k$, and $\epsilon$. The current analysis uses $O(k/\epsilon^2)$ length-squared column samples. It is natural to ask whether $O(k/\epsilon)$ length-squared samples are sufficient for the same additive-error guarantee in the psd setting.
 
-A second open question is whether length-squared sampling can be used more directly for relative-error psd low-rank approximation. 
+A second open question is whether length-squared sampling can be used more directly to obtain relative-error low-rank approximations of psd matrices. One possible approach is through adaptive sampling: if our techniques could be extended to sample from the residual matrix, then one could apply the guarantee of \cite{deshpande_adaptive_2006}. However, it is not clear whether the residual retains enough structure for this approach to work.
 
-A third direction is to further develop robust sampling algorithms. Section~\ref{sec:robust-lra} showed that the rejection-sampling idea can be adapted to a corrupted input matrix after clipping. However, the robust algorithm assumes access to the diagonal corruption parameter $\phi_{\max}$ and has query complexity proportional to $\phi_{\max}^2$. It remains open whether this dependence can be improved or whether $\phi_{\max}$ can be estimated efficiently from entry queries.
+A third direction is to further develop the robust sampling algorithm. At present, the algorithm assumes access to the diagonal corruption parameter $\phi_{\max}$. It remains open whether $\phi_{\max}$ can itself be estimated efficiently from entry queries.
