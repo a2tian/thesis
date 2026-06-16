@@ -3,12 +3,11 @@ In modern data analysis, some naturally-arising matrices are too large to comput
 \bA_{ij} = k(x_i,x_j).
 \]
 Although we can compute any single entry $\bA_{ij}$ on demand, computing and storing all $n^2$ entries is prohibitively expensive when $n$, the size of the dataset, is large. Thus: \textit{how can we perform matrix computations when the input is available only through limited entry queries?} 
+% A large body of work addresses this problem for tasks such as low-rank approximation, matrix-vector and matrix-matrix multiplication, least-squares regression problems, and spectral approximation. 
 
-A large body of work addresses this problem for tasks such as low-rank approximation, matrix-vector and matrix-matrix multiplication, least-squares regression problems, and spectral approximation. 
+% \todo{revisit this exposition}
 
-\todo{revisit this exposition}
-
-A common approach is to work with a small sketch of the matrix obtained by sampling a subset of rows or columns. One natural and widely studied sampling rule is \emph{length-squared sampling}, in which a row or column is sampled with probability proportional to its squared $\ell_2$ norm. This rule appears, for example, in the randomized Kaczmarz method for solving linear systems \cite{needell_stochastic_2015} and in additive-error algorithms for low-rank approximation \cite{frieze_fast_2004}. However, a direct implementation of length-squared sampling must have access to the relevant row or column norms. If these norms are not already available, then forming the sampling distribution requires a preprocessing pass over the entire input matrix. For dense $n\times n$ matrices, this takes $\Theta(n^2)$ time.
+An effective approach is to work with a small sketch of the matrix obtained by sampling a subset of rows or columns. Among the most natural and widely studied sampling rules is \emph{length-squared sampling}, in which a row or column is sampled with probability proportional to its squared $\ell_2$ norm. This rule appears, for example, in the randomized Kaczmarz method for solving linear systems \cite{needell_stochastic_2015} and in additive-error algorithms for low-rank approximation \cite{frieze_fast_2004}. However, a direct implementation of length-squared sampling must have access to the relevant row or column norms. If these norms are not already available, then forming the sampling distribution requires a preprocessing pass over the entire input matrix. For dense $n\times n$ matrices, this takes $\Theta(n^2)$ time.
 
 
 % The problem is compounded by downstream computations involving $\bA$: many linear algebra routines, including eigendecomposition and solving least-squares, typically require $O(n^3)$ arithmetic operations.
@@ -18,15 +17,15 @@ A common approach is to work with a small sketch of the matrix obtained by sampl
 \section{Our Results}
 We consider the problem of sampling a column with probability proportional to its $\ell_2$ norm, i.e., sample column $i$ with probability 
 \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
-where $\bA_{*, i}$ denotes the $i$th column of $\bA$. We show that for a psd matrix, we can draw such a sample without having to read all entries of the input. Our algorithm query $O(n)$ entries of $\bA$ and runs in $O(n)$ time in expectation. If the number of needed samples is small compared to $n$, our algorithm offers significant speedup over pre-computing all the column norms. 
+where $\bA_{*, i}$ denotes the $i$th column of $\bA$. We show that for a psd matrix, we can draw such a sample without having to read all entries of the input. Our algorithm queries $O(n)$ entries of $\bA$ and runs in $O(n)$ time in expectation. If the number of needed samples is small compared to $n$, our algorithm offers significant speedup over pre-computing all the column norms. 
 
 We also show that the query complexity of our algorithm is optimal up to constant factors. In particular, we prove an information-theoretic lower bound showing that any algorithm for length-squared sampling needs to query \(\Omega(n)\) off-diagonal entries in the worst case.
 
 % \todo{make sure this lower bound claim is precise}
 
-We next show how this sampling primitive can be used in several low-rank and spectral approximation problems for positive semidefinite matrices. We consider eigenvalue approximation, additive-error low-rank approximation, and robust low-rank approximation. In each application, our sampler replaces a length-squared column sampling step that would otherwise require computing all the column norms.
+Finally, we show how this sampling primitive can be used in several low-rank and spectral approximation problems for positive semidefinite matrices. We consider eigenvalue approximation, additive-error low-rank approximation, and robust low-rank approximation. In each application, our sampler replaces a length-squared column sampling step that would otherwise require computing all the column norms.
 
-Finally, we include numerical experiments comparing length-squared column sampling with other column-selection methods for low-rank approximation. The goal of these experiments is to identify settings where length-squared sampling is a competitive practical choice.
+% Finally, we include numerical experiments comparing length-squared column sampling with other column-selection methods for low-rank approximation. The goal of these experiments is to identify settings where length-squared sampling is a competitive practical choice.
 
 \section{Outline}
 \label{sec:introduction-outline}

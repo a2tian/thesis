@@ -4,6 +4,8 @@ with constant probability, using $O(nk/\epsilon^2)$ entries of $\bA$ and $O(nk^2
 
 Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their result is sample-optimal, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm. The comparison is summarized in Table~\ref{tab:additive-lra-comparison}. 
 
+\todo{add remark about relative error approximation}
+
 \begin{table}[H]
 \centering
 \small

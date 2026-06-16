@@ -50,23 +50,62 @@ Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are ps
 A common technique used in query-efficient matrix algorithms is to construct a small sketch of the input via a subset of sampled rows or columns. Generally speaking, the quality and cost of the resulting approximation depend on how this subset is chosen. In this section, we review several sampling rules and their related results.
 
 \subsection{Uniform Sampling}
-The uniform sampling method picks $k$ rows or columns uniformly at random, either with or without replacement. A clear advantage of uniform sampling is that it is data agnostic: it generates a sample without using any information about the matrix. Moreover, uniform sampling is often effective in practice \cite{}.
-\todo{citation needed}
+The uniform sampling method picks $k$ rows or columns uniformly at random, either with or without replacement. A clear advantage of uniform sampling is that it is data agnostic: it generates a sample without using any information about the matrix. Moreover, uniform sampling is often effective in practice \cite{kumar_sampling_2012, gittens_revisiting_2013}.
 
-\paragraph{Nystr\"om approximation.}
+% \paragraph{Nystr\"om approximation.}
 Uniform sampling appears in the seminal work of Williams and Seeger \cite{williams_using_2000} on the Nystr\"om method. They show that a Nystr\"om approximation with uniformly sampled index set can substantially reduce the cost of kernel computations without a significant loss in accuracy in practice. 
 
 Subsequent work shows that the performance of uniform sampling depends on the coherence of the relevant singular or eigenspaces \cite{talwalkar_matrix_2010, gittens_spectral_2011}. Informally, coherence measures whether the important directions of the matrix are spread evenly or concentrated on a small number of coordinates. When the coherence is small, important directions are well-spread among the rows or columns, so uniform sampling is likely to capture them. When the coherence is large, a small uniform sample may miss important directions with high probability. Consequently, strong worst-case guarantees for uniform sampling typically require incoherence assumptions or a large sample size \cite{kumar_sampling_2012}.
 
-\subsubsection{TODO}
-
+% \subsubsection{TODO}
 
 \subsection{Length-Squared Sampling}
 
+In contrast to uniform sampling, \textit{importance sampling} assigns sampling probabilities according to a prescribed measure of “importance” of a row or column. When a suitable notion of importance is available, this can lead to stronger approximation guarantees than uniform sampling. However, importance sampling probabilities are data-dependent and thus require a preprocessing step to compute exactly. 
+
+Length-squared sampling is an importance sampling rule in which a row or column is picked with probability proportional to its squared $\ell_2$ norm. To distinguish between the two cases, we may refer to them as squared column norm sampling and squared row norm sampling, respectively.
+
+For a matrix $\bA\in\R^{n\times n}$, the squared column norm distribution is
+\[
+    p_i
+    =
+    \frac{\|\bA_{*,i}\|_2^2}{\|\bA\|_F^2}.
+\]
+This distribution appears in several matrix approximation algorithms, including randomized algorithms for additive error low-rank approximation \cite{frieze_fast_2004}, eigenvalue approximation \cite{bhattacharjee_sublinear_2022, swartworth_tight_2024}, and randomized Kaczmarz-type methods for solving linear systems \cite{needell_stochastic_2015}.
+
+The main difficulty with length-squared sampling is that the sampling distribution is not usually available for free. To sample from the distribution exactly by direct preprocessing, one must compute all squared row or column norms. In the entry query model, this would require reading every nonzero entry of the matrix, precluding a sublinear-time algorithm.
+
+The central observation of this thesis is that positive semidefinite structure makes length-squared sampling easier. For a psd matrix $\bA$, the inequality
+\[
+    \bA_{ij}^2 \leq \bA_{ii}\bA_{jj}
+\]
+allows the diagonal distribution to serve as a proposal distribution for rejection sampling. This leads to an exact length-squared sampler using only $O(n)$ entry queries in expectation, avoiding the quadratic preprocessing step needed to compute all column norms. This sampler is the main primitive we develop in Chapter~\ref{chapter:fast-sample}.
 
 \subsection{Leverage Score Sampling}
 
+Leverage score sampling is a more refined importance sampling method. For a matrix $\bM\in\R^{m\times n}$ of rank $r$, let $\bU\in\R^{m\times r}$ be an orthonormal basis for the columns of $\bM$. The statistical leverage scores of the rows of $\bM$ are given by
+\[\ell(i) := \|\bU_{i, *}\|^2_2\]
+Sampling proportional to row leverage scores occurs in randomized algorithms for relative error low-rank approximation \cite{drineas_relative-error_2007} and least-squares regression \cite{drineas_faster_2007}.
+
+A closely related notion is ridge leverage score sampling. Given a matrix $\bM\in\R^{m\times n}$ and regularization parameter $\lambda>0$, the ridge leverage scores are
+\[
+    \ell_\lambda(i)
+    =
+    \left(\bM(\bM+\lambda\bI)^{-1}\right)_{ii}.
+\]
+Ridge leverage scores have led to strong guarantees for Nystr"om approximation and related low-rank approximation problems for psd matrices \cite{musco_recursive_2017, clarkson_low-rank_2017, musco_sublinear_2019}. In particular, Musco and Woodruff \cite{musco_sublinear_2019} show that the ridge leverage scores of a psd matrix $\bA$ can be approximated in sublinear time to sufficient accuracy for relative error low-rank approximation.
 
 \subsection{Adaptive Sampling}
 
+Adaptive sampling is a sequential column selection method in which the sampling distribution is updated after each selected column. Given a matrix $\bB$ and a current set of selected columns $S$, let $\bP_{\bB_S}$ denote the orthogonal projection onto the span of the selected columns. Adaptive sampling chooses the next column $j$ with probability proportional to the squared norm of the residual column:
+\[
+    p_j
+    =
+    \frac{\|(\bB-\bP_{\bB_S}\bB)_{*,j}\|_2^2}
+         {\|\bB-\bP_{\bB_S}\bB\|_F^2}.
+\]
+Thus, columns that are already well-approximated by the current span become less likely to be sampled, while columns that are poorly approximated become more likely. 
 
+Adaptive sampling has strong theoretical guarantees. In particular, it can be used to obtain a relative-error Frobenius norm approximation after sampling $\poly(k, 1/\epsilon)$ columns  \cite{deshpande_adaptive_2006}. However, the sampling distribution in adaptive sampling is expensive to compute directly as one must compute the squared norms of all residual columns at every step.
+
+% \subsection{Randomly Pivoted Cholesky}
