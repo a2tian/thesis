@@ -168,7 +168,11 @@ together with \(n-m_0\) additional zeros, form an additive \(\epsilon\|\bA\|_F\)
 The preceding theorem assumes access to quantities that are not directly
 available in the entry-query model. First, the zeroing rule defining \(\mathsf Z_{\epsilon}(\bA)\) requires access to
 \(\|\bA\|_F^2\). We replace this quantity by an estimate \(\widehat F\) given by Algorithm~\ref{alg:frobenius-norm-approximation}. After sampling an index \(i_r\), we query the full row
-\(\bA_{i_r,*}\) and rescale by \(\|\bA_{i_r,*}\|_2^2\) instead of $\|\bA_{i_r,*}\|_2^2/\|\bA\|^2_F$. The algorithm
+\(\bA_{i_r,*}\) and compute
+\(\rho_r=\|\bA_{i_r,*}\|_2^2\). In place of the exact sampling probability
+\(q_{i_r}=\rho_r/\|\bA\|_F^2\), we use the estimated probability
+\(\widehat q_{i_r}=\rho_r/\widehat F\), so the rescaling factor is
+\(1/\sqrt{m\widehat q_{i_r}}=\sqrt{\widehat F/(m\rho_r)}\). The algorithm
 below is the resulting implementable version of Theorem~\ref{thm:sw-row-norm-eigenvalue}.
 
 \begin{algorithm}[H]
