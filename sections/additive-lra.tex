@@ -135,9 +135,9 @@ Then for every \(\delta\in(0,1)\), with probability at least \(1-\delta\),
 \end{lemma}
 
 \begin{proof}
-For a sample \(i\sim q\), define
+For a sample \(i\sim q\), define the random matrix
 \[
-    \bR_j=\frac{\bH_{i,*}^{\top}\bA_{i,*}}{q_{i}}.
+    \bR=\frac{\bH_{i,*}^{\top}\bA_{i,*}}{q_{i}}.
 \]
 Then
 \[
@@ -148,12 +148,16 @@ Then
     =
     \bH^\top\bA.
 \]
-Since the samples are independent, we have
-\(
+Let \(\bR_1,\ldots,\bR_t\) be the independent copies of \(\bR\) used to
+form \(\widehat{\bZ}\). Since the samples are independent and
+\(\E[\bR]=\bH^\top\bA\), we have
+\[
     \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
+    =
+    \frac{1}{t}\E\|\bR-\bH^\top\bA\|_F^2
     \leq
     \frac{1}{t}\E\|\bR\|_F^2.
-\)
+\]
 Moreover,
 \[
 \begin{aligned}
@@ -168,17 +172,13 @@ Moreover,
     \sum_{i:\ell_i>0}
     \frac{\|\bH_{i,*}^{\top}\bA_{i,*}\|_F^2}{q_i}\\
     &=\sum_{i:\ell_i>0}\frac{\|\bH_{i,*}\|_2^2\|\bA_{i,*}\|_2^2}{q_i}\\
-    &={k\cdot \|\bA_{i,*}\|_2^2} \qquad\text{using \(q_i=\ell_i/k\).}
+    &=\sum_{i:\ell_i>0} k\|\bA_{i,*}\|_2^2
+        \qquad\text{using \(q_i=\ell_i/k\)}\\
+    &\leq k\|\bA\|_F^2 .
 \end{aligned}
 \]
 Thus,
 \[
-    \E\|\bR\|_F^2
-    \leq
-    k\sum_{i=1}^n \|\bA_{i,*}\|_2^2
-    =
-    k\|\bA\|_F^2
-\qquad\text{and}\qquad
     \E\|\widehat{\bZ}-\bH^\top\bA\|_F^2
     \leq
     \frac{k}{t}\|\bA\|_F^2.
@@ -228,7 +228,7 @@ parameter \(\epsilon\in (0,1)\).
 \smallskip
 Let
 \(
-    c=\lceil Ck/\epsilon^2\rceil
+    s=\lceil Ck/\epsilon^2\rceil
     % \qquad
     % t=\left\lceil \frac{2k}{\epsilon}\right\rceil.
 \)
@@ -243,17 +243,17 @@ Run the following procedure:
     topsep=0.45em,
     parsep=0pt
 ]
-    \item Run Algorithm~\ref{alg:sampling-procedure} $c$ times on $\bA$, producing
+    \item Run Algorithm~\ref{alg:sampling-procedure} $s$ times on $\bA$, producing
     \(
-        i_1,\ldots,i_c
+        i_1,\ldots,i_s
     \)
     sampled by squared column norms.
 
     \item Read the full columns
     \(
-        \bA_{*,i_1},\ldots,\bA_{*,i_c}
+        \bA_{*,i_1},\ldots,\bA_{*,i_s}
     \)
-    and form the matrix \(\bB\in\R^{n\times c}\) whose \(r\)-th column is
+    and form the matrix \(\bB\in\R^{n\times s}\) whose \(r\)-th column is
     \[
         \bB_{*,r}
         =
@@ -300,7 +300,7 @@ Let \(\bA\in\R^{n\times n}\) be a nonzero psd matrix, let
 There are absolute constants \(C,C'>0\) such that
 Algorithm~\ref{alg:sublinear-psd-low-rank}, run with
 \[
-    c=\left\lceil \frac{Ck}{\epsilon^2}\right\rceil,
+    s=\left\lceil \frac{Ck}{\epsilon^2}\right\rceil,
     \qquad
     t=\left\lceil \frac{C'k}{\epsilon}\right\rceil,
 \]
@@ -326,23 +326,23 @@ and fix constants
 \]
 We first prove the approximation guarantee.
 
-Let \(i_1,\ldots,i_c\) be the column indices sampled in Step 1 of
+Let \(i_1,\ldots,i_s\) be the column indices sampled in Step 1 of
 Algorithm~\ref{alg:sublinear-psd-low-rank}. Let \(\widetilde{\bC}\) denote the
 matrix of sampled columns appearing in Lemma~\ref{thm:dkm06}. We have
 \begin{align*}
     \widetilde{\bC}_{*,r}
     &=
-    \frac{1}{\sqrt{c p_{i_r}}}\bA_{*,i_r}\\
-    &=\frac{\|\bA\|_F}{\sqrt c}
+    \frac{1}{\sqrt{s p_{i_r}}}\bA_{*,i_r}\\
+    &=\frac{\|\bA\|_F}{\sqrt s}
     \frac{\bA_{*,i_r}}{\|\bA_{*,i_r}\|_2}\qquad\text{since \(p_i=\|\bA_{*,i}\|_2^2/\|\bA\|_F^2\)}\\
     &=
-    \frac{\|\bA\|_F}{\sqrt c}\bB_{*,r}.
+    \frac{\|\bA\|_F}{\sqrt s}\bB_{*,r}.
 \end{align*}
 Thus
 \(
     \widetilde{\bC}
     =
-    \frac{\|\bA\|_F}{\sqrt c}\bB,
+    \frac{\|\bA\|_F}{\sqrt s}\bB,
 \)
 is a scalar multiple of $\bB$, so \(\widetilde{\bC}\) and \(\bB\) have the same top \(k\) left singular
 subspaces. In particular, the matrix \(\bH\) computed in Step 3 is also a valid
@@ -351,7 +351,7 @@ choice of \(\bH\) for Lemma~\ref{thm:dkm06}.
 Apply Lemma~\ref{thm:dkm06}(a) with accuracy parameter \(\epsilon/2\) and
 failure probability \(\delta=1/6\). Since
 \[
-    c
+    s
     \geq
     \frac{16k\eta^2}{\epsilon^2}
     =
@@ -405,13 +405,13 @@ probability at least \(2/3\), in which case we have
 \]
 This proves the claimed additive error guarantee.
 
-It remains to bound the query complexity and time complexity. The \(c\) calls to
-Algorithm~\ref{alg:sampling-procedure} use \(O(nc)\) entry queries in
-expectation. Step 2 reads \(c\) full columns of \(\bA\), using \(nc\) further
+It remains to bound the query complexity and time complexity. The \(s\) calls to
+Algorithm~\ref{alg:sampling-procedure} use \(O(ns)\) entry queries in
+expectation. Step 2 reads \(s\) full columns of \(\bA\), using \(ns\) further
 entry queries. Step 5 reads \(t\) full rows of \(\bA\), using \(nt\) entry
 queries. Therefore the total expected number of entry queries to $\bA$ is
 \[
-    O(nc+nt)
+    O(ns+nt)
     =
     O\!\left(
         n\frac{k}{\epsilon^2}
@@ -423,13 +423,13 @@ queries. Therefore the total expected number of entry queries to $\bA$ is
 \]
 since \(\epsilon\in(0,1)\).
 
-For the arithmetic bound, forming and rescaling \(\bB\in\R^{n\times c}\) costs \(O(nc)\)
+For the arithmetic bound, forming and rescaling \(\bB\in\R^{n\times s}\) costs \(O(ns)\)
 operations after the sampled columns have been read. To compute a top \(k\)
-left singular subspace for \(\bB\) we compute \(\bB^\top\bB\in\R^{c\times c}\) and its svd, which requires 
+left singular subspace for \(\bB\) we compute \(\bB^\top\bB\in\R^{s\times s}\) and its svd, which requires
 \(
-    O(nc^2+c^3)
+    O(ns^2+s^3)
 \)
-arithmetic. For \(c\leq n\), this is \(O(nc^2)\), hence
+arithmetic. For \(s\leq n\), this is \(O(ns^2)\), hence
 \(
     O\left({nk^2}/{\epsilon^4}\right).
 \)
@@ -440,13 +440,13 @@ Computing all leverage scores of \(\bH\) costs \(O(nk)\). Finally, forming \(\wi
     O\left({nk^2}/{\epsilon}\right),
 \)
 which is dominated by \(O(nk^2/\epsilon^4)\) for \(\epsilon\in(0,1)\). The
-expected arithmetic cost of the sampling procedure contributes \(O(nc)\), which
+expected arithmetic cost of the sampling procedure contributes \(O(ns)\), which
 is also dominated. Thus the total expected arithmetic complexity is
 \[
     O\!\left(\frac{nk^2}{\epsilon^4}\right).
 \]
 
-% If \(c>n\), then \(k/\epsilon^2=\Omega(n)\), and one may instead read all of
+% If \(s>n\), then \(k/\epsilon^2=\Omega(n)\), and one may instead read all of
 % \(\bA\) and compute a rank-\(k\) truncated SVD directly. This uses
 % \(O(n^2)\subseteq O(nk/\epsilon^2)\) entry queries and
 % \(O(n^3)\subseteq O(nk^2/\epsilon^4)\) arithmetic, so the stated bounds still
