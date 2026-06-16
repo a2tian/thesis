@@ -145,8 +145,8 @@ where \(c>0\) is a fixed absolute constant. When
 \end{definition}
 We are now ready to state the following theorem of Swartworth and Woodruff:
 
-\begin{lemma}[\cite{swartworth_tight_2024}, Theorem 7.8]
-\label{lem:sw-row-norm-eigenvalue}
+\begin{theorem}[\cite{swartworth_tight_2024}, Theorem 7.8]
+\label{thm:sw-row-norm-eigenvalue}
 Let \(\bA\in\R^{n\times n}\) be a symmetric matrix, and let \(\epsilon\in(0,1)\). Let $q$ be the squared row norm distribution on $\bA$, where $q_i = \|\bA_{i,*}\|^2_2/\|\bA\|^2_F$.
 Suppose \(i_1,\ldots,i_{m_0}\) are independent samples from $q$, where
 \[
@@ -163,13 +163,13 @@ Then, with probability at least \(5/6\), the eigenvalues of
     \bS\mathsf Z_{\epsilon}(\bA)\bS^\top,
 \)
 together with \(n-m_0\) additional zeros, form an additive \(\epsilon\|\bA\|_F\)-approximation to the spectrum of \(\bA\).
-\end{lemma}
+\end{theorem}
 
-The preceding lemma assumes access to quantities that are not directly
+The preceding theorem assumes access to quantities that are not directly
 available in the entry-query model. First, the zeroing rule defining \(\mathsf Z_{\epsilon}(\bA)\) requires access to
 \(\|\bA\|_F^2\). We replace this quantity by an estimate \(\widehat F\) given by Algorithm~\ref{alg:frobenius-norm-approximation}. After sampling an index \(i_r\), we query the full row
 \(\bA_{i_r,*}\) and rescale by \(\|\bA_{i_r,*}\|_2^2\) instead of $\|\bA_{i_r,*}\|_2^2/\|\bA\|^2_F$. The algorithm
-below is the resulting implementable version of Lemma~\ref{lem:sw-row-norm-eigenvalue}.
+below is the resulting implementable version of Theorem~\ref{thm:sw-row-norm-eigenvalue}.
 
 \begin{algorithm}[H]
 \caption{Sublinear PSD Eigenvalue Approximation}
@@ -294,7 +294,7 @@ the remainder of the proof, assume that \(m<n\).
 %     \left(1+\frac{\epsilon}{4}\right)\|\bA\|_F^2
 % \]
 % with probability at least \(0.99\). Condition on this event.
-We first prove correctness. Condition on $\widehat F$ produced by Step 1 of the algorithm and the indices $i_1,\ldots, i_m$ sampled in Step 2. We show that the matrix $\bG$ in Step 4 of the algorithm is a scalar multiple of $\bS\mathsf Z_{\alpha}(\bA)\bS^\top$ produced by Lemma~\ref{lem:sw-row-norm-eigenvalue} with sampled indices $i_1,\ldots, i_m$ and accuracy parameter $\alpha :=(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. 
+We first prove correctness. Condition on $\widehat F$ produced by Step 1 of the algorithm and the indices $i_1,\ldots, i_m$ sampled in Step 2. We show that the matrix $\bG$ in Step 4 of the algorithm is a scalar multiple of $\bS\mathsf Z_{\alpha}(\bA)\bS^\top$ produced by Theorem~\ref{thm:sw-row-norm-eigenvalue} with sampled indices $i_1,\ldots, i_m$ and accuracy parameter $\alpha :=(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. 
 
 In Step 3 we compute
 \(
@@ -348,7 +348,7 @@ In this case, we readily check that
     \frac{\epsilon}{8}\leq\frac{\epsilon}{4}
     \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\leq\frac{\epsilon}{2}.
 \]
-In particular, we may pick the constant $C$ sufficiently large compared to $C_0$ of Lemma~\ref{lem:sw-row-norm-eigenvalue} in order to apply the lemma with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
+In particular, we may pick the constant $C$ sufficiently large compared to $C_0$ of Theorem~\ref{thm:sw-row-norm-eigenvalue} in order to apply the theorem with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
 \(5/6\), if
 \(
     \nu_1\geq\cdots\geq\nu_m
@@ -415,7 +415,7 @@ and \(\epsilon\in(0,1)\). Thus the returned sequence is an
 \(\epsilon\|\bA\|_F\) additive approximation to the spectrum of \(\bA\).
 
 Taking a union bound over the failure of the Frobenius norm estimate and
-the failure of Lemma~\ref{lem:sw-row-norm-eigenvalue}, the total success
+the failure of Theorem~\ref{thm:sw-row-norm-eigenvalue}, the total success
 probability is at least
 \[
     1-\frac{1}{100}-\frac{1}{6}
