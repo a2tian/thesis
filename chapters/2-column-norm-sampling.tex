@@ -1,6 +1,8 @@
 In this chapter, we demonstrate how to sample columns from a psd matrix $\bA$ such that any column $i$ is picked with probability
 \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
-while reading only $O(n)$ entries of $\bA$ in expectation. In section~\ref{sec:p-power-sampling}, we generalize our techniques to sample with probability proportional to $\|\bA_{*,i}\|^p_p$, where $\|\cdot\|_p$ is the vector $\ell_p$ norm. In section~\ref{sec:sampling-lower-bound}, we prove that any algorithm for length-squared sampling must read $\Omega(n)$ off-diagonal entries in the worst case. 
+while reading only $O(n)$ entries of $\bA$ in expectation. 
+
+% \todo{In section~\ref{sec:p-power-sampling}, we generalize our techniques to sample with probability proportional to $\|\bA_{*,i}\|^p_p$, where $\|\cdot\|_p$ is the vector $\ell_p$ norm. In section~\ref{sec:sampling-lower-bound}, we prove that any algorithm for length-squared sampling must read $\Omega(n)$ off-diagonal entries in the worst case.}
 
 Our algorithm applies a well-known technique called \textit{rejection sampling}. One related application of this technique is due to Needell, Srebro, and Ward \cite{needell_stochastic_2015}, who use rejection sampling to obtain length-squared samples from an arbitrary matrix assuming a known upper bound $B$ on the row norms, i.e., 
 \[\|a_i\|^2_2\leq B\qquad\text{for all $i$.}\]

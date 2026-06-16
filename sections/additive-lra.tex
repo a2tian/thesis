@@ -1,10 +1,9 @@
-In this section, we derive a simple algorithm for computing additive error low-rank approximations to a psd matrix using the length-squared sampling procedure of Chapter~\ref{chapter:fast-sample}. Applying a result of Drineas, Kannan, and Mahoney~\cite{drineas_fast_2006-1}, we compute an approximate basis for the top $k$-dimensional left singular subspace of $\bA$ from $O(k/\epsilon^2)$ columns sampled by squared column norms. Then, we use a well-known leverage score sampling guarantee to approximately project $\bA$ onto this subspace. Given entry-wise access to $\bA\in\R^{n\times n}$, our algorithm outputs matrices $\bX, \bY\in\R^{n\times k}$ satisfying
+In this section, we derive a simple algorithm for computing additive error low-rank approximations to a psd matrix using our fast length-squared sampling procedure. Applying a result of Drineas, Kannan, and Mahoney~\cite{drineas_fast_2006-1}, we compute an approximate basis for the top $k$-dimensional left singular subspace of $\bA$ from $O(k/\epsilon^2)$ columns sampled by squared column norms. Then, we use a well-known leverage score sampling guarantee to approximately project $\bA$ onto this subspace. Given entry-wise access to $\bA\in\R^{n\times n}$, our algorithm outputs matrices $\bX, \bY\in\R^{n\times k}$ satisfying
 \[\|\bA - \bX\bY^\top\|^2_F\leq \|\bA - \bA_k\|^2_F + \epsilon\|\bA\|^2_F\]
 with constant probability, using $O(nk/\epsilon^2)$ entries of $\bA$ and $O(nk^2/\epsilon^4)$ arithmetic in expectation.
 
 Our sample complexity incurs an additional $1/\epsilon$ factor in comparison to the best known algorithm for additive error low-rank approximation: Bakshi, Chepurko, and Woodruff~\cite[Corollary 5.19]{bakshi_robust_2020} achieve an additive error low-rank approximation using only $\tilde O(nk/\epsilon)$ entries, where $\tilde O$ hides polylogarithmic factors in $n$, $k$, and $\epsilon$. Their work also achieves relative error approximation using $\tilde O(nk/\epsilon)$ entries, matching a $\Omega(nk/\epsilon)$ query lower bound of Musco and Woodruff~\cite{musco_sublinear_2019} up to polylogarithmic factors. The relative error guarantee from $\tilde O(nk/\epsilon)$ entries is a strictly stronger result from a theoretical perspective. Nonetheless, the algorithm presented here admits a simple analysis. We pose as an open question whether it is enough to sample only $O(k/\epsilon)$ columns by squared column norms, thus leading to an $O(nk/\epsilon)$ algorithm. The comparison is summarized in Table~\ref{tab:additive-lra-comparison}. 
-
-\todo{add remark about relative error approximation}
+% \todo{add remark about relative error approximation}
 
 \begin{table}[H]
 \centering
@@ -500,10 +499,9 @@ Computing all leverage scores of \(\bH\) costs \(O(nk)\). Finally, forming \(\wi
 which is dominated by \(O(nk^2/\epsilon^4)\) for \(\epsilon\in(0,1)\). The
 expected arithmetic cost of the sampling procedure contributes \(O(ns)\), which
 is also dominated. Thus the total expected arithmetic complexity is
-\[
-    O\!\left(\frac{nk^2}{\epsilon^4}\right).
-\]
-
+\(
+    O\!\left({nk^2}/{\epsilon^4}\right).
+\)
 % If \(s>n\), then \(k/\epsilon^2=\Omega(n)\), and one may instead read all of
 % \(\bA\) and compute a rank-\(k\) truncated SVD directly. This uses
 % \(O(n^2)\subseteq O(nk/\epsilon^2)\) entry queries and

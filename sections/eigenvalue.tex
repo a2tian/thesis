@@ -225,9 +225,6 @@ Run the following procedure:
         \widehat \bS_{r,*}
         :=
         \frac{\be_{i_r}^{\top}}{\sqrt{m\widehat q_{i_r}}}
-        =
-        \sqrt{\frac{\widehat F}{m\|\bA_{i_r,*}\|_2^2}}\,
-        \be_{i_r}^{\top}
         \qquad\text{for } r=1,\ldots,m.
     \]
     \item Compute the eigenvalues
@@ -304,21 +301,17 @@ We first prove correctness. Condition on \(\widehat F\) produced by Step 1
 of the algorithm and the indices \(i_1,\ldots,i_m\) sampled in Step 2. Let
 \(\bS\) be the sampling matrix from Theorem~\ref{thm:sw-row-norm-eigenvalue}
 formed using the same sampled indices and the exact sampling probabilities
-\(q_i=\|\bA_{i,*}\|_2^2/\|\bA\|_F^2\). Set
-\[
+\(q_i=\|\bA_{i,*}\|_2^2/\|\bA\|_F^2\), where
+\[\bS_{r, *} = \frac{\be_{i_r}^\top}{\sqrt{mq_{i_r}}}.\]
+
+Let
+\(
     \alpha
     :=
     \frac{\epsilon}{4}\sqrt{\frac{\widehat F}{\|\bA\|_F^2}}.
-\]
-For each sampled index, Step 3 sets
-\[
-    \widehat q_{i_r}
-    =
-    \frac{\|\bA_{i_r,*}\|_2^2}{\widehat F}
-    =
-    \frac{\|\bA\|_F^2}{\widehat F}\,q_{i_r}.
-\]
-Therefore
+\)
+We make the following connection between \(\widehat \bS\mathsf Z_{\epsilon/4,\widehat F}(\bA)\widehat \bS^\top\) and $\bS\mathsf Z_{\alpha}(\bA) \bS^\top$.
+First, 
 \[
     \widehat \bS_{r,*}
     =
@@ -359,10 +352,10 @@ Now, condition on the event that Step 1 satisfies
 \]
 In this case, we readily check that
 \[
-    \frac{\epsilon}{8}\leq\frac{\epsilon}{4}
+    \frac{\epsilon}{8}\leq\alpha = \frac{\epsilon}{4}
     \sqrt{\frac{\widehat F}{\|\bA\|_F^2}}\leq\frac{\epsilon}{2}.
 \]
-In particular, we may pick the constant $C$ sufficiently large compared to $c$ of Theorem~\ref{thm:sw-row-norm-eigenvalue} in order to apply the theorem with $m$ sampled indices and accuracy parameter $(\epsilon/4)\sqrt{\widehat F / \|\bA\|^2_F}$. It follows that, with probability at least
+In particular, we may pick the constant $C$ sufficiently large compared to $c$ of Theorem~\ref{thm:sw-row-norm-eigenvalue} in order to apply the theorem with $m$ sampled indices and accuracy parameter $\alpha$. It follows that, with probability at least
 \(5/6\), if
 \(
     \nu_1\geq\cdots\geq\nu_m

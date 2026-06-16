@@ -1,4 +1,4 @@
-In the previous section, we used the length-squared sampling procedure of Chapter~\ref{chapter:fast-sample} to obtain additive-error low-rank approximations to psd matrices in sublinear time. In this section, we show that the same approach is robust to a natural class of entry-wise perturbations. Our starting point is the robust low-rank approximation model of Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}. In this model, there is an underlying psd matrix \(\bA\), but we are only given entry-wise access to a corrupted matrix
+In the previous section, we used Algorithm~\ref{alg:sampling-procedure} to obtain additive-error low-rank approximations to psd matrices in sublinear time. In this section, we show that the same approach is robust to a natural class of entry-wise perturbations. Our starting point is the robust low-rank approximation model of Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}. In this model, there is an underlying psd matrix \(\bA\), but we are only given entry-wise access to a corrupted matrix
 \[
     \bB = \bA + \bN,
 \]
@@ -35,7 +35,7 @@ with constant probability using
 \)
 entries of \(\bB\), where $\widetilde O$ hides polylogarithmic factors in $n$, $k$, and $1/\epsilon$.
 
-The main theorem of this section obtains the same form of additive-error guarantee under assumptions \((A1)\) and \((A3)\), but it does not need the row-wise noise assumption \((A2)\).  Our approach is to modify the sampling algorithm of Chapter~\ref{chapter:fast-sample} to obtain length-squared samples from $\bB$ at the cost of $O(\phi_{\max}^2n)$ expected queries per sample. Then we apply the additive error algorithm of Section~\ref{sec:additive-lra} to obtain a low rank approximation to $\bB$, and thus to $\bA$. Our algorithm queries
+The main theorem of this section obtains the same form of additive-error guarantee under assumptions \((A1)\) and \((A3)\), but it does not need the row-wise noise assumption \((A2)\).  Our approach is to modify our sampling algorithm to obtain length-squared samples from $\bB$ at the cost of $O(\phi_{\max}^2n)$ expected queries per sample. Then we apply the additive error algorithm of Section~\ref{sec:additive-lra} to obtain a low rank approximation to $\bB$, and thus to $\bA$. Our algorithm queries
 \(
     O\left({\phi_{\max}^2 n k}/{\epsilon^2}\right)
 \)
@@ -111,7 +111,7 @@ Here \(\widetilde O\) hides polylogarithmic factors in \(n\), \(k\), and
 \label{tab:robust-lra-comparison}
 \end{table}
 
-The main issue is that \(\bB\) need not be positive semidefinite, so the sampler of Chapter~\ref{chapter:fast-sample} cannot be applied directly. Fortunately, we can apply similar techniques after clipping the entries of $\bB$ according to the procedure of \cite{bakshi_robust_2020}, which we recall here.
+The main issue is that \(\bB\) need not be positive semidefinite, so Algorithm~\ref{alg:sampling-procedure} cannot be applied directly. Fortunately, we can apply similar techniques after clipping the entries of $\bB$ according to the procedure of \cite{bakshi_robust_2020}, which we recall here.
 \begin{definition}
 \label{def:clipped-matrix}
     Let $\bA\in\R^{n\times n}$ be psd and $\bB = \bA + \bN$. Define
