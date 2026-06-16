@@ -1,0 +1,67 @@
+This thesis studied the problem of performing matrix approximation when a large positive semidefinite matrix is available only through entry queries. The main technical contribution is a fast procedure for length-squared sampling from a psd matrix. Given a psd matrix $\bA\in\R^{n\times n}$, the algorithm in Chapter~\ref{chapter:fast-sample} outputs index $i$ with probability
+\[
+    p_i
+    =
+    \frac{\|\bA_{*,i}\|_2^2}{\|\bA\|_F^2},
+\]
+while reading only $O(n)$ entries of $\bA$ in expectation. This avoids the direct approach of computing all column norms.
+
+The rest of the thesis explored how this sampling primitive can be used in matrix approximation algorithms that previously assumed access to squared row or column norm distributions. In particular, we considered Frobenius norm approximation, additive-error eigenvalue approximation, additive-error low-rank approximation, and robust low-rank approximation.
+
+% \section{Consequences for Matrix Approximation}
+
+% The first application was Frobenius norm estimation. The acceptance probability of one round of the length-squared sampler is
+% \[
+%     \frac{\|\bA\|_F^2}{\tr(\bA)^2}.
+% \]
+% By estimating the acceptance probability through independent trials, one can estimate $\|\bA\|_F^2$. Section~\ref{sec:frobenius-norm-approximation} showed that this gives a $(1\pm\epsilon)$ approximation to $\|\bA\|_F^2$ using $O(n/\epsilon^2)$ entry queries with constant probability.
+
+% The next application was additive-error eigenvalue approximation. Existing algorithms for this problem sample rows or columns according to squared row norms, but those algorithms typically assume that the squared row-norm distribution and the Frobenius norm are already available. In the psd entry-query setting, these quantities are not directly available without reading the full matrix. Section~\ref{sec:eigenvalue-apporximation} replaced these assumptions using the sampler from Chapter~\ref{chapter:fast-sample} and the Frobenius norm estimator from Section~\ref{sec:frobenius-norm-approximation}. This yields a sublinear algorithm for additive $\epsilon\|\bA\|_F$ eigenvalue approximation of psd matrices using
+% \[
+%     \widetilde O\!\left(\frac{n}{\epsilon^2}\right)
+% \]
+% entry queries in expectation.
+
+% Section~\ref{sec:additive-lra} applied the same sampling primitive to additive-error low-rank approximation. The resulting algorithm outputs matrices $\bX,\bY\in\R^{n\times k}$ satisfying
+% \[
+%     \|\bA-\bX\bY^\top\|_F^2
+%     \leq
+%     \|\bA-\bA_k\|_F^2
+%     +
+%     \epsilon\|\bA\|_F^2
+% \]
+% with constant probability, using
+% \[
+%     O\!\left(\frac{nk}{\epsilon^2}\right)
+% \]
+% entry queries in expectation. This does not match the best known query complexity for additive-error psd low-rank approximation, which is $\widetilde O(nk/\epsilon)$ \cite{bakshi_robust_2020}. However, the algorithm has a relatively simple structure: it uses length-squared samples to construct an approximate top-$k$ subspace and then uses leverage-score sampling to construct an explicit low-rank factorization.
+
+% Finally, Section~\ref{sec:robust-lra} considered a robust version of the low-rank approximation problem. In this setting, the algorithm has entrywise access not to the psd matrix $\bA$ itself, but to a corrupted matrix
+% \[
+%     \bB=\bA+\bN.
+% \]
+% By clipping the entries of $\bB$ and modifying the rejection sampler, we obtained length-squared samples from the clipped matrix. This led to a robust additive-error low-rank approximation algorithm with guarantee
+% \[
+%     \|\bA-\bX\bY^\top\|_F^2
+%     \leq
+%     \|\bA-\bA_k\|_F^2
+%     +
+%     O(\epsilon+\sqrt{\eta})\|\bA\|_F^2,
+% \]
+% under the Frobenius noise assumption and the diagonal corruption parameter assumption. Compared with the result of Bakshi, Chepurko, and Woodruff~\cite{bakshi_robust_2020}, this approach removes the row-wise noise assumption but incurs an additional factor of $1/\epsilon$ in the query complexity.
+
+\section{Open Questions}
+
+The most direct open question is whether the additive-error low-rank approximation algorithm in Section~\ref{sec:additive-lra} can be improved from
+\(
+    O\!({nk}/{\epsilon^2})
+\)
+queries to
+\(
+    O\!\left({nk}/{\epsilon}\right),
+\)
+matching the optimal dependence on $n$, $k$, and $\epsilon$. The current analysis uses $O(k/\epsilon^2)$ length-squared column samples. It is natural to ask whether $O(k/\epsilon)$ length-squared samples are sufficient for the same additive-error guarantee in the psd setting.
+
+A second open question is whether length-squared sampling can be used more directly for relative-error psd low-rank approximation. 
+
+A third direction is to further develop robust sampling algorithms. Section~\ref{sec:robust-lra} showed that the rejection-sampling idea can be adapted to a corrupted input matrix after clipping. However, the robust algorithm assumes access to the diagonal corruption parameter $\phi_{\max}$ and has query complexity proportional to $\phi_{\max}^2$. It remains open whether this dependence can be improved or whether $\phi_{\max}$ can be estimated efficiently from entry queries.

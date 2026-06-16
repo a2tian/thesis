@@ -42,8 +42,29 @@ Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are ps
 % \todo{add subsection on rejection sampling?}
 
 
-\section{Sublinear Low-Rank Approximation}
+\section{Sublinear Matrix Approximation}
 
+As in the kernel matrix example from Chapter~\ref{chapter:intro}, we consider large matrices to which we may access individual entries without forming the entire matrix explicitly. This motivates the \textit{entry-query model}: from indices $(i,j)$, an algorithm may query and receive the entry $\bA_{ij}$. For a dense $n\times n$ matrix, reading the full input requires $n^2$ entry queries. We call an algorithm \textit{sublinear} if it uses $o(n^2)$ queries and $o(n^2)$ additional arithmetic in the entry query model. 
+
+This thesis was motivated by sublinear low-rank approximation. Given a matrix $\bA\in\R^{n\times n}$, the goal is to output a matrix $\widehat \bA$ of small rank such that the residual $\bA-\widehat\bA$ is small. Note that even forming all entries of $\widehat\bA$ is too expensive in the sublinear setting, so instead we output approximation factors $\bX, \bY\in\R^{n\times k}$, where $k$ is the rank of $\widehat\bA$, so that $\bX\bY^\top = \widehat\bA$.
+
+There are two common types of error guarantees for low-rank approximation. A \textit{relative-error} guarantee compares the algorithm's error to the best possible rank-$r$ approximation:
+\[
+    \|\bA-\widehat\bA\|_F^2
+    \leq
+    (1+\epsilon)\|\bA-\bA_r\|_F^2,
+\]
+where $\bA_r$ denotes the optimal rank-$r$ approximation to $\bA$. An \textit{additive-error} guarantee instead bounds the error by
+\[
+    \|\bA-\widehat\bA\|_F^2
+    \leq
+    \|\bA-\bA_r\|_F^2
+    +
+    \epsilon\|\bA\|_F^2,
+\]
+Additive error is generally weaker than relative error since $\|\bA - \bA_r\|^2_F\leq \|\bA\|^2_F$. 
+
+For general matrices, sublinear-time low-rank approximation is impossible: Clarkson and Woodruff give an $\Omega(\nnz\bA)$ query lower bound, where $\nnz\bA$ denotes the number of nonzero entries of $\bA$ \cite{clarkson_low_2013}. At the same time, this barrier can be avoided on structured classes of matrices. A large body of work focuses on positive semidefinite matrices; for example, Musco and Woodruff show that for any psd matrix $\bA\in\R^{n\times n}$, one can compute a relative-error low-rank approximation with time and query complexity $\widetilde O\left(n\cdot \poly(k/\epsilon)\right)$\footnote{we use $\widetilde O$ to hide polylogaritmic factors in $n$, $k$, and $1/\epsilon$.}. Sublinear-time algorithms have also been developed for distance matrices \cite{bakshi_sublinear_2018}, Toeplitz matrices \cite{musco_sublinear_2024}, and Hankel matrices \cite{kapralov_sublinear_2025}.
 
 
 \section{Sampling Primitives for Matrix Approximation}
@@ -106,6 +127,7 @@ Adaptive sampling is a sequential column selection method in which the sampling 
 \]
 Thus, columns that are already well-approximated by the current span become less likely to be sampled, while columns that are poorly approximated become more likely. 
 
-Adaptive sampling has strong theoretical guarantees. In particular, it can be used to obtain a relative-error Frobenius norm approximation after sampling $\poly(k, 1/\epsilon)$ columns  \cite{deshpande_adaptive_2006}. However, the sampling distribution in adaptive sampling is expensive to compute directly as one must compute the squared norms of all residual columns at every step.
+Adaptive sampling has strong theoretical guarantees. In particular, it can be used to obtain a relative-error Frobenius norm approximation after sampling $\poly(k, 1/\epsilon)$ columns  \cite{deshpande_adaptive_2006}. 
+% However, the sampling distribution in adaptive sampling is expensive to compute directly as one must compute the squared norms of all residual columns at every step.
 
 % \subsection{Randomly Pivoted Cholesky}
