@@ -137,7 +137,7 @@ The table suggests that \RPCholesky\ performs well on these kernel matrices in b
 
 Figures~\ref{fig:rpcholesky_rel_tr} and~\ref{fig:rpcholesky_rel_fro} show that the relative error decays steadily as the approximation rank increases. The rate of decay varies substantially across datasets, which reflects differences in the spectra of the corresponding kernel matrices. Figure~\ref{fig:rpcholesky_time} shows approximately increasing runtime as a function of $k$. The cost of each entry query depends on the ambient feature dimension of the dataset; hence, the running time varies between datasets.
 
-The preceding comparison measures error relative to $\|\bA\|_F^2$ or $\tr(\bA)$ rather than relative to the optimal residual. To probe relative-error behavior more directly, fix a target rank $r$ and an index set $S$, and define the trace and Frobenius residual ratios
+The preceding comparison measures error relative to $\|\bA\|_F^2$ or $\tr(\bA)$ rather than relative to the optimal residual. To assess relative-error behavior more directly, fix a target rank $r$ and an index set $S$, and define the trace and Frobenius residual ratios
 \[
     \gamma_{r,*}(S)=
     \frac{\tr(\bA-\bA\gen{S})}{\tr(\bA-\bA_r)},
