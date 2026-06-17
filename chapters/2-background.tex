@@ -35,9 +35,9 @@ A symmetric matrix $\bA\in\R^{n\times n}$ is \textit{positive semidefinite (psd)
 \subsection{Nystr\"om Approximation}
 Let $\bA\in\R^{n\times n}$ be a psd matrix and $S\subset[n]$. Define
 \[\bC := \bA_{\ast, S}\qquad\bW := \bA_{S, S}\]
-We write $\widetilde \bA$ to denote the \textit{Nystr\"om approximation} of $\bA$ with index set $S$, where 
-\[\widetilde\bA = \bC\bW^{-1}\bC^\top.\]
-Both the Nystr\"om approximation and its residual, $\bA - \widetilde\bA$, are psd. Moreover, $\rank(\widetilde\bA) = |S|$.
+We write $\bA\gen{S}$ to denote the \textit{Nystr\"om approximation} of $\bA$ with index set $S$, where 
+\[\bA\gen{S} = \bC\bW^{-1}\bC^\top.\]
+Both the Nystr\"om approximation and its residual, $\bA - \bA\gen{S}$, are psd. Moreover, $\rank(\bA\gen{S}) \leq |S|$.
 
 % \todo{add subsection on rejection sampling?}
 
@@ -64,7 +64,7 @@ where $\bA_r$ denotes the optimal rank-$r$ approximation to $\bA$. An \textit{ad
 \]
 Additive error is generally weaker than relative error since $\|\bA - \bA_r\|^2_F\leq \|\bA\|^2_F$. 
 
-For general matrices, sublinear-time low-rank approximation is impossible: Clarkson and Woodruff give an $\Omega(\nnz\bA)$ query lower bound, where $\nnz\bA$ denotes the number of nonzero entries of $\bA$ \cite{clarkson_low_2013}. At the same time, this barrier can be avoided on structured classes of matrices. A large body of work focuses on positive semidefinite matrices; for example, Musco and Woodruff show that for any psd matrix $\bA\in\R^{n\times n}$, one can compute a relative-error low-rank approximation with time and query complexity $\widetilde O\left(n\cdot \poly(k/\epsilon)\right)$\footnote{we use $\widetilde O$ to hide polylogaritmic factors in $n$, $k$, and $1/\epsilon$.}. Sublinear-time algorithms have also been developed for distance matrices \cite{bakshi_sublinear_2018}, Toeplitz matrices \cite{musco_sublinear_2024}, and Hankel matrices \cite{kapralov_sublinear_2025}.
+For general matrices, sublinear-time low-rank approximation is impossible: Clarkson and Woodruff give an $\Omega(\nnz\bA)$ query lower bound, where $\nnz\bA$ denotes the number of nonzero entries of $\bA$ \cite{clarkson_low_2013}. At the same time, this barrier can be avoided on structured classes of matrices. A large body of work focuses on positive semidefinite matrices; for example, Musco and Woodruff show that for any psd matrix $\bA\in\R^{n\times n}$, one can compute a relative-error low-rank approximation with time and query complexity $\widetilde O\left(n\cdot \poly(k/\epsilon)\right)$\footnote{we use $\widetilde O$ to hide polylogarithmic factors in $n$, $k$, and $1/\epsilon$.}. Sublinear-time algorithms have also been developed for distance matrices \cite{bakshi_sublinear_2018}, Toeplitz matrices \cite{musco_sublinear_2024}, and Hankel matrices \cite{kapralov_sublinear_2025}.
 
 
 \section{Sampling Primitives for Matrix Approximation}
@@ -114,7 +114,7 @@ A closely related notion is ridge leverage score sampling. Given a matrix $\bM\i
     =
     \left(\bM(\bM+\lambda\bI)^{-1}\right)_{ii}.
 \]
-Ridge leverage scores have led to strong guarantees for Nystr"om approximation and related low-rank approximation problems for psd matrices \cite{musco_recursive_2017, clarkson_low-rank_2017, musco_sublinear_2019}. In particular, Musco and Woodruff \cite{musco_sublinear_2019} show that the ridge leverage scores of a psd matrix $\bA$ can be approximated in sublinear time to sufficient accuracy for relative error low-rank approximation.
+Ridge leverage scores have led to strong guarantees for Nystr\"om approximation and related low-rank approximation problems for psd matrices \cite{musco_recursive_2017, clarkson_low-rank_2017, musco_sublinear_2019}. In particular, Musco and Woodruff \cite{musco_sublinear_2019} show that the ridge leverage scores of a psd matrix $\bA$ can be approximated in sublinear time to sufficient accuracy for relative error low-rank approximation.
 
 \subsection{Adaptive Sampling}
 

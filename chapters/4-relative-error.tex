@@ -1,14 +1,112 @@
-We initially tried to obtain a Frobenius relative-error guarantee by using \RPCholesky\ as a column Nystr\"om method. Given a dataset $D=\{\bx_1,\ldots,\bx_n\}$, the associated Gaussian kernel matrix is
+
+
+In the previous chapter, we used fast length-squared sampling to derive a sublinear algorithm for additive error low-rank approximation of psd matrices. This chapter returns to the stronger goal that originally motivated the search for such sampling primitives: relative-error low-rank approximation. Given entrywise access to a psd matrix $\bA\in\R^{n\times n}$, a target rank $r$, and an accuracy parameter $\varepsilon>0$, the desired guarantee is
+\[
+    \|\bA-\widehat{\bA}\|_F^2
+    \leq
+    (1+\varepsilon)\|\bA-\bA_k\|_F^2,
+\]
+where $\widehat{\bA}$ is the low-rank approximation and $\bA_k$ is the optimal rank-$k$ approximation to $\bA$. This chapter documents why a natural Nystr\"om approximation-based route to this guarantee does not succeed.
+
+Recall that for an index set $S\subset[n]$, the column Nystr\"om approximation is
+\[
+    \bA\gen{S}
+    =
+    \bA_{*,S}\bA_{S,S}^{-1}\bA_{S,*}.
+\]
+Both $\bA\gen{S}$ and the residual matrix $\bR_S:=\bA-\bA\gen{S}$ are psd. Randomly Pivoted Cholesky, abbreviated \RPCholesky, is an adaptive rule for choosing the column set $S$. Starting from $S_0=\emptyset$, at step $t$ it samples a pivot $s_t$ according to the diagonal of the current Nystr\"om residual:
+\[
+    \Pr[s_t=j]
+    =
+    \frac{(\bA-\bA\gen{S_{t-1}})_{jj}}
+         {\tr(\bA-\bA\gen{S_{t-1}})}.
+\]
+The new set is $S_t=S_{t-1}\cup\{s_t\}$, and after $k$ steps the algorithm returns $\bA\gen{S_k}$. 
+
+\begin{algorithm}[H]
+    \label{alg:rpc-adapt}
+    \caption{Randomly Pivoted Cholesky}
+    \textbf{Input:} {psd matrix $\bA\in\R^{n\times n}$, approximation rank $k$}
+    
+    \smallskip
+    Initially, $S\gets \varnothing$.
+    
+    \smallskip
+    Do, for  {$i = 1, \ldots, k$}:
+    \begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+        \item sample a column $\displaystyle s_i \sim \frac{\diag(\bA - \bA\gen{S})}{\tr(\bA - \bA\gen{S})}$.
+        \item $S\gets s_i$
+    \end{enumerate}
+\end{algorithm}
+
+In order to avoid evaluating $\bA - \bA\gen{S}$ in every step, we can compute the approximation for $\bA$ in factored form using the pivoted partial Cholesky algorithm \cite{chen_randomly_2025}, as demonstrated in Algorithm~\ref{alg:partial-cholesky}.
+
+\begin{algorithm}[H]
+    \caption{Pivoted partial Cholesky}
+    \label{alg:partial-cholesky}
+    \textbf{Input:} {psd matrix $\bA\in\R^{n\times n}$, approximation rank $k$}
+    
+    \smallskip
+    \textbf{Output:} {pivot set $S = \{s_1,\ldots, s_k\}$; matrix $\bF\in\R^{n\times k}$ satisfying $\bF\bF^\top = \bA\gen{S}$}
+
+    \smallskip
+    Initialize $\bF\gets \mathbf 0_{n\times k}$\;
+
+    \smallskip
+    Do, for $i = 1\ldots k$:
+    \begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=2em,
+    itemsep=0.35em,
+    topsep=0.45em,
+    parsep=0pt
+]
+        \item Select a pivot $s_i\in [n]$
+        \item $\bg\gets \bA(:, s_i)$
+        \item $\bg\gets \bg - \bF(*, [i-1])\bF(s_i, [i-1])^\top$
+        \item $\bF(*, i)\gets \bg \big / \sqrt{\bg(s_i)}$
+    \end{enumerate}
+
+    \smallskip
+    Return $\bF$
+\end{algorithm}
+% This pivot rule is closely related to adaptive length-squared sampling. If $\bA=\bB^\top\bB$ is a Gram matrix, then the diagonal entry $(\bA-\bA\gen{S})_{jj}$ is the squared norm of the $j$th residual column of $\bB-\bP_{\bB_S}\bB$. 
+
+The main theoretical guarantee for \RPCholesky\ is a relative trace-error bound. Let
+\[
+    \eta_r=\frac{\tr(\bA-\bA_r)}{\tr(\bA)}.
+\]
+Chen et al.~\cite{chen_randomly_2025} show that if
+\[
+    k\geq \frac{r}{\varepsilon}+r\log\left(\frac{1}{\varepsilon\eta_r}\right),
+\]
+then the Nystr\"om approximation produced by \RPCholesky\ satisfies
+\[
+    \E\left[\tr(\bA-\bA\gen{S_k})\right]
+    \leq
+    (1+\varepsilon)\tr(\bA-\bA_r).
+\]
+Since $\bA-\bA\gen{S_k}$ is psd, this is a trace-norm guarantee for the residual. The question considered here is whether the same simple column-selection method, or any similarly small column Nystr\"om approximation, can also achieve the relative Frobenius error guarantee above.
+
+We begin with experiments on Gaussian kernel matrices. Given a dataset $D=\{\bx_1,\ldots,\bx_n\}$, the associated Gaussian kernel matrix is
 \[
     \bK(i,j)=\exp\left(-\frac{1}{2\sigma}\|\bx_i-\bx_j\|^2\right),
 \]
-where $\sigma>0$ is the kernel bandwidth. The experiments below use our independent Python implementation, available at \href{\GitHubURL}{\GitHubURL}.
+where $\sigma>0$ is the kernel bandwidth. To serve as a baseline, we will also consider the greedy pivot selection method:
+\[\text{select pivot}\quad s_i \in \argmax_{1\leq j\leq n}\,{\bR^{(i)}(j, j)}\quad\text{with ties broken arbitrarily.}\]
+The experiments below use our independent Python implementation. The source code is available at \href{\GitHubURL}{\GitHubURL}. 
 
-We first reproduce a subset of rows from Table 1 of \cite{chen_randomly_2025}, which compares \RPCholesky\ against greedy pivot selection and the optimal rank-$k$ approximation. We then repeat the same comparison for the Frobenius norm. For a low-rank approximation $\hat\bA$, define the relative trace and Frobenius errors by
+We first reproduce a subset of rows from Table 1 of \cite{chen_randomly_2025}, which compares \RPCholesky\ against greedy pivot selection and the optimal rank-$k$ approximation. We then repeat the same comparison for the Frobenius norm. For a low-rank approximation $\widehat\bA$, define the relative trace and Frobenius errors by
 \[
-    \eta_{*}=\frac{\tr(\bA-\hat\bA)}{\tr(\bA)}
+    \eta_{*}=\frac{\tr(\bA-\widehat\bA)}{\tr(\bA)}
     \qquad\qquad
-    \eta_F=\frac{\|\bA-\hat\bA\|_F}{\|\bA\|_F}.
+    \eta_F=\frac{\|\bA-\widehat\bA\|_F}{\|\bA\|_F}.
 \]
 Table~\ref{tab:rel-error1000} reports these errors for rank $1000$ approximations. The ``Opt'' columns represent the error of the optimal rank-1000 approximation given by the truncated svd.
 
@@ -166,7 +264,7 @@ The preceding example suggests a natural modification of the pivot rule. The fai
 \caption{\RPCholesky2\ pivot selection}
 \label{alg:rpc2}
 
-\textbf{Input:} residual matrix \(\bR=\bA-\hat\bA\), parameter \(c>0\).
+\textbf{Input:} residual matrix \(\bR=\bA-\widehat\bA\), parameter \(c>0\).
 \smallskip
 
 \begin{enumerate}[

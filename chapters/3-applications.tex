@@ -3,60 +3,13 @@
 \input{sections/frobenius-norm}
 
 \section{Eigenvalue Approximation}
-\label{sec:eigenvalue-apporximation}
+\label{sec:eigenvalue-approximation}
 \input{sections/eigenvalue}
-
-% \begin{definition}[Additive spectral approximation]
-% Let $\bA \in \R^{n \times n}$ be a symmetric matrix. A sequence $\widehat{\lambda}_1 \geq \cdots \geq \widehat{\lambda}_n$ is an additive $\alpha$-approximation to the spectrum of $\bA$ if
-% \[
-%     \abs{\lambda_i(\bA) - \widehat{\lambda}_i} \leq \alpha
-% \]
-% for every $i \in [n]$.
-% \end{definition}
-
-% \begin{lemma}[\cite{bhattacharjee_sublinear_2022}, Lemma 11]
-% Let $\bA\in\R^{n\times n}$ be a symmetric matrix. Let $\bA'\in\R^{n\times n}$ be the matrix obtained by setting $\bA_{ij}' = 0$ if either
-% \begin{enumerate}
-%     \item $i=j$ and $\|\bA_{*, i}\|^2_2 < \frac{\epsilon^2}{4}\|\bA\|^2_F$, or
-%     \item $i\neq j$ and $\|\bA_{*, i}\|^2_2\cdot\|\bA_{*, j}\|^2_2 < \frac{\epsilon^2\|\bA\|^2_F|\bA_{ij}|^2}{c\log^4n}$ for a sufficiently large absolute constant $c$,
-% \end{enumerate}
-% and $\bA_{ij}' = \bA_{ij}$ otherwise. Then for all $i\in[n]$,
-% \[|\lambda_i(\bA) - \lambda_i(\bA')|\leq\epsilon\|\bA\|_F.\]
-% \end{lemma}
-
-% \begin{theorem}[Swartworth--Woodruff, adapted to i.i.d. samples]
-% \label{thm:iid-row-norm-eigenvalue}
-% Let $\bM \in \R^{n \times n}$ be symmetric, and suppose that we can sample indices from
-% \[
-%     q_i = \frac{\norm{\bM_i}^2}{\norm{\bM}_F^2}.
-% \]
-% Let $i_1,\ldots,i_m$ be independent samples from $q$, where
-% \[
-%     m \geq C \alpha^{-2} \log^4 n \log^2(1/\alpha)
-% \]
-% for a sufficiently large absolute constant $C$. Define the sampling matrix $\bS \in \R^{m \times n}$ by
-% \[
-%     \bS_{t,*} = \frac{\be_{i_t}^{\top}}{\sqrt{m q_{i_t}}}.
-% \]
-% Let $\bM^\sharp$ be obtained from $\bM$ by the Swartworth--Woodruff zeroing rule at accuracy parameter $\alpha$: the diagonal entry $M_{ii}$ is zeroed only when
-% \[
-%     \norm{\bM_i}^2 \leq \frac{\alpha^2}{4}\norm{\bM}_F^2,
-% \]
-% and an off-diagonal entry $M_{ij}$ is zeroed when
-% \[
-%     \norm{\bM_i}^2\norm{\bM_j}^2
-%     \leq
-%     \frac{\alpha^2 \norm{\bM}_F^2 M_{ij}^2}{c\log^4 n},
-% \]
-% where $c$ is the absolute constant in the zeroing rule. Then, with probability at least $2/3$, the eigenvalues of $\bS \bM^\sharp \bS^\top$, together with $n-m$ additional zeros, form an additive $\alpha\norm{\bM}_F$-approximation to the spectrum of $\bM$.
-% \end{theorem}
 
 \section{Additive Error Low-Rank Approximation}
 \label{sec:additive-lra}
 \input{sections/additive-lra}
 
-
-\newpage
 \section{Robust Low-Rank Approximation}
 \label{sec:robust-lra}
 \input{sections/robust-lra}

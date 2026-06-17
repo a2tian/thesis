@@ -15,7 +15,7 @@ An effective approach is to work with a small sketch of the matrix obtained by s
 % Fortunately, the kernel matrix $\bA$ often exhibits low-rank structure, meaning that it can be approximated by a much smaller matrix without significant loss of accuracy. Substituting $\bA$ with an appropriate low-rank approximation can yield speedups of several orders of magnitude in practice compared to direct methods, especially in kernel ridge regression and kernel spectral clustering \cite{chen_randomly_2025}. Given the practical significance, \textit{how can we compute accurate low-rank approximations for large kernel matrices efficiently?}
 
 \section{Our Results}
-We consider the problem of sampling a column with probability proportional to its $\ell_2$ norm, i.e., sample column $i$ with probability 
+We consider the problem of sampling a column with probability proportional to its squared $\ell_2$ norm, i.e., sample column $i$ with probability 
 \[p_i = \frac{\|\bA_{*, i}\|^2_2}{\|\bA\|^2_F}\]
 where $\bA_{*, i}$ denotes the $i$th column of $\bA$. We show that for a psd matrix, we can draw such a sample without having to read all entries of the input. Our algorithm queries $O(n)$ entries of $\bA$ and runs in $O(n)$ time in expectation. If the number of needed samples is small compared to $n$, our algorithm offers significant speedup over pre-computing all the column norms. 
 

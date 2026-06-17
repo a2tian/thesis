@@ -185,7 +185,7 @@ Although \(\widetilde{\bB}\) is not necessarily positive semidefinite, the clipp
     \leq
     \phi_{\max}^2 |\bB_{ii}|\,|\bB_{jj}|\qquad\text{for all $i,j\in[n]$.}
 \]
-In Algorithm~\ref{alg:robust-sampler}, we use this identity to sample by squared column norms of $\widetilde B$.
+In Algorithm~\ref{alg:robust-sampler}, we use this identity to sample by squared column norms of $\widetilde \bB$.
 
 
 \begin{algorithm}[H]
@@ -208,7 +208,7 @@ Repeat the following in rounds until an index is accepted:
     \item Sample indices \(i,j \overset{\mathrm{i.i.d.}}{\sim} d\).
 
     \item Accept and return \(i\) with probability
-    $\frac{\widetilde\bB_{ij}^2}{\phi_{\max}^2|B_{ii}||B_{jj}|}$.
+    $\frac{\widetilde\bB_{ij}^2}{\phi_{\max}^2|\bB_{ii}||\bB_{jj}|}$.
     Otherwise, reject.
 \end{enumerate}
 \end{algorithm}
